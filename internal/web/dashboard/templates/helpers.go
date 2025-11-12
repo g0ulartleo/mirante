@@ -67,13 +67,37 @@ type treemapData struct {
 }
 
 func buildTreemapData(alarmsWithSignals []alarm.AlarmSignals, level int, baseURL string) treemapData {
+	prefix := strings.Trim(strings.TrimLeft(baseURL, "/"), "/")
+	var prefixSegments []string
+	if prefix == "" {
+		prefixSegments = []string{}
+	} else {
+		prefixSegments = strings.Split(prefix, "/")
+	}
+	effectiveLevel := len(prefixSegments)
+
 	groups := make(map[string][]alarm.AlarmSignals)
 	thisLevel := []alarm.AlarmSignals{}
 	for _, a := range alarmsWithSignals {
-		if strings.Join(a.Alarm.Path, "/") == strings.TrimLeft(baseURL, "/") {
+		pathStr := strings.Join(a.Alarm.Path, "/")
+
+		if prefix == "" {
+			if len(a.Alarm.Path) == 0 {
+				thisLevel = append(thisLevel, a)
+				continue
+			}
+			key := a.Alarm.Path[0]
+			groups[key] = append(groups[key], a)
+			continue
+		}
+
+		if pathStr == prefix {
 			thisLevel = append(thisLevel, a)
-		} else if len(a.Alarm.Path) > level {
-			key := a.Alarm.Path[level]
+			continue
+		}
+
+		if strings.HasPrefix(pathStr, prefix+"/") && len(a.Alarm.Path) > effectiveLevel {
+			key := a.Alarm.Path[effectiveLevel]
 			groups[key] = append(groups[key], a)
 		}
 	}

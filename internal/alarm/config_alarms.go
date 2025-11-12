@@ -49,7 +49,10 @@ func LoadAlarmConfig(path string) (*Alarm, error) {
 		alarm.Cron = fmt.Sprintf("@every %s", interval)
 	}
 	if len(alarm.Path) == 0 {
-		alarm.Path = strings.Split(path, "/")[2 : len(strings.Split(path, "/"))-1]
+		segments := strings.Split(path, "/")
+		if len(segments) > 2 {
+			alarm.Path = segments[2 : len(segments)-1]
+		}
 	}
 	return alarm, nil
 }

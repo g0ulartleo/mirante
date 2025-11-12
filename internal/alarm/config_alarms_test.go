@@ -135,6 +135,7 @@ id: test-alarm
 name: Test Alarm
 description: Test alarm configuration
 type: endpoint-checker
+interval: 30s
 path: ["Project", "APIs"]
 `,
 			expectedAlarm: &Alarm{
@@ -142,6 +143,8 @@ path: ["Project", "APIs"]
 				Name:        "Test Alarm",
 				Description: "Test alarm configuration",
 				Type:        "endpoint-checker",
+				Interval:    "30s",
+				Cron:        "@every 30s",
 				Path:        []string{"Project", "APIs"},
 			},
 			expectError: false,
