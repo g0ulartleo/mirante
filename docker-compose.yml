@@ -25,6 +25,8 @@ services:
       - .:/app
     depends_on:
       - redis
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   worker:
     build:
@@ -43,6 +45,8 @@ services:
       - ~/.aws:/root/.aws:ro
     depends_on:
       - redis
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   scheduler:
     build:

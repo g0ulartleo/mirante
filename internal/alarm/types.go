@@ -1,6 +1,10 @@
 package alarm
 
-import "github.com/g0ulartleo/mirante-alerts/internal/signal"
+import (
+	"time"
+
+	"github.com/g0ulartleo/mirante-alerts/internal/signal"
+)
 
 type Alarm struct {
 	ID            string             `yaml:"id"`
@@ -33,6 +37,8 @@ type SlackNotificationConfig struct {
 }
 
 type AlarmSignals struct {
-	Alarm   Alarm
-	Signals []signal.Signal
+	Alarm             Alarm
+	Signals           []signal.Signal
+	LastCheckedAt     time.Time
+	UnhealthyCount24h int
 }

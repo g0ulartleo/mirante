@@ -26,7 +26,12 @@ func NewDashboardNotifyTask(alarmID string, signal signal.Signal) (*asynq.Task, 
 	if err != nil {
 		return nil, fmt.Errorf("json.Marshal failed: %w", err)
 	}
-	return asynq.NewTask(TypeDashboardNotify, payload, asynq.MaxRetry(1)), nil
+	return asynq.NewTask(
+		TypeDashboardNotify,
+		payload,
+		asynq.MaxRetry(1),
+		asynq.TaskID(fmt.Sprintf("%s:%s", TypeDashboardNotify, alarmID)),
+	), nil
 }
 
 func HandleDashboardNotifyTask(ctx context.Context, t *asynq.Task, signalService *signal.Service, alarmService *alarm.AlarmService, redisClient *redis.Client) error {

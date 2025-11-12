@@ -1,5 +1,7 @@
 package signal
 
+import "time"
+
 type Service struct {
 	repo SignalRepository
 }
@@ -36,4 +38,8 @@ func (s *Service) GetAlarmHealth(alarmID string) (Status, error) {
 
 func (s *Service) CleanOldSignals() error {
 	return s.repo.CleanOldSignals()
+}
+
+func (s *Service) CountUnhealthySince(alarmID string, since time.Time) (int, error) {
+	return s.repo.CountUnhealthySince(alarmID, since)
 }

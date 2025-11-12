@@ -1,11 +1,11 @@
 package templates
 
 import (
-	"fmt"
-	"math"
-	"strings"
+    "fmt"
+    "math"
+    "time"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/alarm"
+    "github.com/g0ulartleo/mirante-alerts/internal/alarm"
 )
 
 templ Alarms(alarmsWithSignals []alarm.AlarmSignals) {
@@ -20,19 +20,9 @@ templ WebSocketContainer(alarmsWithSignals []alarm.AlarmSignals) {
 
 templ Treemap(alarmsWithSignals []alarm.AlarmSignals, level int, baseURL string) {
 	<div class="h-screen p-2">
-		{{ groups := make(map[string][]alarm.AlarmSignals) }}
-		{{ thisLevelConfigs := []alarm.AlarmSignals{} }}
+        {{ data := buildTreemapData(alarmsWithSignals, level, baseURL) }}
 
-		for _, alarmWithSignal := range alarmsWithSignals {
-			if strings.Join(alarmWithSignal.Alarm.Path, "/") == strings.TrimLeft(baseURL, "/") {
-				{{ thisLevelConfigs = append(thisLevelConfigs, alarmWithSignal) }}
-			} else if len(alarmWithSignal.Alarm.Path) > level {
-				{{ groupKey := alarmWithSignal.Alarm.Path[level] }}
-				{{ groups[groupKey] = append(groups[groupKey], alarmWithSignal) }}
-			}
-		}
-
-		{{ totalItems := len(thisLevelConfigs) + len(groups) }}
+        {{ totalItems := len(data.ThisLevel) + len(data.Groups) }}
 		{{ cols := int(math.Sqrt(float64(totalItems))) }}
 		{{ if cols * cols < totalItems { cols += 1 } }}
 		{{ gridTemplateColumns := fmt.Sprintf("grid-cols-[repeat(%d,minmax(0,1fr))]", cols) }}
@@ -43,100 +33,84 @@ templ Treemap(alarmsWithSignals []alarm.AlarmSignals, level int, baseURL string)
 			spanNeeded = cols - lastRowItems + 1
 		} }}
 
-		<div class={ "grid gap-2 h-[calc(100vh-1rem)] " + gridTemplateColumns }>
+        <div class={ "grid gap-2 h-[calc(100vh-1rem)] " + gridTemplateColumns } data-cols={ cols }>
 			{{ itemsRendered := 0 }}
-			for groupKey, groupConfigs := range groups {
-				{{ itemClass := "w-full h-full flex items-center justify-center rounded-sm text-center p-2 " + getGroupStatus(groupConfigs) }}
+            for _, g := range data.Groups {
+                {{ groupKey := g.Name }}
+                {{ groupConfigs := g.Alarms }}
+                {{ itemClass := "w-full h-full flex items-center justify-center rounded-sm text-center p-2 relative group overflow-hidden " + getGroupStatus(groupConfigs) }}
 				{{ itemsRendered++ }}
 				{{ isLastItem := itemsRendered == totalItems }}
+                {{ idx := itemsRendered - 1 }}
 
 				{{ if isLastItem && lastRowItems > 0 && lastRowItems < cols {
 					itemClass += fmt.Sprintf(" col-span-%d", spanNeeded)
 				} }}
 
-				<a href={getGroupURL(baseURL, groupKey)} class={ itemClass }>
-					<span class="text-xl text-white font-semibold">{ groupKey }</span>
-				</a>
+                <a href={getGroupURL(baseURL, groupKey)} class={ itemClass } data-href={ getGroupURL(baseURL, groupKey) } data-idx={ idx } tabindex="0" role="button">
+                    <span class="text-xl text-white font-semibold relative z-10">{ groupKey }</span>
+                    if level == 0 {
+                        <div class="kbd-overlay absolute inset-x-0 bottom-0 top-1/2 bg-gradient-to-t from-black/50 to-transparent opacity-0 transition-opacity flex items-end justify-center p-2 pointer-events-none">
+                            <div class="text-white text-sm text-center space-y-1 pb-1">
+                                <p>{ fmt.Sprintf("%d unhealthy now", countUnhealthy(groupConfigs)) }</p>
+                                <p>{ fmt.Sprintf("%d unhealthy signals in 24h", sumUnhealthy24h(groupConfigs)) }</p>
+                                if !lastCheckedGroup(groupConfigs).IsZero() {
+                                    <p>last signal received { humanizeDuration(time.Since(lastCheckedGroup(groupConfigs))) } ago</p>
+                                }
+                            </div>
+                        </div>
+                    }
+                </a>
 			}
 
-			for _, alarmWithSignal := range thisLevelConfigs {
-				{{ itemClass := "w-full h-full flex items-center justify-center rounded-sm text-center p-2 " + getAlarmStatusColor(alarmWithSignal) }}
+            for _, alarmWithSignal := range data.ThisLevel {
+                {{ itemClass := "w-full h-full flex items-center justify-center rounded-md text-center p-3 md:p-4 shadow-sm ring-1 ring-black/5 relative overflow-hidden group " + getAlarmStatusColor(alarmWithSignal) }}
 				{{ itemsRendered++ }}
 				{{ isLastItem := itemsRendered == totalItems }}
+                {{ idx := itemsRendered - 1 }}
 
 				{{ if isLastItem && lastRowItems > 0 && lastRowItems < cols {
 					itemClass += fmt.Sprintf(" col-span-%d", spanNeeded)
 				} }}
 
-				<div class={ itemClass }>
-					<div class="flex flex-col gap-2">
-						<span class="text-xl text-white">{ alarmWithSignal.Alarm.Name }</span>
-						if len(alarmWithSignal.Signals) > 0 {
-							<p class="text-sm text-white">{ alarmWithSignal.Signals[len(alarmWithSignal.Signals)-1].Message }</p>
-						}
-					</div>
-				</div>
+                <div class={ itemClass } data-idx={ idx } tabindex="0" role="button">
+                    if data.Level == 0 {
+                        <div class="flex items-center gap-2 text-white relative z-10">
+                            <span class={ "inline-block h-2.5 w-2.5 rounded-full " + getAlarmStatusDotColor(alarmWithSignal) }></span>
+                            <span class="text-xl font-semibold leading-tight">{ alarmWithSignal.Alarm.Name }</span>
+                        </div>
+                        <div class="kbd-overlay absolute inset-x-0 bottom-0 top-1/2 bg-gradient-to-t from-black/50 to-transparent opacity-0 transition-opacity flex items-end justify-center p-3 pointer-events-none">
+                            <div class="flex flex-col gap-2 items-center text-white max-w-[95%] pb-1">
+                                if len(alarmWithSignal.Signals) > 0 {
+                                    <p class="text-sm opacity-95 truncate w-full" title={ alarmWithSignal.Signals[len(alarmWithSignal.Signals)-1].Message }>{ alarmWithSignal.Signals[len(alarmWithSignal.Signals)-1].Message }</p>
+                                }
+                                <div class="mt-1 flex flex-wrap items-center justify-center gap-2 text-xs opacity-90">
+                                    if !alarmWithSignal.LastCheckedAt.IsZero() {
+                                        <span class="rounded-full bg-white/15 px-2 py-0.5">last signal received { humanizeDuration(time.Since(alarmWithSignal.LastCheckedAt)) } ago</span>
+                                    }
+                                    <span class="rounded-full bg-white/15 px-2 py-0.5">{ fmt.Sprintf("%d", alarmWithSignal.UnhealthyCount24h) } unhealthy signals in 24h</span>
+                                </div>
+                            </div>
+                        </div>
+                    } else {
+                        <div class="flex flex-col gap-2 items-center text-white max-w-[95%]">
+                            <div class="flex items-center gap-2">
+                                <span class={ "inline-block h-2.5 w-2.5 rounded-full " + getAlarmStatusDotColor(alarmWithSignal) }></span>
+                                <span class="text-xl font-semibold leading-tight">{ alarmWithSignal.Alarm.Name }</span>
+                            </div>
+                            if len(alarmWithSignal.Signals) > 0 {
+                                <p class="text-sm opacity-95 truncate w-full" title={ alarmWithSignal.Signals[len(alarmWithSignal.Signals)-1].Message }>{ alarmWithSignal.Signals[len(alarmWithSignal.Signals)-1].Message }</p>
+                            }
+                            <div class="mt-1 flex flex-wrap items-center justify-center gap-2 text-xs opacity-90">
+                                if !alarmWithSignal.LastCheckedAt.IsZero() {
+                                    <span class="rounded-full bg-white/15 px-2 py-0.5">last signal received { humanizeDuration(time.Since(alarmWithSignal.LastCheckedAt)) } ago</span>
+                                }
+                                <span class="rounded-full bg-white/15 px-2 py-0.5">{ fmt.Sprintf("%d", alarmWithSignal.UnhealthyCount24h) } unhealthy signals in 24h</span>
+                            </div>
+                        </div>
+                    }
+                </div>
 			}
 		</div>
 	</div>
-}
-
-func getGroupStatus(alarmsWithSignals []alarm.AlarmSignals) string {
-	hasUnhealthy := false
-	allHealthy := true
-
-	for _, alarmWithSignal := range alarmsWithSignals {
-		if len(alarmWithSignal.Signals) > 0 {
-			lastStatus := alarmWithSignal.Signals[len(alarmWithSignal.Signals)-1].Status
-			if lastStatus == "unhealthy" {
-				hasUnhealthy = true
-				break
-			} else if lastStatus != "healthy" {
-				allHealthy = false
-			}
-		} else {
-			allHealthy = false
-		}
-	}
-
-	switch {
-	case hasUnhealthy:
-		return "bg-red-500 hover:bg-red-600"
-	case allHealthy:
-		return "bg-green-500 hover:bg-green-600"
-	default:
-		return "bg-gray-500 hover:bg-gray-600"
-	}
-}
-
-func getAlarmStatusColor(alarmSignals alarm.AlarmSignals) string {
-	if len(alarmSignals.Signals) == 0 {
-		return "bg-gray-500"
-	}
-	lastStatus := alarmSignals.Signals[len(alarmSignals.Signals)-1].Status
-	if lastStatus == "healthy" {
-		return "bg-green-500"
-	}
-    if lastStatus == "unknown" {
-        return "bg-gray-500"
-    }
-	return "bg-red-500"
-}
-
-func getGroupURL(baseURL string, groupKey string) templ.SafeURL {
-	if baseURL == "/" {
-		return templ.SafeURL(fmt.Sprintf("%s", groupKey))
-	}
-	return templ.SafeURL(fmt.Sprintf("%s/%s", baseURL, groupKey))
-}
-
-func getParentURL(currentURL string) templ.SafeURL {
-	if currentURL == "/" {
-		return templ.SafeURL(currentURL)
-	}
-	lastSlash := strings.LastIndex(currentURL, "/")
-	if lastSlash <= len("/") {
-		return templ.SafeURL("/")
-	}
-	return templ.SafeURL(currentURL[:lastSlash])
 }

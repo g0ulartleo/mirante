@@ -15,6 +15,7 @@ templ Base(children templ.Component) {
 			<div id="alarms-container">
 				@children
 			</div>
+			<script src="/static/js/keyboard-nav.js"></script>
 			<script>
 				function createFavicon(color) {
 					const canvas = document.createElement('canvas');
@@ -73,8 +74,10 @@ templ Base(children templ.Component) {
 								const doc = parser.parseFromString(html, 'text/html');
 								const newContent = doc.getElementById('alarms-container').innerHTML;
 
-								document.getElementById('alarms-container').innerHTML = newContent;
-								updateFavicon(document.getElementById('alarms-container'));
+								const container = document.getElementById('alarms-container');
+								container.innerHTML = newContent;
+								updateFavicon(container);
+								initKeyboardNav();
 							} catch (error) {
 								console.error('Error processing message:', error);
 							}
@@ -106,13 +109,13 @@ templ Base(children templ.Component) {
 
 								document.getElementById('alarms-container').innerHTML = newContent;
 								updateFavicon(document.getElementById('alarms-container'));
+								initKeyboardNav();
 							});
 					}
 
 					connect();
 
 					const navigationHandler = () => {
-						console.log('reinitializing ws connection');
 						if (ws.readyState === WebSocket.OPEN) {
 							ws.close(1000, 'Normal navigation closure');
 						}
@@ -123,6 +126,7 @@ templ Base(children templ.Component) {
 					window.addEventListener('popstate', navigationHandler);
 					window.addEventListener('pageshow', (event) => {
 						if (event.persisted) navigationHandler();
+						initKeyboardNav();
 					});
 
 					window.addEventListener('beforeunload', () => {
@@ -130,10 +134,12 @@ templ Base(children templ.Component) {
 					});
 				}
 
-				document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {
 					initWebSocket();
 					updateFavicon(document.getElementById('alarms-container'));
+					initKeyboardNav();
 				});
+
 			</script>
 		</body>
 	</html>

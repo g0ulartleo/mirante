@@ -23,7 +23,12 @@ func NewSignalWriteTask(signal signal.Signal) (*asynq.Task, error) {
 	if err != nil {
 		return nil, fmt.Errorf("json.Marshal failed: %v", err)
 	}
-	return asynq.NewTask(TypeSignalWrite, payload, asynq.MaxRetry(3)), nil
+	return asynq.NewTask(
+		TypeSignalWrite,
+		payload,
+		asynq.MaxRetry(3),
+		asynq.TaskID(fmt.Sprintf("%s:%s", TypeSignalWrite, signal.AlarmID)),
+	), nil
 }
 
 func HandleSignalWriteTask(ctx context.Context, t *asynq.Task, signalService *signal.Service) error {

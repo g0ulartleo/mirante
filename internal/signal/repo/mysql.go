@@ -92,6 +92,19 @@ func (r *MySQLSignalRepository) GetAlarmHealth(alarmID string) (signal.Status, e
 	return signal.StatusUnknown, nil
 }
 
+func (r *MySQLSignalRepository) CountUnhealthySince(alarmID string, since time.Time) (int, error) {
+	query := `
+        SELECT COUNT(*)
+        FROM signals
+        WHERE alarm_id = ? AND status = 'unhealthy' AND created_at >= ?`
+	var count int
+	err := r.db.QueryRow(query, alarmID, since).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 func (r *MySQLSignalRepository) Init() error {
 	query := `CREATE DATABASE IF NOT EXISTS ` + signalsDatabase
 	_, err := r.db.Exec(query)

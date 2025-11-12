@@ -1,6 +1,8 @@
 package repo
 
 import (
+	"time"
+
 	"github.com/g0ulartleo/mirante-alerts/internal/signal"
 )
 
@@ -47,4 +49,18 @@ func (r *MemorySignalRepository) CleanOldSignals() error {
 
 func (r *MemorySignalRepository) Close() error {
 	return nil
+}
+
+// naive in-memory scan
+func (r *MemorySignalRepository) CountUnhealthySince(alarmID string, since time.Time) (int, error) {
+	signals := r.signals[alarmID]
+	count := 0
+	for _, s := range signals {
+		if s.Timestamp.After(since) || s.Timestamp.Equal(since) {
+			if s.Status == signal.StatusUnhealthy {
+				count++
+			}
+		}
+	}
+	return count, nil
 }

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/g0ulartleo/mirante-alerts/internal/alarm"
 	"github.com/g0ulartleo/mirante-alerts/internal/sentinel"
@@ -25,7 +26,12 @@ func NewAlarmCheckTask(alarmID string) (*asynq.Task, error) {
 	if err != nil {
 		return nil, fmt.Errorf("json.Marshal failed: %v", err)
 	}
-	return asynq.NewTask(TypeAlarmCheck, payload, asynq.MaxRetry(1)), nil
+	return asynq.NewTask(
+		TypeAlarmCheck,
+		payload,
+		asynq.MaxRetry(1),
+		asynq.TaskID(fmt.Sprintf("%s:%s", TypeAlarmCheck, alarmID)),
+	), nil
 }
 
 func HandleAlarmCheckTask(
@@ -61,9 +67,10 @@ func checkAlarm(
 	sentinel, err := initializeSentinel(alarmConfig, sentinelFactory)
 	if err != nil {
 		writeErr := signalService.WriteSignal(signal.Signal{
-			AlarmID: payload.AlarmID,
-			Status:  signal.StatusUnknown,
-			Message: fmt.Sprintf("failed to initialize sentinel: %v", err),
+			AlarmID:   payload.AlarmID,
+			Status:    signal.StatusUnknown,
+			Timestamp: time.Now(),
+			Message:   fmt.Sprintf("failed to initialize sentinel: %v", err),
 		})
 		if writeErr != nil {
 			return fmt.Errorf("failed to write signal: %w", writeErr)
@@ -74,9 +81,10 @@ func checkAlarm(
 	sig, err := sentinel.Check(ctx, payload.AlarmID)
 	if err != nil {
 		err = signalService.WriteSignal(signal.Signal{
-			AlarmID: payload.AlarmID,
-			Status:  signal.StatusUnknown,
-			Message: fmt.Sprintf("failed to check sentinel: %v", err),
+			AlarmID:   payload.AlarmID,
+			Status:    signal.StatusUnknown,
+			Timestamp: time.Now(),
+			Message:   fmt.Sprintf("failed to check sentinel: %v", err),
 		})
 		if err != nil {
 			return fmt.Errorf("failed to write signal: %w", err)
@@ -88,20 +96,20 @@ func checkAlarm(
 	if err != nil {
 		return fmt.Errorf("failed to write signal: %w", err)
 	}
-	changed, err := signalService.AlarmHasChangedStatus(payload.AlarmID)
-	if err != nil {
-		return fmt.Errorf("failed to get alarm latest signals: %w", err)
-	}
-	if !changed {
-		return nil
-	}
-
 	dashboardTask, err := NewDashboardNotifyTask(payload.AlarmID, sig)
 	if err != nil {
 		return fmt.Errorf("failed to create dashboard notify task: %w", err)
 	}
 	if _, err := asyncClient.Enqueue(dashboardTask); err != nil {
 		return fmt.Errorf("failed to enqueue dashboard notify task: %w", err)
+	}
+
+	changed, err := signalService.AlarmHasChangedStatus(payload.AlarmID)
+	if err != nil {
+		return fmt.Errorf("failed to get alarm latest signals: %w", err)
+	}
+	if !changed {
+		return nil
 	}
 
 	if alarmConfig.HasNotificationsEnabled() {

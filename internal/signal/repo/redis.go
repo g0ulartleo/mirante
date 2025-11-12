@@ -115,3 +115,24 @@ func (r *RedisStore) CleanOldSignals() error {
 
 	return iter.Err()
 }
+
+func (r *RedisStore) CountUnhealthySince(alarmID string, since time.Time) (int, error) {
+	ctx := context.Background()
+	key := "signals:" + alarmID
+	min := fmt.Sprintf("%d", since.Unix())
+	results, err := r.redis.ZRangeByScore(ctx, key, &redis.ZRangeBy{Min: min, Max: "+inf"}).Result()
+	if err != nil {
+		return 0, err
+	}
+	count := 0
+	for _, result := range results {
+		var sig signal.Signal
+		if err := json.Unmarshal([]byte(result), &sig); err != nil {
+			continue
+		}
+		if sig.Status == signal.StatusUnhealthy {
+			count++
+		}
+	}
+	return count, nil
+}

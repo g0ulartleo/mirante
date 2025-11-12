@@ -25,7 +25,12 @@ func NewAlarmNotifyTask(alarmID string, sig signal.Signal) (*asynq.Task, error) 
 	if err != nil {
 		return nil, fmt.Errorf("json.Marshal failed: %w", err)
 	}
-	return asynq.NewTask(TypeAlarmNotify, payload, asynq.MaxRetry(1)), nil
+	return asynq.NewTask(
+		TypeAlarmNotify,
+		payload,
+		asynq.MaxRetry(1),
+		asynq.TaskID(fmt.Sprintf("%s:%s", TypeAlarmNotify, alarmID)),
+	), nil
 }
 
 func HandleAlarmNotifyTask(ctx context.Context, t *asynq.Task, alarmService *alarm.AlarmService) error {

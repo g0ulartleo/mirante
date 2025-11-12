@@ -78,6 +78,19 @@ func (r *SQLiteSignalRepository) GetAlarmHealth(alarmID string) (signal.Status, 
 	return signal.StatusUnknown, nil
 }
 
+func (r *SQLiteSignalRepository) CountUnhealthySince(alarmID string, since time.Time) (int, error) {
+	query := `
+        SELECT COUNT(*)
+        FROM signals
+        WHERE alarm_id = ? AND status = 'unhealthy' AND created_at >= ?`
+	var count int
+	err := r.db.QueryRow(query, alarmID, since).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 func (r *SQLiteSignalRepository) Init() error {
 	query := `CREATE TABLE IF NOT EXISTS signals (
 		alarm_id VARCHAR(255) NOT NULL,
