@@ -1,0 +1,15 @@
+id: test-mysql-count
+name: Test MySQL Count
+type: mysql-count-checker
+interval: 1m
+config:
+  connection:
+    host: localhost
+    port: 3306
+    user: test
+    password: test
+    database: testdb
+  query: SELECT 1
+  expected: 1
+
+

@@ -93,7 +93,7 @@ templ Treemap(alarmsWithSignals []alarm.AlarmSignals, level int, baseURL string)
                             </div>
                         </div>
                     } else {
-                        <div class="flex flex-col gap-2 items-center text-white max-w-[95%]">
+                        <div class="flex flex-col gap-2 items-center text-white max-w-[95%] relative z-10">
                             <div class="flex items-center gap-2">
                                 <span class={ "inline-block h-2.5 w-2.5 rounded-full " + getAlarmStatusDotColor(alarmWithSignal) }></span>
                                 <span class="text-xl font-semibold leading-tight">{ alarmWithSignal.Alarm.Name }</span>
@@ -108,6 +108,11 @@ templ Treemap(alarmsWithSignals []alarm.AlarmSignals, level int, baseURL string)
                                 <span class="rounded-full bg-white/15 px-2 py-0.5">{ fmt.Sprintf("%d", alarmWithSignal.UnhealthyCount24h) } unhealthy signals in 24h</span>
                             </div>
                         </div>
+                        if alarmWithSignal.Alarm.Description != "" {
+                            <div class="kbd-overlay absolute inset-x-0 bottom-0 top-1/2 bg-gradient-to-t from-black/50 to-transparent opacity-0 transition-opacity flex items-end justify-center p-3 pointer-events-none">
+                                <p class="text-white text-sm text-center max-w-[95%] pb-1 whitespace-pre-line">{ alarmWithSignal.Alarm.Description }</p>
+                            </div>
+                        }
                     }
                 </div>
 			}

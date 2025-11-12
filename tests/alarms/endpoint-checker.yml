@@ -1,0 +1,9 @@
+id: test-endpoint
+name: Test Endpoint Checker
+type: endpoint-checker
+interval: 1m
+config:
+  url: https://example.com
+  expected_status: 200
+
+

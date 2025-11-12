@@ -1,0 +1,10 @@
+id: test-sqs-count
+name: Test SQS Count
+type: sqs-count-checker
+interval: 1m
+config:
+  queue_url: https://sqs.us-east-1.amazonaws.com/123456789012/test-queue
+  max_message_count: 10
+  aws_region: us-east-1
+
+

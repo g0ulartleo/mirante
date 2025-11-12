@@ -1,0 +1,16 @@
+id: test-postgres-count
+name: Test Postgres Count
+type: postgres-count-checker
+interval: 1m
+config:
+  connection:
+    host: localhost
+    port: 5432
+    user: test
+    password: test
+    database: testdb
+    sslmode: disable
+  query: SELECT 1
+  expected: 1
+
+

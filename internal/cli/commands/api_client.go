@@ -61,7 +61,7 @@ func (c *Client) doRequest(method, endpoint string, body any) ([]byte, error) {
 		} else if c.config.APIKey != "" {
 			req.Header.Set("X-API-Key", c.config.APIKey)
 		} else {
-			return nil, fmt.Errorf("no authentication configured. Run './cli auth <api_host>' or './cli config <api_host> <api_key>'")
+			return nil, fmt.Errorf("no authentication configured. Run 'mirante auth-key <api_host> <api_key>' or 'mirante auth <api_host>'")
 		}
 	}
 
