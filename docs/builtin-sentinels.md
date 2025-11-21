@@ -52,3 +52,68 @@ config:
   max_message_count: 1000
   aws_region: us-east-1
 ```
+
+### Step Functions Checker
+
+The Step Functions Checker sentinel type monitors AWS Step Functions state machine executions and validates that they are running successfully according to a specified schedule.
+
+This sentinel supports two modes:
+
+1. **Interval-based**: Checks if there was a successful execution within a specified time window (e.g., last 24 hours)
+2. **Cron-based**: Checks if there was a successful execution since the last expected execution time based on a cron schedule
+
+#### Configuration with Execution Interval
+
+Use this mode when you want to ensure a successful execution happened within a fixed time window:
+
+```yaml
+id: daily-etl-job-monitor
+name: Daily ETL Job Monitor
+type: step-functions-checker
+config:
+  state_machine_arn: arn:aws:states:us-east-1:123456789012:stateMachine:daily-etl-job
+  execution_interval: 24h
+  aws_region: us-east-1
+```
+
+#### Configuration with Cron Expression
+
+Use this mode when you want to validate executions against a cron schedule. This is useful for step functions that run at specific times or with complex schedules:
+
+```yaml
+id: hourly-sync-job-monitor
+name: Hourly Sync Job Monitor
+type: step-functions-checker
+config:
+  state_machine_arn: arn:aws:states:us-east-1:123456789012:stateMachine:hourly-sync
+  expected_cron: "0 * * * *"
+  aws_region: us-east-1
+```
+
+#### Cron Expression Examples
+
+```yaml
+"0 9 * * *"           # Daily at 9 AM
+"0 */6 * * *"         # Every 6 hours
+"0 9 * * 1-5"         # Weekdays at 9 AM
+"0 9 * * 0,6"         # Weekends (Saturday and Sunday) at 9 AM
+"0 * * * 1-5"         # Every hour on weekdays
+"0 9-17 * * 1-5"      # Business hours (9 AM - 5 PM) on weekdays
+"0 0 1 * *"           # First day of every month at midnight
+"*/30 * * * *"        # Every 30 minutes
+```
+
+**Note on Complex Schedules**: For scenarios requiring different frequencies on weekdays vs weekends (e.g., hourly on weekdays, daily on weekends), you'll need to create **two separate alarms**:
+- One with `expected_cron: "0 * * * 1-5"` for weekday hourly monitoring
+- Another with `expected_cron: "0 9 * * 0,6"` for weekend daily monitoring
+
+This approach ensures proper monitoring for each schedule pattern.
+
+#### Behavior
+
+The sentinel will report:
+- **Healthy**: If a SUCCEEDED execution is found after the last expected execution time (cron mode) or within the execution interval (interval mode)
+- **Healthy**: If an execution is currently RUNNING
+- **Unhealthy**: If the last successful execution is older than expected
+- **Unhealthy**: If the last execution FAILED or is in any status other than SUCCEEDED or RUNNING
+- **Unknown**: If there's an error fetching execution data

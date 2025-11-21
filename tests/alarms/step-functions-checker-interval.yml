@@ -1,0 +1,11 @@
+id: test-step-functions-checker-interval
+name: Step Functions Checker with Interval
+description: "Example: Monitors a Step Function that should succeed within the last 24 hours"
+interval: 1h
+type: step-functions-checker
+path: ['Test']
+config:
+  state_machine_arn: arn:aws:states:us-east-1:123456789012:stateMachine:test-step-function
+  execution_interval: 24h
+  aws_region: us-east-1
+

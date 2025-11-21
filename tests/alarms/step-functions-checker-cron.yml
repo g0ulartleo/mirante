@@ -1,0 +1,11 @@
+id: test-step-functions-checker-cron
+name: Step Functions Checker with Cron
+description: "Example: Monitors a Step Function that should run every day at 9 AM"
+interval: 30m
+type: step-functions-checker
+path: ['Test']
+config:
+  state_machine_arn: arn:aws:states:us-east-1:123456789012:stateMachine:test-step-function
+  expected_cron: "0 9 * * *"
+  aws_region: us-east-1
+

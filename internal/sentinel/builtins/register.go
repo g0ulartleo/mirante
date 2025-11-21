@@ -7,4 +7,5 @@ func Register(f *sentinel.SentinelFactory) {
 	f.Register("mysql-count-checker", NewMySQLCountCheckerSentinel)
 	f.Register("sqs-count-checker", NewSQSCountCheckerSentinel)
 	f.Register("postgres-count-checker", NewPostgresCountCheckerSentinel)
+	f.Register("step-functions-checker", NewStepFunctionsCheckerSentinel)
 }
