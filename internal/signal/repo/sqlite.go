@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/signal"
+	"github.com/g0ulartleo/mirante/internal/signal"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -57,10 +57,10 @@ func (r *SQLiteSignalRepository) GetAlarmLatestSignals(alarmID string, limit int
 
 func (r *SQLiteSignalRepository) GetAlarmHealth(alarmID string) (signal.Status, error) {
 	query := `
-		SELECT status 
-		FROM signals 
-		WHERE alarm_id = ? 
-		ORDER BY created_at DESC 
+		SELECT status
+		FROM signals
+		WHERE alarm_id = ?
+		ORDER BY created_at DESC
 		LIMIT 1`
 	rows, err := r.db.Query(query, alarmID)
 	if err != nil {

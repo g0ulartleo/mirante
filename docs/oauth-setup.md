@@ -1,6 +1,6 @@
 # OAuth Authentication Setup Guide
 
-This guide walks you through setting up OAuth authentication for mirante-alerts, allowing you to control access using your existing Google or GitHub accounts.
+This guide walks you through setting up OAuth authentication for mirante, allowing you to control access using your existing Google or GitHub accounts.
 
 ## Quick Setup
 
@@ -13,7 +13,7 @@ This guide walks you through setting up OAuth authentication for mirante-alerts,
 
 3. **Update the configuration file** at `config/auth.yaml`
 
-4. **Restart your mirante-alerts server**
+4. **Restart your mirante server**
 
 5. **Authenticate with CLI**
    ```bash
@@ -154,7 +154,7 @@ After authentication, use CLI commands normally:
 
 ### Token Management
 
-Tokens are stored in `~/.mirante-alerts/cli_config.json`. To re-authenticate:
+Tokens are stored in `~/.mirante/cli_config.json`. To re-authenticate:
 
 ```bash
 ./bin/cli auth https://your-domain.com

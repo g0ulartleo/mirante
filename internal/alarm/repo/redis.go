@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/alarm"
-	"github.com/g0ulartleo/mirante-alerts/internal/config"
+	"github.com/g0ulartleo/mirante/internal/alarm"
+	"github.com/g0ulartleo/mirante/internal/config"
 	"github.com/redis/go-redis/v9"
 )
 

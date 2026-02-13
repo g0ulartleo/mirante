@@ -3,7 +3,7 @@ package auth
 import (
 	"log"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/config"
+	"github.com/g0ulartleo/mirante/internal/config"
 	"github.com/labstack/echo/v4"
 )
 

@@ -1,7 +1,7 @@
 package repo
 
 import (
-	"github.com/g0ulartleo/mirante-alerts/internal/alarm"
+	"github.com/g0ulartleo/mirante/internal/alarm"
 )
 
 func New() (alarm.AlarmRepository, error) {

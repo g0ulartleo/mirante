@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/alarm"
-	"github.com/g0ulartleo/mirante-alerts/internal/notification"
-	"github.com/g0ulartleo/mirante-alerts/internal/signal"
+	"github.com/g0ulartleo/mirante/internal/alarm"
+	"github.com/g0ulartleo/mirante/internal/notification"
+	"github.com/g0ulartleo/mirante/internal/signal"
 	"github.com/hibiken/asynq"
 )
 

@@ -5,10 +5,10 @@ import (
 	"log"
 	"time"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/alarm"
-	alarmrepo "github.com/g0ulartleo/mirante-alerts/internal/alarm/repo"
-	"github.com/g0ulartleo/mirante-alerts/internal/config"
-	"github.com/g0ulartleo/mirante-alerts/internal/worker/tasks"
+	"github.com/g0ulartleo/mirante/internal/alarm"
+	alarmrepo "github.com/g0ulartleo/mirante/internal/alarm/repo"
+	"github.com/g0ulartleo/mirante/internal/config"
+	"github.com/g0ulartleo/mirante/internal/worker/tasks"
 	"github.com/hibiken/asynq"
 )
 

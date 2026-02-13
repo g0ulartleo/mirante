@@ -1,6 +1,6 @@
 package builtins
 
-import "github.com/g0ulartleo/mirante-alerts/internal/sentinel"
+import "github.com/g0ulartleo/mirante/internal/sentinel"
 
 func Register(f *sentinel.SentinelFactory) {
 	f.Register("endpoint-checker", NewEndpointCheckerSentinel)

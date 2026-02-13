@@ -3,8 +3,8 @@ package repo
 import (
 	"fmt"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/config"
-	"github.com/g0ulartleo/mirante-alerts/internal/signal"
+	"github.com/g0ulartleo/mirante/internal/config"
+	"github.com/g0ulartleo/mirante/internal/signal"
 )
 
 func New(cfg *config.AppConfig) (signal.SignalRepository, error) {

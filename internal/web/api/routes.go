@@ -4,12 +4,12 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/alarm"
-	"github.com/g0ulartleo/mirante-alerts/internal/auth"
-	"github.com/g0ulartleo/mirante-alerts/internal/config"
-	"github.com/g0ulartleo/mirante-alerts/internal/signal"
-	"github.com/g0ulartleo/mirante-alerts/internal/web/dashboard"
-	"github.com/g0ulartleo/mirante-alerts/internal/worker/tasks"
+	"github.com/g0ulartleo/mirante/internal/alarm"
+	"github.com/g0ulartleo/mirante/internal/auth"
+	"github.com/g0ulartleo/mirante/internal/config"
+	"github.com/g0ulartleo/mirante/internal/signal"
+	"github.com/g0ulartleo/mirante/internal/web/dashboard"
+	"github.com/g0ulartleo/mirante/internal/worker/tasks"
 	"github.com/hibiken/asynq"
 	"github.com/labstack/echo/v4"
 )

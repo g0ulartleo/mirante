@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/config"
-	"github.com/g0ulartleo/mirante-alerts/internal/signal"
+	"github.com/g0ulartleo/mirante/internal/config"
+	"github.com/g0ulartleo/mirante/internal/signal"
 )
 
 type MySQLSignalRepository struct {
@@ -50,7 +50,7 @@ func (r *MySQLSignalRepository) Save(signal signal.Signal) error {
 
 func (r *MySQLSignalRepository) GetAlarmLatestSignals(alarmID string, limit int) ([]signal.Signal, error) {
 	query := `
-		SELECT alarm_id, status, message, created_at 
+		SELECT alarm_id, status, message, created_at
 		FROM signals WHERE alarm_id = ? ORDER BY created_at DESC LIMIT ?`
 	rows, err := r.db.Query(query, alarmID, limit)
 	if err != nil {
@@ -71,10 +71,10 @@ func (r *MySQLSignalRepository) GetAlarmLatestSignals(alarmID string, limit int)
 
 func (r *MySQLSignalRepository) GetAlarmHealth(alarmID string) (signal.Status, error) {
 	query := `
-		SELECT status 
-		FROM signals 
-		WHERE alarm_id = ? 
-		ORDER BY created_at DESC 
+		SELECT status
+		FROM signals
+		WHERE alarm_id = ?
+		ORDER BY created_at DESC
 		LIMIT 1`
 	rows, err := r.db.Query(query, alarmID)
 	if err != nil {

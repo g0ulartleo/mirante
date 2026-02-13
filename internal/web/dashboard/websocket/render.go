@@ -8,8 +8,8 @@ import (
 
 	"github.com/a-h/templ"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/alarm"
-	"github.com/g0ulartleo/mirante-alerts/internal/web/dashboard/templates"
+	"github.com/g0ulartleo/mirante/internal/alarm"
+	"github.com/g0ulartleo/mirante/internal/web/dashboard/templates"
 )
 
 func RenderComponent(currentPath string, message []byte) (templ.Component, error) {

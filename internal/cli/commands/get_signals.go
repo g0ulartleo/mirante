@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/cli"
-	"github.com/g0ulartleo/mirante-alerts/internal/config"
+	"github.com/g0ulartleo/mirante/internal/cli"
+	"github.com/g0ulartleo/mirante/internal/config"
 )
 
 type GetSignalsCommand struct{}

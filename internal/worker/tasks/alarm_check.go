@@ -7,9 +7,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/alarm"
-	"github.com/g0ulartleo/mirante-alerts/internal/sentinel"
-	"github.com/g0ulartleo/mirante-alerts/internal/signal"
+	"github.com/g0ulartleo/mirante/internal/alarm"
+	"github.com/g0ulartleo/mirante/internal/sentinel"
+	"github.com/g0ulartleo/mirante/internal/signal"
 	"github.com/hibiken/asynq"
 )
 

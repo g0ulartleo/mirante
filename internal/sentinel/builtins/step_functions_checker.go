@@ -9,8 +9,8 @@ import (
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/sfn"
 	"github.com/aws/aws-sdk-go-v2/service/sfn/types"
-	"github.com/g0ulartleo/mirante-alerts/internal/sentinel"
-	"github.com/g0ulartleo/mirante-alerts/internal/signal"
+	"github.com/g0ulartleo/mirante/internal/sentinel"
+	"github.com/g0ulartleo/mirante/internal/signal"
 	"github.com/robfig/cron/v3"
 )
 

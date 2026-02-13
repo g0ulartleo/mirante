@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/sentinel"
-	"github.com/g0ulartleo/mirante-alerts/internal/sentinel/connections"
-	"github.com/g0ulartleo/mirante-alerts/internal/signal"
+	"github.com/g0ulartleo/mirante/internal/sentinel"
+	"github.com/g0ulartleo/mirante/internal/sentinel/connections"
+	"github.com/g0ulartleo/mirante/internal/signal"
 )
 
 type MySQLCountCheckerSentinel struct {

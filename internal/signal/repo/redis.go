@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/config"
-	"github.com/g0ulartleo/mirante-alerts/internal/signal"
+	"github.com/g0ulartleo/mirante/internal/config"
+	"github.com/g0ulartleo/mirante/internal/signal"
 	"github.com/redis/go-redis/v9"
 )
 

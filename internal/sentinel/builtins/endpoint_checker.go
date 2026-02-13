@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/sentinel"
-	"github.com/g0ulartleo/mirante-alerts/internal/signal"
+	"github.com/g0ulartleo/mirante/internal/sentinel"
+	"github.com/g0ulartleo/mirante/internal/signal"
 )
 
 const (

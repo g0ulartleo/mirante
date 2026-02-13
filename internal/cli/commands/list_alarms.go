@@ -5,9 +5,9 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/alarm"
-	"github.com/g0ulartleo/mirante-alerts/internal/cli"
-	"github.com/g0ulartleo/mirante-alerts/internal/config"
+	"github.com/g0ulartleo/mirante/internal/alarm"
+	"github.com/g0ulartleo/mirante/internal/cli"
+	"github.com/g0ulartleo/mirante/internal/config"
 )
 
 type ListAlarmsCommand struct{}

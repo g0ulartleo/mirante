@@ -29,7 +29,7 @@ build:
 
 .PHONY: init-oauth
 init-oauth:
-	@echo "Initializing OAuth configuration for mirante-alerts..."
+	@echo "Initializing OAuth configuration for mirante..."
 	@echo ""
 	@mkdir -p config
 	@if [ -f "config/auth.yaml" ]; then \

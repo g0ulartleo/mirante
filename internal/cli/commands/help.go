@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/cli"
+	"github.com/g0ulartleo/mirante/internal/cli"
 )
 
 type HelpCommand struct{}

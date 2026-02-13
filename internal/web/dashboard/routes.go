@@ -6,10 +6,10 @@ import (
 	"strings"
 
 	"github.com/a-h/templ"
-	"github.com/g0ulartleo/mirante-alerts/internal/alarm"
-	"github.com/g0ulartleo/mirante-alerts/internal/signal"
-	"github.com/g0ulartleo/mirante-alerts/internal/web/dashboard/templates"
-	"github.com/g0ulartleo/mirante-alerts/internal/web/dashboard/websocket"
+	"github.com/g0ulartleo/mirante/internal/alarm"
+	"github.com/g0ulartleo/mirante/internal/signal"
+	"github.com/g0ulartleo/mirante/internal/web/dashboard/templates"
+	"github.com/g0ulartleo/mirante/internal/web/dashboard/websocket"
 	"github.com/labstack/echo/v4"
 )
 

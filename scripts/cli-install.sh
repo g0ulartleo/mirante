@@ -2,7 +2,7 @@
 
 set -e
 
-REPO="g0ulartleo/mirante-alerts"
+REPO="g0ulartleo/mirante"
 BINARY_NAME="mirante"
 INSTALL_DIR="/usr/local/bin"
 
@@ -127,14 +127,14 @@ install_binary() {
 
 verify_installation() {
     local binary_path="$INSTALL_DIR/$BINARY_NAME${BINARY_EXT}"
-    
+
     if command -v "$BINARY_NAME" >/dev/null 2>&1; then
         log_info "$BINARY_NAME is now available in your PATH"
         log_info "Run '$BINARY_NAME help' to get started"
     elif [[ "$OS" == "windows" ]] && [ -f "$binary_path" ]; then
         log_info "$BINARY_NAME installed to $binary_path"
         log_warn "Run '$binary_path login' to get started"
-        
+
         if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
             log_warn "$INSTALL_DIR is not in your PATH"
             log_info "To add to PATH permanently, run:"
@@ -142,11 +142,11 @@ verify_installation() {
         fi
     else
         log_warn "$BINARY_NAME was installed but is not in your PATH"
-        
+
         if [[ "$OS" != "windows" ]] && [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
             log_warn "$INSTALL_DIR is not in your PATH"
             log_info "Adding $INSTALL_DIR to PATH..."
-            
+
             SHELL_PROFILE=""
             if [[ "$SHELL" == *"zsh"* ]]; then
                 SHELL_PROFILE="$HOME/.zshrc"
@@ -156,7 +156,7 @@ verify_installation() {
                     SHELL_PROFILE="$HOME/.bash_profile"
                 fi
             fi
-            
+
             if [ -n "$SHELL_PROFILE" ]; then
                 echo "" >> "$SHELL_PROFILE"
                 echo "# Added by Mirante CLI installer" >> "$SHELL_PROFILE"

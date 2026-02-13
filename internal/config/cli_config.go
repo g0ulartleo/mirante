@@ -18,7 +18,7 @@ func GetCLIConfigPath() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	configDir := filepath.Join(homeDir, ".mirante-alerts")
+	configDir := filepath.Join(homeDir, ".mirante")
 	if err := os.MkdirAll(configDir, 0755); err != nil {
 		return "", err
 	}

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/cli"
-	_ "github.com/g0ulartleo/mirante-alerts/internal/cli/commands"
+	"github.com/g0ulartleo/mirante/internal/cli"
+	_ "github.com/g0ulartleo/mirante/internal/cli/commands"
 )
 
 func main() {

@@ -10,9 +10,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/alarm"
-	"github.com/g0ulartleo/mirante-alerts/internal/sentinel"
-	builtins "github.com/g0ulartleo/mirante-alerts/internal/sentinel/builtins"
+	"github.com/g0ulartleo/mirante/internal/alarm"
+	"github.com/g0ulartleo/mirante/internal/sentinel"
+	builtins "github.com/g0ulartleo/mirante/internal/sentinel/builtins"
 )
 
 // These tests are lightweight integration checks that ensure:

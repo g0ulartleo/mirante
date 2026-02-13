@@ -1,4 +1,4 @@
-module github.com/g0ulartleo/mirante-alerts
+module github.com/g0ulartleo/mirante
 
 go 1.23.6
 

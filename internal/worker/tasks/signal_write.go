@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/signal"
+	"github.com/g0ulartleo/mirante/internal/signal"
 	"github.com/hibiken/asynq"
 )
 

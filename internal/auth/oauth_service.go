@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/config"
+	"github.com/g0ulartleo/mirante/internal/config"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/github"
@@ -171,7 +171,7 @@ func (s *OAuthService) GenerateJWT(userInfo *UserInfo) (string, error) {
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(duration)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
-			Issuer:    "mirante-alerts",
+			Issuer:    "mirante",
 			Subject:   userInfo.Email,
 		},
 	}

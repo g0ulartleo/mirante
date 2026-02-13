@@ -3,7 +3,7 @@ package api
 import (
 	"strings"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/alarm"
+	"github.com/g0ulartleo/mirante/internal/alarm"
 )
 
 func MaskSensitiveData(a *alarm.Alarm) *alarm.Alarm {

@@ -5,8 +5,8 @@ import (
 	"sort"
 	"time"
 
-	"github.com/g0ulartleo/mirante-alerts/internal/alarm"
-	"github.com/g0ulartleo/mirante-alerts/internal/signal"
+	"github.com/g0ulartleo/mirante/internal/alarm"
+	"github.com/g0ulartleo/mirante/internal/signal"
 )
 
 func GetAlarmSignals(signalService *signal.Service, alarmService *alarm.AlarmService) ([]alarm.AlarmSignals, error) {
