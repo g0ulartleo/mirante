@@ -3,6 +3,7 @@ package alarm
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -173,6 +174,74 @@ path: ["Project", "APIs"]
 			}
 		})
 	}
+}
+
+func TestLoadAlarmConfig_ResolvesEnvVars(t *testing.T) {
+	t.Setenv("CHECK_URL", "https://env.example.com")
+
+	tmpFile := writeAlarmConfig(t, `
+id: env-alarm
+name: Alarm with env vars
+type: endpoint-checker
+interval: 45s
+config:
+  url: ${CHECK_URL}
+`)
+
+	cfg, err := LoadAlarmConfig(tmpFile)
+	require.NoError(t, err)
+	assert.Equal(t, "env-alarm", cfg.ID)
+	assert.Equal(t, "@every 45s", cfg.Cron)
+	assert.Equal(t, "https://env.example.com", cfg.Config["url"])
+}
+
+func TestLoadAlarmConfig_ResolvesNestedEnvVars(t *testing.T) {
+	t.Setenv("DB_PASSWORD", "secret-pass")
+	t.Setenv("SSH_KEY_B64", "c29tZS1rZXk=")
+
+	tmpFile := writeAlarmConfig(t, `
+id: nested-env
+name: Nested env alarm
+type: mysql-count-checker
+interval: 1m
+config:
+  connection:
+    host: localhost
+    port: 3306
+    user: root
+    password: ${DB_PASSWORD}
+    database: app
+    tunnel:
+      host: bastion
+      port: 22
+      user: ec2-user
+      private_key_base64: ${SSH_KEY_B64}
+  query: SELECT 1
+  expected: 1
+`)
+
+	cfg, err := LoadAlarmConfig(tmpFile)
+	require.NoError(t, err)
+
+	conn := cfg.Config["connection"].(map[string]any)
+	assert.Equal(t, "secret-pass", conn["password"])
+	tunnel := conn["tunnel"].(map[string]any)
+	assert.Equal(t, "c29tZS1rZXk=", tunnel["private_key_base64"])
+}
+
+func TestLoadAlarmConfig_MissingEnvVar(t *testing.T) {
+	tmpFile := writeAlarmConfig(t, `
+id: missing-env
+name: Missing env alarm
+type: endpoint-checker
+interval: 1m
+config:
+  url: ${MISSING_URL}
+`)
+
+	_, err := LoadAlarmConfig(tmpFile)
+	require.Error(t, err)
+	assert.True(t, strings.Contains(err.Error(), "missing environment variable: MISSING_URL"))
 }
 
 func writeAlarmConfig(t *testing.T, yamlContent string) string {

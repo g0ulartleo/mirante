@@ -35,6 +35,10 @@ func LoadAlarmConfig(path string) (*Alarm, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal yml file: %w", err)
 	}
+	err = ResolveAlarmConfigEnvVars(alarm)
+	if err != nil {
+		return nil, fmt.Errorf("failed to resolve env vars in %s: %w", path, err)
+	}
 	if alarm.Interval == "" && alarm.Cron == "" {
 		return nil, fmt.Errorf("misconfiguration for alarm %s: interval or cron is required", alarm.ID)
 	}

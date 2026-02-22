@@ -1,5 +1,7 @@
 package alarm
 
+import "fmt"
+
 type AlarmService struct {
 	repo AlarmRepository
 }
@@ -21,6 +23,9 @@ func (s *AlarmService) GetAlarms() ([]*Alarm, error) {
 }
 
 func (s *AlarmService) SetAlarm(alarm *Alarm) error {
+	if err := ResolveAlarmConfigEnvVars(alarm); err != nil {
+		return fmt.Errorf("failed to resolve env vars for alarm %s: %w", alarm.ID, err)
+	}
 	return s.repo.SetAlarm(alarm)
 }
 

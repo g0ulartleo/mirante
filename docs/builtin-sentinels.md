@@ -1,5 +1,7 @@
 ## Built-in Sentinels
 
+Note: Alarm `config` values support environment variable placeholders with `${VAR_NAME}`. Values are resolved when the alarm is loaded/inserted, and missing variables cause validation errors.
+
 ### Endpoint Checker
 
 The Endpoint Checker sentinel type performs HTTP operations on URLs and validates responses based on configuration.
@@ -11,7 +13,7 @@ id: providers-apis-google-health-check
 name: Google Health Check
 type: endpoint-checker
 config:
-  url: https://example.com
+  url: ${HEALTHCHECK_URL}
   expected_status: 200
   expected_body: "Hello, World!" # optional
 ```
@@ -31,7 +33,7 @@ config:
     host: localhost
     port: 3306
     user: root
-    password: secret
+    password: ${MYSQL_PASSWORD}
     database: myapp
   query: "SELECT COUNT(*) FROM users"
   expected: 100
@@ -48,7 +50,7 @@ id: queue-backlog-monitor
 name: SQS Queue Message Count Monitor
 type: sqs-count-checker
 config:
-  queue_url: https://sqs.us-east-1.amazonaws.com/123456789012/my-queue
+  queue_url: ${SQS_QUEUE_URL}
   max_message_count: 1000
   aws_region: us-east-1
 ```
@@ -71,7 +73,7 @@ id: daily-etl-job-monitor
 name: Daily ETL Job Monitor
 type: step-functions-checker
 config:
-  state_machine_arn: arn:aws:states:us-east-1:123456789012:stateMachine:daily-etl-job
+  state_machine_arn: ${STEP_FUNCTIONS_ARN}
   execution_interval: 24h
   aws_region: us-east-1
 ```
@@ -85,7 +87,7 @@ id: hourly-sync-job-monitor
 name: Hourly Sync Job Monitor
 type: step-functions-checker
 config:
-  state_machine_arn: arn:aws:states:us-east-1:123456789012:stateMachine:hourly-sync
+  state_machine_arn: ${STEP_FUNCTIONS_ARN}
   expected_cron: "0 * * * *"
   aws_region: us-east-1
 ```
