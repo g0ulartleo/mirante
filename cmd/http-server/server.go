@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/g0ulartleo/mirante/internal/alarm"
 	alarmrepo "github.com/g0ulartleo/mirante/internal/alarm/repo"
@@ -39,6 +40,25 @@ func main() {
 	defer asyncClient.Close()
 
 	e := echo.New()
+	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			start := time.Now()
+			log.Printf("HTTP request started method=%s path=%s remote_ip=%s", c.Request().Method, c.Request().URL.Path, c.RealIP())
+
+			err := next(c)
+
+			status := c.Response().Status
+			if status == 0 {
+				status = http.StatusOK
+			}
+			if err != nil && status == http.StatusOK {
+				status = http.StatusInternalServerError
+			}
+
+			log.Printf("HTTP request finished method=%s path=%s status=%d duration=%s error=%v", c.Request().Method, c.Request().URL.Path, status, time.Since(start), err)
+			return err
+		}
+	})
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Static("/static", "static")

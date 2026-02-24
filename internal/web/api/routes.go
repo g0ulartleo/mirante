@@ -124,6 +124,7 @@ func RegisterRoutes(e *echo.Echo, signalService *signal.Service, alarmService *a
 
 	api.POST("/alarms/:alarm_id/check", func(c echo.Context) error {
 		alarmID := c.Param("alarm_id")
+		log.Printf("Manual sentinel check requested alarm_id=%s remote_ip=%s", alarmID, c.RealIP())
 		task, err := tasks.NewAlarmCheckTask(alarmID)
 		if err != nil {
 			log.Printf("Error creating check alarm task: %v", err)
@@ -133,6 +134,7 @@ func RegisterRoutes(e *echo.Echo, signalService *signal.Service, alarmService *a
 			log.Printf("Error enqueueing task: %v", err)
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
+		log.Printf("Manual sentinel check enqueued alarm_id=%s", alarmID)
 		return c.JSON(http.StatusOK, map[string]string{"message": "Task enqueued"})
 	}, auth.AuthRateLimitMiddleware(10))
 }

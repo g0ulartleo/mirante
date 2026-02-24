@@ -13,7 +13,8 @@ so production usage is not yet recommended.
 ### components
 
 - **HTTP Server:** Serves the web UI that displays alarm status and history, and an admin API for CLI usage. Located in `cmd/http-server/`.
-- **Worker Server:** Processes background tasks such as writing signals and executing sentinel checks. See `cmd/worker-server/`.
+- **Worker Server:** Processes background tasks such as writing signals and requesting sentinel checks over gRPC. See `cmd/worker-server/`.
+- **Sentinel Runner:** Executes sentinels and returns check results via gRPC, isolating sentinel dependencies from Mirante core. Located in `cmd/sentinel-runner/`.
 - **Scheduler:** Registers and executes periodic sentinel checks as well as cleanup tasks. Located in `cmd/scheduler/`.
 - **CLI:** A command-line interface for managing alarms and signals. See `cmd/cli/`.
 
@@ -23,6 +24,7 @@ so production usage is not yet recommended.
 - **MySQLCountChecker**: Executes SQL queries that return counts and validates them against expected values
 - **SQSCountChecker**: Monitors the number of messages in an SQS queue and alerts if it exceeds a threshold
 - see all built-in sentinels with configuration examples [here](docs/builtin-sentinels.md)
+- sentinel runtime contract and external runner guide [here](docs/sentinel-runtime.md)
 
 
 ## what is working right now
@@ -36,7 +38,7 @@ so production usage is not yet recommended.
 
 - allow env variables on alarm configs
 - alarm initialization/integration with github repo
-- custom sentinel runtime, allowing private/external sentinels (make worker talk with sentinel runner using RPC)
+- external/private sentinel runners in any language using the runtime contract
 - add warning state for alarms
 
 

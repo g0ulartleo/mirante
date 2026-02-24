@@ -37,9 +37,30 @@ services:
       - .env
     environment:
       - REDIS_ADDR=redis:6379
+      - SENTINEL_RUNNER_ADDR=sentinel-runner:50051
       - AWS_SHARED_CREDENTIALS_FILE=/root/.aws/credentials
       - AWS_CONFIG_FILE=/root/.aws/config
       - AIR_FORCE_BUILD=true
+    volumes:
+      - .:/app
+      - ~/.aws:/root/.aws:ro
+    depends_on:
+      - redis
+      - sentinel-runner
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  sentinel-runner:
+    build:
+      context: .
+      target: dev
+    command: go run ./cmd/sentinel-runner/main.go
+    env_file:
+      - .env
+    environment:
+      - SENTINEL_RUNNER_ADDR=0.0.0.0:50051
+      - AWS_SHARED_CREDENTIALS_FILE=/root/.aws/credentials
+      - AWS_CONFIG_FILE=/root/.aws/config
     volumes:
       - .:/app
       - ~/.aws:/root/.aws:ro
@@ -61,4 +82,3 @@ services:
       - .:/app
     depends_on:
       - redis
-

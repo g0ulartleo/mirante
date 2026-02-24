@@ -24,7 +24,6 @@ func NewDashboard(signalService *signal.Service, alarmService *alarm.AlarmServic
 	if err != nil {
 		return nil, err
 	}
-	go wsBroker.Run()
 	return &Dashboard{
 		wsBroker:      wsBroker,
 		signalService: signalService,

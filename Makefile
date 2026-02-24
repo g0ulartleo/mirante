@@ -10,6 +10,7 @@ help:
 	@echo "  clean-dist               Clean distribution files"
 	@echo "  init-oauth               Initialize OAuth configuration"
 	@echo "  setup                    Create sample environment configuration"
+	@echo "  proto-generate           Generate protobuf Go stubs"
 
 .PHONY: go-install-air
 go-install-air:
@@ -24,8 +25,13 @@ build:
 	templ generate
 	go build -o ./bin/http-server ./cmd/http-server/server.go
 	go build -o ./bin/worker ./cmd/worker-server/main.go
+	go build -o ./bin/sentinel-runner ./cmd/sentinel-runner/main.go
 	go build -o ./bin/scheduler ./cmd/scheduler/main.go
 	go build -ldflags="-s -w" -o ./bin/mirante ./cmd/cli/main.go
+
+.PHONY: proto-generate
+proto-generate:
+	protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative proto/sentinelruntime/v1/runtime.proto
 
 .PHONY: init-oauth
 init-oauth:
