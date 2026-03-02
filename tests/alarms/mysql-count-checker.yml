@@ -4,12 +4,7 @@ type: mysql-count-checker
 interval: 1m
 config:
   connection:
-    host: localhost
-    port: 3306
-    user: test
-    password: test
-    database: testdb
+    url: ${TEST_MYSQL_DB_URL}
   query: SELECT 1
   expected: 1
-
 

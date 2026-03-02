@@ -229,6 +229,28 @@ config:
 	assert.Equal(t, "c29tZS1rZXk=", tunnel["private_key_base64"])
 }
 
+func TestLoadAlarmConfig_ResolvesDBURLInConnection(t *testing.T) {
+	t.Setenv("MYSQL_DB_URL", "mysql://root:secret@localhost:3306/app?tls=true")
+
+	tmpFile := writeAlarmConfig(t, `
+id: mysql-url-env
+name: MySQL URL env alarm
+type: mysql-count-checker
+interval: 1m
+config:
+  connection:
+    url: ${MYSQL_DB_URL}
+  query: SELECT 1
+  expected: 1
+`)
+
+	cfg, err := LoadAlarmConfig(tmpFile)
+	require.NoError(t, err)
+
+	conn := cfg.Config["connection"].(map[string]any)
+	assert.Equal(t, "mysql://root:secret@localhost:3306/app?tls=true", conn["url"])
+}
+
 func TestLoadAlarmConfig_MissingEnvVar(t *testing.T) {
 	tmpFile := writeAlarmConfig(t, `
 id: missing-env

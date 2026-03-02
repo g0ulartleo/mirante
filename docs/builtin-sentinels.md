@@ -30,14 +30,31 @@ name: Users Count Check
 type: mysql-count-checker
 config:
   connection:
-    host: localhost
-    port: 3306
-    user: root
-    password: ${MYSQL_PASSWORD}
-    database: myapp
+    url: ${MYSQL_DB_URL}
   query: "SELECT COUNT(*) FROM users"
   expected: 100
 ```
+
+`connection.url` accepts MySQL query parameters (for example `tls=true`, `parseTime=true`), so SSL/TLS-related options can be passed directly in the URL.
+
+### Postgres Count Checker
+
+The Postgres Count Checker sentinel type executes a SQL query that returns a count and validates it against an expected value.
+
+#### Configuration
+
+```yaml
+id: orders-count-check
+name: Orders Count Check
+type: postgres-count-checker
+config:
+  connection:
+    url: ${POSTGRES_DB_URL}
+  query: "SELECT COUNT(*) FROM orders"
+  expected: 100
+```
+
+`connection.url` accepts PostgreSQL SSL options (for example `sslmode=require`, `sslrootcert=/path/to/ca.pem`) and those options are used when creating the connection.
 
 ### SQS Count Checker
 

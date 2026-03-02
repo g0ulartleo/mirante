@@ -20,6 +20,9 @@ import (
 // - A sentinel can be created from the factory and configured using that YAML
 
 func TestAlarmYAMLsInitializeSentinels(t *testing.T) {
+	t.Setenv("TEST_POSTGRES_DB_URL", "postgres://test:test@localhost:5432/testdb?sslmode=disable")
+	t.Setenv("TEST_MYSQL_DB_URL", "mysql://test:test@localhost:3306/testdb?tls=false")
+
 	var cases []string
 	root := "alarms"
 	_ = filepath.WalkDir(root, func(p string, d fs.DirEntry, err error) error {

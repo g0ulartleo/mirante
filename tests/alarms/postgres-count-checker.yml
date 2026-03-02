@@ -4,13 +4,7 @@ type: postgres-count-checker
 interval: 1m
 config:
   connection:
-    host: localhost
-    port: 5432
-    user: test
-    password: test
-    database: testdb
-    sslmode: disable
+    url: ${TEST_POSTGRES_DB_URL}
   query: SELECT 1
   expected: 1
-
 
