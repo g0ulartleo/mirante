@@ -35,7 +35,7 @@ func NewAlarmCheckTask(alarmID string) (*asynq.Task, error) {
 		TypeAlarmCheck,
 		payload,
 		asynq.MaxRetry(1),
-		asynq.TaskID(fmt.Sprintf("%s:%s", TypeAlarmCheck, alarmID)),
+		asynq.Unique(30*time.Second),
 	), nil
 }
 
