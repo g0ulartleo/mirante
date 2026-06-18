@@ -62,6 +62,14 @@ func (c *Client) ListAlarms(ctx context.Context) ([]*alarm.Alarm, error) {
 	return alarms, nil
 }
 
+func (c *Client) Health(ctx context.Context) error {
+	rpcCtx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
+
+	_, err := c.service.Health(rpcCtx, &runtimev1.HealthRequest{})
+	return err
+}
+
 func fromProtoAlarm(pa *runtimev1.Alarm) alarm.Alarm {
 	a := alarm.Alarm{
 		ID:          pa.GetId(),

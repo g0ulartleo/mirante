@@ -98,6 +98,11 @@ export interface ListDetail {
 
 export function loadAlarms(options: { alarmsDir: string }): Promise<AlarmDefinition[]>;
 export function createRuntimeService(alarms: AlarmDefinition[]): Record<string, unknown>;
-export function serveRuntime(options: { alarmsDir: string; addr?: string }): Promise<unknown>;
+export function serveRuntime(options: {
+  alarmsDir: string;
+  addr?: string;
+  credentials?: object;
+  grpcOptions?: Record<string, number>;
+}): Promise<unknown>;
 export function toProtoAlarm(alarm: AlarmDefinition): Promise<Alarm>;
 export function normalizeDetails(details: SignalDetail[]): SignalDetail[];

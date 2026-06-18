@@ -123,10 +123,7 @@ func (r *Router) RunAlarm(ctx context.Context, runtimeName string, alarmID strin
 func (r *Router) Health(ctx context.Context) map[string]error {
 	results := map[string]error{}
 	for _, nc := range r.clients {
-		healthCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
-		_, err := nc.client.ListAlarms(healthCtx)
-		cancel()
-		if err != nil {
+		if err := nc.client.Health(ctx); err != nil {
 			results[nc.name] = err
 		}
 	}

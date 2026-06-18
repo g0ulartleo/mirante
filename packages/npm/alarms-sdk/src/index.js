@@ -151,10 +151,13 @@ export function createRuntimeService(alarms) {
         ));
       }
     },
+    Health: async (_call, callback) => {
+      callback(null, { status: 'SERVING' });
+    },
   };
 }
 
-export async function serveRuntime({ alarmsDir, addr = '127.0.0.1:50051' }) {
+export async function serveRuntime({ alarmsDir, addr = '127.0.0.1:50051', credentials, grpcOptions = {} }) {
   const grpc = require('@grpc/grpc-js');
   const protoLoader = require('@grpc/proto-loader');
   const packageDefinition = protoLoader.loadSync(protoPath, {
@@ -165,10 +168,11 @@ export async function serveRuntime({ alarmsDir, addr = '127.0.0.1:50051' }) {
   });
   const proto = grpc.loadPackageDefinition(packageDefinition).alarmruntime.v1;
   const alarms = await loadAlarms({ alarmsDir });
-  const server = new grpc.Server();
+  const server = new grpc.Server(grpcOptions);
   server.addService(proto.AlarmRuntime.service, createRuntimeService(alarms));
+  const creds = credentials ?? grpc.ServerCredentials.createInsecure();
   await new Promise((resolve, reject) => {
-    server.bindAsync(addr, grpc.ServerCredentials.createInsecure(), (error) => {
+    server.bindAsync(addr, creds, (error) => {
       if (error) {
         reject(error);
         return;

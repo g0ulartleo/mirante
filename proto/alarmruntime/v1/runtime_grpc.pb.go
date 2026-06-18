@@ -22,6 +22,7 @@ const (
 	AlarmRuntime_ListAlarms_FullMethodName = "/alarmruntime.v1.AlarmRuntime/ListAlarms"
 	AlarmRuntime_GetAlarm_FullMethodName   = "/alarmruntime.v1.AlarmRuntime/GetAlarm"
 	AlarmRuntime_RunAlarm_FullMethodName   = "/alarmruntime.v1.AlarmRuntime/RunAlarm"
+	AlarmRuntime_Health_FullMethodName     = "/alarmruntime.v1.AlarmRuntime/Health"
 )
 
 // AlarmRuntimeClient is the client API for AlarmRuntime service.
@@ -31,6 +32,7 @@ type AlarmRuntimeClient interface {
 	ListAlarms(ctx context.Context, in *ListAlarmsRequest, opts ...grpc.CallOption) (*ListAlarmsResponse, error)
 	GetAlarm(ctx context.Context, in *GetAlarmRequest, opts ...grpc.CallOption) (*GetAlarmResponse, error)
 	RunAlarm(ctx context.Context, in *RunAlarmRequest, opts ...grpc.CallOption) (*RunAlarmResponse, error)
+	Health(ctx context.Context, in *HealthRequest, opts ...grpc.CallOption) (*HealthResponse, error)
 }
 
 type alarmRuntimeClient struct {
@@ -71,6 +73,16 @@ func (c *alarmRuntimeClient) RunAlarm(ctx context.Context, in *RunAlarmRequest, 
 	return out, nil
 }
 
+func (c *alarmRuntimeClient) Health(ctx context.Context, in *HealthRequest, opts ...grpc.CallOption) (*HealthResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(HealthResponse)
+	err := c.cc.Invoke(ctx, AlarmRuntime_Health_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AlarmRuntimeServer is the server API for AlarmRuntime service.
 // All implementations must embed UnimplementedAlarmRuntimeServer
 // for forward compatibility.
@@ -78,6 +90,7 @@ type AlarmRuntimeServer interface {
 	ListAlarms(context.Context, *ListAlarmsRequest) (*ListAlarmsResponse, error)
 	GetAlarm(context.Context, *GetAlarmRequest) (*GetAlarmResponse, error)
 	RunAlarm(context.Context, *RunAlarmRequest) (*RunAlarmResponse, error)
+	Health(context.Context, *HealthRequest) (*HealthResponse, error)
 	mustEmbedUnimplementedAlarmRuntimeServer()
 }
 
@@ -96,6 +109,9 @@ func (UnimplementedAlarmRuntimeServer) GetAlarm(context.Context, *GetAlarmReques
 }
 func (UnimplementedAlarmRuntimeServer) RunAlarm(context.Context, *RunAlarmRequest) (*RunAlarmResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RunAlarm not implemented")
+}
+func (UnimplementedAlarmRuntimeServer) Health(context.Context, *HealthRequest) (*HealthResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Health not implemented")
 }
 func (UnimplementedAlarmRuntimeServer) mustEmbedUnimplementedAlarmRuntimeServer() {}
 func (UnimplementedAlarmRuntimeServer) testEmbeddedByValue()                      {}
@@ -172,6 +188,24 @@ func _AlarmRuntime_RunAlarm_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AlarmRuntime_Health_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HealthRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlarmRuntimeServer).Health(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlarmRuntime_Health_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlarmRuntimeServer).Health(ctx, req.(*HealthRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AlarmRuntime_ServiceDesc is the grpc.ServiceDesc for AlarmRuntime service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -190,6 +224,10 @@ var AlarmRuntime_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RunAlarm",
 			Handler:    _AlarmRuntime_RunAlarm_Handler,
+		},
+		{
+			MethodName: "Health",
+			Handler:    _AlarmRuntime_Health_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

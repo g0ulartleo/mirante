@@ -10,6 +10,13 @@ service AlarmRuntime {
   rpc ListAlarms(ListAlarmsRequest) returns (ListAlarmsResponse);
   rpc GetAlarm(GetAlarmRequest) returns (GetAlarmResponse);
   rpc RunAlarm(RunAlarmRequest) returns (RunAlarmResponse);
+  rpc Health(HealthRequest) returns (HealthResponse);
+}
+
+message HealthRequest {}
+
+message HealthResponse {
+  string status = 1;
 }
 
 message ListAlarmsRequest {}
