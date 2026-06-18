@@ -42,19 +42,16 @@ func TestUnhealthyOverridesWarningGroupStatus(t *testing.T) {
 }
 
 func TestFormatSignalDetails(t *testing.T) {
-	sig := signal.Signal{Details: []signal.Detail{
-		{Title: "Summary", Type: signal.DetailTypeText, Text: "hello"},
-		{Title: "Object", Type: signal.DetailTypeObject, Object: map[string]any{"count": float64(3)}},
-		{Title: "Table", Type: signal.DetailTypeTable, Table: &signal.TableDetail{Columns: []string{"name", "count"}, Rows: [][]string{{"jobs", "3"}}}},
-		{Title: "List", Type: signal.DetailTypeList, List: []string{"a", "b"}},
+	sig := signal.Signal{Details: []map[string]any{
+		{"count": float64(3), "msg": "hello"},
+		{"tags": []any{"a", "b"}},
 	}}
 
 	got := formatSignalDetails(sig)
 	for _, want := range []string{
-		"Summary: hello",
-		"Object: {\"count\":3}",
-		"Table: name | count\njobs | 3",
-		"List: a, b",
+		"\"count\":3",
+		"\"msg\":\"hello\"",
+		"\"tags\":[\"a\",\"b\"]",
 	} {
 		if !strings.Contains(got, want) {
 			t.Fatalf("formatSignalDetails() = %q; missing %q", got, want)

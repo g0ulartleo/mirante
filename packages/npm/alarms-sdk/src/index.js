@@ -206,31 +206,10 @@ export async function toProtoAlarm(alarm) {
 
 export function normalizeDetails(details) {
   return normalizeArray(details).map((detail) => {
-    if (!detail || typeof detail !== 'object') {
-      throw new Error('detail must be an object');
+    if (!detail || typeof detail !== 'object' || Array.isArray(detail)) {
+      throw new Error('detail must be a plain object');
     }
-    const title = String(detail.title ?? '');
-    if ('text' in detail) {
-      return { title, text: String(detail.text ?? '') };
-    }
-    if ('object' in detail) {
-      return { title, object: detail.object ?? {} };
-    }
-    if ('table' in detail) {
-      return {
-        title,
-        table: {
-          columns: normalizeArray(detail.table?.columns).map(String),
-          rows: normalizeArray(detail.table?.rows).map((row) => ({
-            cells: normalizeArray(row?.cells ?? row).map(String),
-          })),
-        },
-      };
-    }
-    if ('list' in detail) {
-      return { title, list: { items: normalizeArray(detail.list?.items ?? detail.list).map(String) } };
-    }
-    throw new Error(`detail ${JSON.stringify(title)} has no value`);
+    return detail;
   });
 }
 

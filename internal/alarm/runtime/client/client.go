@@ -12,6 +12,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type Client struct {
@@ -174,41 +175,13 @@ func fromRunAlarmResponse(alarmID string, response *runtimev1.RunAlarmResponse) 
 	}
 }
 
-func fromProtoDetails(details []*runtimev1.RunAlarmDetail) []signal.Detail {
-	converted := make([]signal.Detail, 0, len(details))
+func fromProtoDetails(details []*structpb.Struct) []map[string]any {
+	converted := make([]map[string]any, 0, len(details))
 	for _, detail := range details {
 		if detail == nil {
 			continue
 		}
-		converted = append(converted, fromProtoDetail(detail))
-	}
-	return converted
-}
-
-func fromProtoDetail(detail *runtimev1.RunAlarmDetail) signal.Detail {
-	converted := signal.Detail{Title: detail.GetTitle()}
-	switch value := detail.GetValue().(type) {
-	case *runtimev1.RunAlarmDetail_Text:
-		converted.Type = signal.DetailTypeText
-		converted.Text = value.Text
-	case *runtimev1.RunAlarmDetail_Object:
-		converted.Type = signal.DetailTypeObject
-		if value.Object != nil {
-			converted.Object = value.Object.AsMap()
-		}
-	case *runtimev1.RunAlarmDetail_Table:
-		converted.Type = signal.DetailTypeTable
-		if value.Table != nil {
-			converted.Table = &signal.TableDetail{Columns: value.Table.GetColumns()}
-			for _, row := range value.Table.GetRows() {
-				converted.Table.Rows = append(converted.Table.Rows, row.GetCells())
-			}
-		}
-	case *runtimev1.RunAlarmDetail_List:
-		converted.Type = signal.DetailTypeList
-		if value.List != nil {
-			converted.List = value.List.GetItems()
-		}
+		converted = append(converted, detail.AsMap())
 	}
 	return converted
 }

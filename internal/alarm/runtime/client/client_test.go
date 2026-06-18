@@ -61,32 +61,14 @@ func TestFromProtoAlarmKeepsRepeatedNotifications(t *testing.T) {
 }
 
 func TestFromResponseConvertsDetails(t *testing.T) {
-	object, err := structpb.NewStruct(map[string]any{"count": float64(3)})
+	data, err := structpb.NewStruct(map[string]any{"count": float64(3)})
 	assert.NoError(t, err)
 
 	sig := fromRunAlarmResponse("alarm-1", &runtimev1.RunAlarmResponse{
-		Status: runtimev1.SignalStatus_SIGNAL_STATUS_WARNING,
-		Details: []*runtimev1.RunAlarmDetail{
-			{Title: "text", Value: &runtimev1.RunAlarmDetail_Text{Text: "hello"}},
-			{Title: "object", Value: &runtimev1.RunAlarmDetail_Object{Object: object}},
-			{Title: "table", Value: &runtimev1.RunAlarmDetail_Table{Table: &runtimev1.TableDetail{
-				Columns: []string{"name", "count"},
-				Rows: []*runtimev1.TableRow{
-					{Cells: []string{"jobs", "3"}},
-				},
-			}}},
-			{Title: "list", Value: &runtimev1.RunAlarmDetail_List{List: &runtimev1.ListDetail{Items: []string{"a", "b"}}}},
-		},
+		Status:  runtimev1.SignalStatus_SIGNAL_STATUS_WARNING,
+		Details: []*structpb.Struct{data},
 	})
 
-	assert.Len(t, sig.Details, 4)
-	assert.Equal(t, signal.DetailTypeText, sig.Details[0].Type)
-	assert.Equal(t, "hello", sig.Details[0].Text)
-	assert.Equal(t, signal.DetailTypeObject, sig.Details[1].Type)
-	assert.Equal(t, float64(3), sig.Details[1].Object["count"])
-	assert.Equal(t, signal.DetailTypeTable, sig.Details[2].Type)
-	assert.Equal(t, []string{"name", "count"}, sig.Details[2].Table.Columns)
-	assert.Equal(t, [][]string{{"jobs", "3"}}, sig.Details[2].Table.Rows)
-	assert.Equal(t, signal.DetailTypeList, sig.Details[3].Type)
-	assert.Equal(t, []string{"a", "b"}, sig.Details[3].List)
+	assert.Len(t, sig.Details, 1)
+	assert.Equal(t, float64(3), sig.Details[0]["count"])
 }

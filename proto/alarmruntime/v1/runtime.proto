@@ -41,7 +41,7 @@ message RunAlarmResponse {
   SignalStatus status = 1;
   string message = 2;
   RuntimeError error = 3;
-  repeated RunAlarmDetail details = 4;
+  repeated google.protobuf.Struct details = 4;
 }
 
 enum SignalStatus {
@@ -89,26 +89,4 @@ message EmailNotification {
   repeated string to = 1;
 }
 
-message RunAlarmDetail {
-  string title = 1;
-  oneof value {
-    string text = 2;
-    google.protobuf.Struct object = 3;
-    TableDetail table = 4;
-    ListDetail list = 5;
-  }
-}
-
-message TableDetail {
-  repeated string columns = 1;
-  repeated TableRow rows = 2;
-}
-
-message TableRow {
-  repeated string cells = 1;
-}
-
-message ListDetail {
-  repeated string items = 1;
-}
 

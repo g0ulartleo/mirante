@@ -426,7 +426,7 @@ type RunAlarmResponse struct {
 	Status        SignalStatus           `protobuf:"varint,1,opt,name=status,proto3,enum=alarmruntime.v1.SignalStatus" json:"status,omitempty"`
 	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 	Error         *RuntimeError          `protobuf:"bytes,3,opt,name=error,proto3" json:"error,omitempty"`
-	Details       []*RunAlarmDetail      `protobuf:"bytes,4,rep,name=details,proto3" json:"details,omitempty"`
+	Details       []*structpb.Struct     `protobuf:"bytes,4,rep,name=details,proto3" json:"details,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -482,7 +482,7 @@ func (x *RunAlarmResponse) GetError() *RuntimeError {
 	return nil
 }
 
-func (x *RunAlarmResponse) GetDetails() []*RunAlarmDetail {
+func (x *RunAlarmResponse) GetDetails() []*structpb.Struct {
 	if x != nil {
 		return x.Details
 	}
@@ -789,268 +789,6 @@ func (x *EmailNotification) GetTo() []string {
 	return nil
 }
 
-type RunAlarmDetail struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	Title string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
-	// Types that are valid to be assigned to Value:
-	//
-	//	*RunAlarmDetail_Text
-	//	*RunAlarmDetail_Object
-	//	*RunAlarmDetail_Table
-	//	*RunAlarmDetail_List
-	Value         isRunAlarmDetail_Value `protobuf_oneof:"value"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *RunAlarmDetail) Reset() {
-	*x = RunAlarmDetail{}
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[13]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RunAlarmDetail) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RunAlarmDetail) ProtoMessage() {}
-
-func (x *RunAlarmDetail) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[13]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RunAlarmDetail.ProtoReflect.Descriptor instead.
-func (*RunAlarmDetail) Descriptor() ([]byte, []int) {
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{13}
-}
-
-func (x *RunAlarmDetail) GetTitle() string {
-	if x != nil {
-		return x.Title
-	}
-	return ""
-}
-
-func (x *RunAlarmDetail) GetValue() isRunAlarmDetail_Value {
-	if x != nil {
-		return x.Value
-	}
-	return nil
-}
-
-func (x *RunAlarmDetail) GetText() string {
-	if x != nil {
-		if x, ok := x.Value.(*RunAlarmDetail_Text); ok {
-			return x.Text
-		}
-	}
-	return ""
-}
-
-func (x *RunAlarmDetail) GetObject() *structpb.Struct {
-	if x != nil {
-		if x, ok := x.Value.(*RunAlarmDetail_Object); ok {
-			return x.Object
-		}
-	}
-	return nil
-}
-
-func (x *RunAlarmDetail) GetTable() *TableDetail {
-	if x != nil {
-		if x, ok := x.Value.(*RunAlarmDetail_Table); ok {
-			return x.Table
-		}
-	}
-	return nil
-}
-
-func (x *RunAlarmDetail) GetList() *ListDetail {
-	if x != nil {
-		if x, ok := x.Value.(*RunAlarmDetail_List); ok {
-			return x.List
-		}
-	}
-	return nil
-}
-
-type isRunAlarmDetail_Value interface {
-	isRunAlarmDetail_Value()
-}
-
-type RunAlarmDetail_Text struct {
-	Text string `protobuf:"bytes,2,opt,name=text,proto3,oneof"`
-}
-
-type RunAlarmDetail_Object struct {
-	Object *structpb.Struct `protobuf:"bytes,3,opt,name=object,proto3,oneof"`
-}
-
-type RunAlarmDetail_Table struct {
-	Table *TableDetail `protobuf:"bytes,4,opt,name=table,proto3,oneof"`
-}
-
-type RunAlarmDetail_List struct {
-	List *ListDetail `protobuf:"bytes,5,opt,name=list,proto3,oneof"`
-}
-
-func (*RunAlarmDetail_Text) isRunAlarmDetail_Value() {}
-
-func (*RunAlarmDetail_Object) isRunAlarmDetail_Value() {}
-
-func (*RunAlarmDetail_Table) isRunAlarmDetail_Value() {}
-
-func (*RunAlarmDetail_List) isRunAlarmDetail_Value() {}
-
-type TableDetail struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Columns       []string               `protobuf:"bytes,1,rep,name=columns,proto3" json:"columns,omitempty"`
-	Rows          []*TableRow            `protobuf:"bytes,2,rep,name=rows,proto3" json:"rows,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *TableDetail) Reset() {
-	*x = TableDetail{}
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[14]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *TableDetail) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*TableDetail) ProtoMessage() {}
-
-func (x *TableDetail) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[14]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use TableDetail.ProtoReflect.Descriptor instead.
-func (*TableDetail) Descriptor() ([]byte, []int) {
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{14}
-}
-
-func (x *TableDetail) GetColumns() []string {
-	if x != nil {
-		return x.Columns
-	}
-	return nil
-}
-
-func (x *TableDetail) GetRows() []*TableRow {
-	if x != nil {
-		return x.Rows
-	}
-	return nil
-}
-
-type TableRow struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Cells         []string               `protobuf:"bytes,1,rep,name=cells,proto3" json:"cells,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *TableRow) Reset() {
-	*x = TableRow{}
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[15]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *TableRow) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*TableRow) ProtoMessage() {}
-
-func (x *TableRow) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[15]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use TableRow.ProtoReflect.Descriptor instead.
-func (*TableRow) Descriptor() ([]byte, []int) {
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{15}
-}
-
-func (x *TableRow) GetCells() []string {
-	if x != nil {
-		return x.Cells
-	}
-	return nil
-}
-
-type ListDetail struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Items         []string               `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListDetail) Reset() {
-	*x = ListDetail{}
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[16]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListDetail) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListDetail) ProtoMessage() {}
-
-func (x *ListDetail) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[16]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListDetail.ProtoReflect.Descriptor instead.
-func (*ListDetail) Descriptor() ([]byte, []int) {
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{16}
-}
-
-func (x *ListDetail) GetItems() []string {
-	if x != nil {
-		return x.Items
-	}
-	return nil
-}
-
 var File_proto_alarmruntime_v1_runtime_proto protoreflect.FileDescriptor
 
 const file_proto_alarmruntime_v1_runtime_proto_rawDesc = "" +
@@ -1067,12 +805,12 @@ const file_proto_alarmruntime_v1_runtime_proto_rawDesc = "" +
 	"\x10GetAlarmResponse\x12,\n" +
 	"\x05alarm\x18\x01 \x01(\v2\x16.alarmruntime.v1.AlarmR\x05alarm\",\n" +
 	"\x0fRunAlarmRequest\x12\x19\n" +
-	"\balarm_id\x18\x01 \x01(\tR\aalarmId\"\xd3\x01\n" +
+	"\balarm_id\x18\x01 \x01(\tR\aalarmId\"\xcb\x01\n" +
 	"\x10RunAlarmResponse\x125\n" +
 	"\x06status\x18\x01 \x01(\x0e2\x1d.alarmruntime.v1.SignalStatusR\x06status\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\x123\n" +
-	"\x05error\x18\x03 \x01(\v2\x1d.alarmruntime.v1.RuntimeErrorR\x05error\x129\n" +
-	"\adetails\x18\x04 \x03(\v2\x1f.alarmruntime.v1.RunAlarmDetailR\adetails\"_\n" +
+	"\x05error\x18\x03 \x01(\v2\x1d.alarmruntime.v1.RuntimeErrorR\x05error\x121\n" +
+	"\adetails\x18\x04 \x03(\v2\x17.google.protobuf.StructR\adetails\"_\n" +
 	"\fRuntimeError\x125\n" +
 	"\x04code\x18\x01 \x01(\x0e2!.alarmruntime.v1.RuntimeErrorCodeR\x04code\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\"\xfa\x01\n" +
@@ -1093,22 +831,7 @@ const file_proto_alarmruntime_v1_runtime_proto_rawDesc = "" +
 	"\x18SlackWebhookNotification\x12\x10\n" +
 	"\x03url\x18\x01 \x01(\tR\x03url\"#\n" +
 	"\x11EmailNotification\x12\x0e\n" +
-	"\x02to\x18\x01 \x03(\tR\x02to\"\xe1\x01\n" +
-	"\x0eRunAlarmDetail\x12\x14\n" +
-	"\x05title\x18\x01 \x01(\tR\x05title\x12\x14\n" +
-	"\x04text\x18\x02 \x01(\tH\x00R\x04text\x121\n" +
-	"\x06object\x18\x03 \x01(\v2\x17.google.protobuf.StructH\x00R\x06object\x124\n" +
-	"\x05table\x18\x04 \x01(\v2\x1c.alarmruntime.v1.TableDetailH\x00R\x05table\x121\n" +
-	"\x04list\x18\x05 \x01(\v2\x1b.alarmruntime.v1.ListDetailH\x00R\x04listB\a\n" +
-	"\x05value\"V\n" +
-	"\vTableDetail\x12\x18\n" +
-	"\acolumns\x18\x01 \x03(\tR\acolumns\x12-\n" +
-	"\x04rows\x18\x02 \x03(\v2\x19.alarmruntime.v1.TableRowR\x04rows\" \n" +
-	"\bTableRow\x12\x14\n" +
-	"\x05cells\x18\x01 \x03(\tR\x05cells\"\"\n" +
-	"\n" +
-	"ListDetail\x12\x14\n" +
-	"\x05items\x18\x01 \x03(\tR\x05items*\x9b\x01\n" +
+	"\x02to\x18\x01 \x03(\tR\x02to*\x9b\x01\n" +
 	"\fSignalStatus\x12\x1d\n" +
 	"\x19SIGNAL_STATUS_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15SIGNAL_STATUS_HEALTHY\x10\x01\x12\x1b\n" +
@@ -1140,7 +863,7 @@ func file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP() []byte {
 }
 
 var file_proto_alarmruntime_v1_runtime_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_proto_alarmruntime_v1_runtime_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
+var file_proto_alarmruntime_v1_runtime_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_proto_alarmruntime_v1_runtime_proto_goTypes = []any{
 	(SignalStatus)(0),                // 0: alarmruntime.v1.SignalStatus
 	(RuntimeErrorCode)(0),            // 1: alarmruntime.v1.RuntimeErrorCode
@@ -1157,39 +880,31 @@ var file_proto_alarmruntime_v1_runtime_proto_goTypes = []any{
 	(*AlarmNotifications)(nil),       // 12: alarmruntime.v1.AlarmNotifications
 	(*SlackWebhookNotification)(nil), // 13: alarmruntime.v1.SlackWebhookNotification
 	(*EmailNotification)(nil),        // 14: alarmruntime.v1.EmailNotification
-	(*RunAlarmDetail)(nil),           // 15: alarmruntime.v1.RunAlarmDetail
-	(*TableDetail)(nil),              // 16: alarmruntime.v1.TableDetail
-	(*TableRow)(nil),                 // 17: alarmruntime.v1.TableRow
-	(*ListDetail)(nil),               // 18: alarmruntime.v1.ListDetail
-	(*structpb.Struct)(nil),          // 19: google.protobuf.Struct
+	(*structpb.Struct)(nil),          // 15: google.protobuf.Struct
 }
 var file_proto_alarmruntime_v1_runtime_proto_depIdxs = []int32{
 	11, // 0: alarmruntime.v1.ListAlarmsResponse.alarms:type_name -> alarmruntime.v1.Alarm
 	11, // 1: alarmruntime.v1.GetAlarmResponse.alarm:type_name -> alarmruntime.v1.Alarm
 	0,  // 2: alarmruntime.v1.RunAlarmResponse.status:type_name -> alarmruntime.v1.SignalStatus
 	10, // 3: alarmruntime.v1.RunAlarmResponse.error:type_name -> alarmruntime.v1.RuntimeError
-	15, // 4: alarmruntime.v1.RunAlarmResponse.details:type_name -> alarmruntime.v1.RunAlarmDetail
+	15, // 4: alarmruntime.v1.RunAlarmResponse.details:type_name -> google.protobuf.Struct
 	1,  // 5: alarmruntime.v1.RuntimeError.code:type_name -> alarmruntime.v1.RuntimeErrorCode
 	12, // 6: alarmruntime.v1.Alarm.notifications:type_name -> alarmruntime.v1.AlarmNotifications
 	13, // 7: alarmruntime.v1.AlarmNotifications.slack_webhooks:type_name -> alarmruntime.v1.SlackWebhookNotification
 	14, // 8: alarmruntime.v1.AlarmNotifications.emails:type_name -> alarmruntime.v1.EmailNotification
-	19, // 9: alarmruntime.v1.RunAlarmDetail.object:type_name -> google.protobuf.Struct
-	16, // 10: alarmruntime.v1.RunAlarmDetail.table:type_name -> alarmruntime.v1.TableDetail
-	18, // 11: alarmruntime.v1.RunAlarmDetail.list:type_name -> alarmruntime.v1.ListDetail
-	17, // 12: alarmruntime.v1.TableDetail.rows:type_name -> alarmruntime.v1.TableRow
-	4,  // 13: alarmruntime.v1.AlarmRuntime.ListAlarms:input_type -> alarmruntime.v1.ListAlarmsRequest
-	6,  // 14: alarmruntime.v1.AlarmRuntime.GetAlarm:input_type -> alarmruntime.v1.GetAlarmRequest
-	8,  // 15: alarmruntime.v1.AlarmRuntime.RunAlarm:input_type -> alarmruntime.v1.RunAlarmRequest
-	2,  // 16: alarmruntime.v1.AlarmRuntime.Health:input_type -> alarmruntime.v1.HealthRequest
-	5,  // 17: alarmruntime.v1.AlarmRuntime.ListAlarms:output_type -> alarmruntime.v1.ListAlarmsResponse
-	7,  // 18: alarmruntime.v1.AlarmRuntime.GetAlarm:output_type -> alarmruntime.v1.GetAlarmResponse
-	9,  // 19: alarmruntime.v1.AlarmRuntime.RunAlarm:output_type -> alarmruntime.v1.RunAlarmResponse
-	3,  // 20: alarmruntime.v1.AlarmRuntime.Health:output_type -> alarmruntime.v1.HealthResponse
-	17, // [17:21] is the sub-list for method output_type
-	13, // [13:17] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	4,  // 9: alarmruntime.v1.AlarmRuntime.ListAlarms:input_type -> alarmruntime.v1.ListAlarmsRequest
+	6,  // 10: alarmruntime.v1.AlarmRuntime.GetAlarm:input_type -> alarmruntime.v1.GetAlarmRequest
+	8,  // 11: alarmruntime.v1.AlarmRuntime.RunAlarm:input_type -> alarmruntime.v1.RunAlarmRequest
+	2,  // 12: alarmruntime.v1.AlarmRuntime.Health:input_type -> alarmruntime.v1.HealthRequest
+	5,  // 13: alarmruntime.v1.AlarmRuntime.ListAlarms:output_type -> alarmruntime.v1.ListAlarmsResponse
+	7,  // 14: alarmruntime.v1.AlarmRuntime.GetAlarm:output_type -> alarmruntime.v1.GetAlarmResponse
+	9,  // 15: alarmruntime.v1.AlarmRuntime.RunAlarm:output_type -> alarmruntime.v1.RunAlarmResponse
+	3,  // 16: alarmruntime.v1.AlarmRuntime.Health:output_type -> alarmruntime.v1.HealthResponse
+	13, // [13:17] is the sub-list for method output_type
+	9,  // [9:13] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_proto_alarmruntime_v1_runtime_proto_init() }
@@ -1197,19 +912,13 @@ func file_proto_alarmruntime_v1_runtime_proto_init() {
 	if File_proto_alarmruntime_v1_runtime_proto != nil {
 		return
 	}
-	file_proto_alarmruntime_v1_runtime_proto_msgTypes[13].OneofWrappers = []any{
-		(*RunAlarmDetail_Text)(nil),
-		(*RunAlarmDetail_Object)(nil),
-		(*RunAlarmDetail_Table)(nil),
-		(*RunAlarmDetail_List)(nil),
-	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_alarmruntime_v1_runtime_proto_rawDesc), len(file_proto_alarmruntime_v1_runtime_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   17,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

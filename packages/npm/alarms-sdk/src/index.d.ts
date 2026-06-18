@@ -81,20 +81,7 @@ export interface RuntimeError {
   message: string;
 }
 
-export type SignalDetail =
-  | { title: string; text: string }
-  | { title: string; object: Record<string, unknown> }
-  | { title: string; table: TableDetail }
-  | { title: string; list: ListDetail };
-
-export interface TableDetail {
-  columns: string[];
-  rows: Array<{ cells: string[] }>;
-}
-
-export interface ListDetail {
-  items: string[];
-}
+export type SignalDetail = Record<string, unknown>;
 
 export function loadAlarms(options: { alarmsDir: string }): Promise<AlarmDefinition[]>;
 export function createRuntimeService(alarms: AlarmDefinition[]): Record<string, unknown>;

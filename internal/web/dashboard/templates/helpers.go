@@ -199,44 +199,16 @@ func formatSignalDetails(sig signal.Signal) string {
 		return ""
 	}
 	var b strings.Builder
-	for i, detail := range sig.Details {
+	for i, d := range sig.Details {
 		if i > 0 {
 			b.WriteString("\n")
 		}
-		if detail.Title != "" {
-			b.WriteString(detail.Title)
-			b.WriteString(": ")
+		data, err := json.Marshal(d)
+		if err != nil {
+			b.WriteString(fmt.Sprintf("%v", d))
+		} else {
+			b.WriteString(string(data))
 		}
-		b.WriteString(formatSignalDetailValue(detail))
 	}
 	return b.String()
-}
-
-func formatSignalDetailValue(detail signal.Detail) string {
-	switch detail.Type {
-	case signal.DetailTypeText:
-		return detail.Text
-	case signal.DetailTypeObject:
-		data, err := json.Marshal(detail.Object)
-		if err != nil {
-			return fmt.Sprintf("%v", detail.Object)
-		}
-		return string(data)
-	case signal.DetailTypeTable:
-		if detail.Table == nil {
-			return ""
-		}
-		lines := []string{}
-		if len(detail.Table.Columns) > 0 {
-			lines = append(lines, strings.Join(detail.Table.Columns, " | "))
-		}
-		for _, row := range detail.Table.Rows {
-			lines = append(lines, strings.Join(row, " | "))
-		}
-		return strings.Join(lines, "\n")
-	case signal.DetailTypeList:
-		return strings.Join(detail.List, ", ")
-	default:
-		return ""
-	}
 }
