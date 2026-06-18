@@ -11,7 +11,7 @@ import (
 type GetSignalsCommand struct{}
 
 func (c *GetSignalsCommand) Name() string {
-	return "get-signals"
+	return "get signals"
 }
 
 func (c *GetSignalsCommand) Description() string {
@@ -19,12 +19,12 @@ func (c *GetSignalsCommand) Description() string {
 }
 
 func (c *GetSignalsCommand) Usage() string {
-	return "get-signals <alarm-id>"
+	return "get signals <alarm-id>"
 }
 
 func (c *GetSignalsCommand) Run(args []string) error {
 	if len(args) != 1 {
-		return fmt.Errorf("usage: ./cli get-signals <alarm-id>")
+		return fmt.Errorf("usage: ./cli get signals <alarm-id>")
 	}
 
 	alarmID := args[0]
@@ -49,4 +49,5 @@ func (c *GetSignalsCommand) Run(args []string) error {
 func init() {
 	c := &GetSignalsCommand{}
 	cli.RegisterCommand(c.Name(), c)
+	cli.RegisterAlias("get-signals", c)
 }

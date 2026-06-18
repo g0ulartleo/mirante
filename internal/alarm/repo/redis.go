@@ -79,6 +79,21 @@ func (r *RedisAlarmRepository) DeleteAlarm(alarmID string) error {
 	return r.redis.Save(context.Background()).Err()
 }
 
+func (r *RedisAlarmRepository) DeleteStaleAlarmsByRuntime(runtime string, keepIDs map[string]bool) error {
+	all, err := r.GetAlarms()
+	if err != nil {
+		return err
+	}
+	for _, a := range all {
+		if a.Runtime == runtime && !keepIDs[a.ID] {
+			if err := r.DeleteAlarm(a.ID); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
 func (r *RedisAlarmRepository) Close() error {
 	return r.redis.Close()
 }

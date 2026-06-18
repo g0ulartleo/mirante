@@ -17,7 +17,6 @@ type EmailNotification struct {
 }
 
 func (e *EmailNotification) Build(alarmConfig *alarm.Alarm, sig signal.Signal) error {
-	e.To = alarmConfig.Notifications.Email.To
 	e.Subject = fmt.Sprintf("%s is %s", alarmConfig.Name, sig.Status)
 	e.Body = sig.Message
 	return nil
@@ -45,6 +44,6 @@ func (e *EmailNotification) Send() error {
 	return nil
 }
 
-func NewEmailNotification() *EmailNotification {
-	return &EmailNotification{}
+func NewEmailNotification(to []string) *EmailNotification {
+	return &EmailNotification{To: to}
 }

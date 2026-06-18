@@ -1,9 +1,11 @@
 package templates
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/g0ulartleo/mirante/internal/alarm"
+	"github.com/g0ulartleo/mirante/internal/signal"
 )
 
 func makeFixtures() []alarm.AlarmSignals {
@@ -12,6 +14,51 @@ func makeFixtures() []alarm.AlarmSignals {
 		{Alarm: alarm.Alarm{Name: "A Env2", Path: []string{"GroupA", "Env2"}}},
 		{Alarm: alarm.Alarm{Name: "Metric One", Path: []string{"GroupB"}}},
 		{Alarm: alarm.Alarm{Name: "Metric Two", Path: []string{"GroupB"}}},
+	}
+}
+
+func TestWarningStatusUsesWarningColors(t *testing.T) {
+	alarmSignals := alarm.AlarmSignals{Signals: []signal.Signal{{Status: signal.StatusWarning}}}
+
+	if got := getAlarmStatusColor(alarmSignals); got != "bg-yellow-500" {
+		t.Fatalf("getAlarmStatusColor warning = %s; want bg-yellow-500", got)
+	}
+	if got := getAlarmStatusDotColor(alarmSignals); got != "bg-yellow-300" {
+		t.Fatalf("getAlarmStatusDotColor warning = %s; want bg-yellow-300", got)
+	}
+	if got := getGroupStatus([]alarm.AlarmSignals{alarmSignals}); got != "bg-yellow-500" {
+		t.Fatalf("getGroupStatus warning = %s; want bg-yellow-500", got)
+	}
+}
+
+func TestUnhealthyOverridesWarningGroupStatus(t *testing.T) {
+	got := getGroupStatus([]alarm.AlarmSignals{
+		{Signals: []signal.Signal{{Status: signal.StatusWarning}}},
+		{Signals: []signal.Signal{{Status: signal.StatusUnhealthy}}},
+	})
+	if got != "bg-red-500" {
+		t.Fatalf("getGroupStatus warning+unhealthy = %s; want bg-red-500", got)
+	}
+}
+
+func TestFormatSignalDetails(t *testing.T) {
+	sig := signal.Signal{Details: []signal.Detail{
+		{Title: "Summary", Type: signal.DetailTypeText, Text: "hello"},
+		{Title: "Object", Type: signal.DetailTypeObject, Object: map[string]any{"count": float64(3)}},
+		{Title: "Table", Type: signal.DetailTypeTable, Table: &signal.TableDetail{Columns: []string{"name", "count"}, Rows: [][]string{{"jobs", "3"}}}},
+		{Title: "List", Type: signal.DetailTypeList, List: []string{"a", "b"}},
+	}}
+
+	got := formatSignalDetails(sig)
+	for _, want := range []string{
+		"Summary: hello",
+		"Object: {\"count\":3}",
+		"Table: name | count\njobs | 3",
+		"List: a, b",
+	} {
+		if !strings.Contains(got, want) {
+			t.Fatalf("formatSignalDetails() = %q; missing %q", got, want)
+		}
 	}
 }
 

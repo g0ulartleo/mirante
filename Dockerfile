@@ -11,7 +11,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go install github.com/a-h/templ/cmd/templ@latest
+RUN go install github.com/a-h/templ/cmd/templ@v0.3.906
 RUN templ generate
 RUN make build
 
@@ -28,12 +28,12 @@ RUN go mod download
 
 COPY . .
 
-RUN go install github.com/a-h/templ/cmd/templ@latest && \
+RUN go install github.com/a-h/templ/cmd/templ@v0.3.906 && \
     go install github.com/air-verse/air@v1.61.7
 
 EXPOSE 40169
 
-FROM alpine:3.20
+FROM alpine:3.20 AS prod
 
 WORKDIR /app
 

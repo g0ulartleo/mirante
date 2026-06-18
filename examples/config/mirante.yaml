@@ -1,0 +1,34 @@
+storage:
+  driver: redis
+
+redis:
+  addr: redis:6379
+
+http:
+  addr: 0.0.0.0
+  port: "40169"
+
+alarm_runtime:
+  timeout: 30s
+  runtimes:
+    go:
+      addr: go-alarm-runtime:50051
+
+auth:
+  api_key: ${API_KEY}
+  basic:
+    username: ${DASHBOARD_BASIC_AUTH_USERNAME}
+    password: ${DASHBOARD_BASIC_AUTH_PASSWORD}
+  oauth:
+    enabled: false
+    provider: google
+    redirect_url: http://localhost:40169/auth/callback
+    allowed_domains: []
+    allowed_emails: []
+    session_timeout: 24h
+
+smtp:
+  host: ${SMTP_HOST}
+  port: ${SMTP_PORT}
+  user: ${SMTP_USER}
+  password: ${SMTP_PASSWORD}

@@ -2,7 +2,9 @@ package repo
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/g0ulartleo/mirante/internal/config"
@@ -40,8 +42,12 @@ func NewMySQLSignalRepository(cfg config.MySQLConfig) (signal.SignalRepository, 
 }
 
 func (r *MySQLSignalRepository) Save(signal signal.Signal) error {
-	query := `INSERT INTO signals (alarm_id, status, message, created_at) VALUES (?, ?, ?, ?)`
-	_, err := r.db.Exec(query, signal.AlarmID, signal.Status, signal.Message, time.Now())
+	detailsJSON, err := json.Marshal(signal.Details)
+	if err != nil {
+		return err
+	}
+	query := `INSERT INTO signals (alarm_id, status, message, details_json, created_at) VALUES (?, ?, ?, ?, ?)`
+	_, err = r.db.Exec(query, signal.AlarmID, signal.Status, signal.Message, string(detailsJSON), time.Now())
 	if err != nil {
 		return err
 	}
@@ -50,7 +56,7 @@ func (r *MySQLSignalRepository) Save(signal signal.Signal) error {
 
 func (r *MySQLSignalRepository) GetAlarmLatestSignals(alarmID string, limit int) ([]signal.Signal, error) {
 	query := `
-		SELECT alarm_id, status, message, created_at
+		SELECT alarm_id, status, message, details_json, created_at
 		FROM signals WHERE alarm_id = ? ORDER BY created_at DESC LIMIT ?`
 	rows, err := r.db.Query(query, alarmID, limit)
 	if err != nil {
@@ -60,8 +66,12 @@ func (r *MySQLSignalRepository) GetAlarmLatestSignals(alarmID string, limit int)
 	signals := make([]signal.Signal, 0)
 	for rows.Next() {
 		var s signal.Signal
-		err := rows.Scan(&s.AlarmID, &s.Status, &s.Message, &s.Timestamp)
+		var detailsJSON sql.NullString
+		err := rows.Scan(&s.AlarmID, &s.Status, &s.Message, &detailsJSON, &s.Timestamp)
 		if err != nil {
+			return nil, err
+		}
+		if err := scanDetails(detailsJSON, &s); err != nil {
 			return nil, err
 		}
 		signals = append(signals, s)
@@ -116,6 +126,7 @@ func (r *MySQLSignalRepository) Init() error {
 			alarm_id VARCHAR(255) NOT NULL,
 			status VARCHAR(255) NOT NULL,
 			message VARCHAR(255) NOT NULL,
+			details_json JSON NULL,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			INDEX idx_alarm_created (alarm_id, created_at)
 		)`
@@ -123,7 +134,18 @@ func (r *MySQLSignalRepository) Init() error {
 	if err != nil {
 		return err
 	}
+	_, err = r.db.Exec(`ALTER TABLE ` + signalsDatabase + `.signals ADD COLUMN details_json JSON NULL`)
+	if err != nil && !strings.Contains(strings.ToLower(err.Error()), "duplicate column") {
+		return err
+	}
 	return nil
+}
+
+func scanDetails(detailsJSON sql.NullString, sig *signal.Signal) error {
+	if !detailsJSON.Valid || detailsJSON.String == "" || detailsJSON.String == "null" {
+		return nil
+	}
+	return json.Unmarshal([]byte(detailsJSON.String), &sig.Details)
 }
 
 func (r *MySQLSignalRepository) CleanOldSignals() error {

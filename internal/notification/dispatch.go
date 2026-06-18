@@ -7,11 +7,15 @@ import (
 
 func Dispatch(alarmConfig *alarm.Alarm, sig signal.Signal) []error {
 	notifications := []Notification{}
-	if len(alarmConfig.Notifications.Email.To) > 0 {
-		notifications = append(notifications, NewEmailNotification())
+	for _, email := range alarmConfig.Notifications.Emails {
+		if len(email.To) > 0 {
+			notifications = append(notifications, NewEmailNotification(email.To))
+		}
 	}
-	if alarmConfig.Notifications.Slack.WebhookURL != "" {
-		notifications = append(notifications, NewSlackNotification())
+	for _, webhook := range alarmConfig.Notifications.SlackWebhooks {
+		if webhook.URL != "" {
+			notifications = append(notifications, NewSlackNotification(webhook.URL))
+		}
 	}
 
 	errors := []error{}

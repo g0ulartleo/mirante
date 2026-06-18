@@ -10,30 +10,30 @@ type Alarm struct {
 	ID            string             `yaml:"id"`
 	Name          string             `yaml:"name"`
 	Description   string             `yaml:"description"`
+	HowToFix      string             `yaml:"how_to_fix"`
+	Runtime       string             `yaml:"-"`
 	Path          []string           `yaml:"path"`
-	Type          string             `yaml:"type"`
-	Config        map[string]any     `yaml:"config"`
 	Cron          string             `yaml:"cron"`
 	Interval      string             `yaml:"interval"`
 	Notifications AlarmNotifications `yaml:"notifications"`
 }
 
 func (a *Alarm) HasNotificationsEnabled() bool {
-	return len(a.Notifications.Email.To) > 0 || a.Notifications.Slack.WebhookURL != ""
+	return len(a.Notifications.Emails) > 0 || len(a.Notifications.SlackWebhooks) > 0
 }
 
 type AlarmNotifications struct {
-	Email                EmailNotificationConfig `yaml:"email"`
-	Slack                SlackNotificationConfig `yaml:"slack"`
-	NotifyMissingSignals bool                    `yaml:"notify_missing_signals"`
+	Emails               []EmailNotificationConfig        `yaml:"emails"`
+	SlackWebhooks        []SlackWebhookNotificationConfig `yaml:"slack_webhooks"`
+	NotifyMissingSignals bool                             `yaml:"notify_missing_signals"`
 }
 
 type EmailNotificationConfig struct {
 	To []string `yaml:"to"`
 }
 
-type SlackNotificationConfig struct {
-	WebhookURL string `yaml:"webhook_url"`
+type SlackWebhookNotificationConfig struct {
+	URL string `yaml:"url"`
 }
 
 type AlarmSignals struct {

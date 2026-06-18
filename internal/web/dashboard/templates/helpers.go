@@ -1,6 +1,7 @@
 package templates
 
 import (
+	"encoding/json"
 	"fmt"
 	"sort"
 	"strings"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/g0ulartleo/mirante/internal/alarm"
+	"github.com/g0ulartleo/mirante/internal/signal"
 )
 
 func getGroupStatus(alarmsWithSignals []alarm.AlarmSignals) string {
@@ -15,6 +17,7 @@ func getGroupStatus(alarmsWithSignals []alarm.AlarmSignals) string {
 		return "bg-gray-500"
 	}
 	healthyCount := 0
+	warningCount := 0
 	for _, a := range alarmsWithSignals {
 		if len(a.Signals) == 0 {
 			continue
@@ -23,9 +26,15 @@ func getGroupStatus(alarmsWithSignals []alarm.AlarmSignals) string {
 		if lastStatus == "unhealthy" {
 			return "bg-red-500"
 		}
+		if lastStatus == "warning" {
+			warningCount++
+		}
 		if lastStatus == "healthy" {
 			healthyCount++
 		}
+	}
+	if warningCount > 0 {
+		return "bg-yellow-500"
 	}
 	if healthyCount == len(alarmsWithSignals) {
 		return "bg-green-500"
@@ -40,6 +49,9 @@ func getAlarmStatusColor(alarmSignals alarm.AlarmSignals) string {
 	lastStatus := alarmSignals.Signals[len(alarmSignals.Signals)-1].Status
 	if lastStatus == "healthy" {
 		return "bg-green-500"
+	}
+	if lastStatus == "warning" {
+		return "bg-yellow-500"
 	}
 	if lastStatus == "unknown" {
 		return "bg-gray-500"
@@ -124,6 +136,9 @@ func getAlarmStatusDotColor(alarmSignals alarm.AlarmSignals) string {
 	if lastStatus == "healthy" {
 		return "bg-emerald-300"
 	}
+	if lastStatus == "warning" {
+		return "bg-yellow-300"
+	}
 	if lastStatus == "unknown" {
 		return "bg-gray-300"
 	}
@@ -177,4 +192,51 @@ func humanizeDuration(d time.Duration) string {
 	}
 	days := hours / 24
 	return fmt.Sprintf("%dd", days)
+}
+
+func formatSignalDetails(sig signal.Signal) string {
+	if len(sig.Details) == 0 {
+		return ""
+	}
+	var b strings.Builder
+	for i, detail := range sig.Details {
+		if i > 0 {
+			b.WriteString("\n")
+		}
+		if detail.Title != "" {
+			b.WriteString(detail.Title)
+			b.WriteString(": ")
+		}
+		b.WriteString(formatSignalDetailValue(detail))
+	}
+	return b.String()
+}
+
+func formatSignalDetailValue(detail signal.Detail) string {
+	switch detail.Type {
+	case signal.DetailTypeText:
+		return detail.Text
+	case signal.DetailTypeObject:
+		data, err := json.Marshal(detail.Object)
+		if err != nil {
+			return fmt.Sprintf("%v", detail.Object)
+		}
+		return string(data)
+	case signal.DetailTypeTable:
+		if detail.Table == nil {
+			return ""
+		}
+		lines := []string{}
+		if len(detail.Table.Columns) > 0 {
+			lines = append(lines, strings.Join(detail.Table.Columns, " | "))
+		}
+		for _, row := range detail.Table.Rows {
+			lines = append(lines, strings.Join(row, " | "))
+		}
+		return strings.Join(lines, "\n")
+	case signal.DetailTypeList:
+		return strings.Join(detail.List, ", ")
+	default:
+		return ""
+	}
 }

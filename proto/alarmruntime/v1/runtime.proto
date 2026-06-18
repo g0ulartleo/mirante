@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+package alarmruntime.v1;
+
+option go_package = "github.com/g0ulartleo/mirante/proto/alarmruntime/v1;alarmruntimev1";
+
+import "google/protobuf/struct.proto";
+
+service AlarmRuntime {
+  rpc ListAlarms(ListAlarmsRequest) returns (ListAlarmsResponse);
+  rpc GetAlarm(GetAlarmRequest) returns (GetAlarmResponse);
+  rpc RunAlarm(RunAlarmRequest) returns (RunAlarmResponse);
+}
+
+message ListAlarmsRequest {}
+
+message ListAlarmsResponse {
+  repeated Alarm alarms = 1;
+}
+
+message GetAlarmRequest {
+  string alarm_id = 1;
+}
+
+message GetAlarmResponse {
+  Alarm alarm = 1;
+}
+
+message RunAlarmRequest {
+  string alarm_id = 1;
+}
+
+message RunAlarmResponse {
+  SignalStatus status = 1;
+  string message = 2;
+  RuntimeError error = 3;
+  repeated RunAlarmDetail details = 4;
+}
+
+enum SignalStatus {
+  SIGNAL_STATUS_UNSPECIFIED = 0;
+  SIGNAL_STATUS_HEALTHY = 1;
+  SIGNAL_STATUS_UNHEALTHY = 2;
+  SIGNAL_STATUS_UNKNOWN = 3;
+  SIGNAL_STATUS_WARNING = 4;
+}
+
+enum RuntimeErrorCode {
+  RUNTIME_ERROR_CODE_UNSPECIFIED = 0;
+  RUNTIME_ERROR_CODE_UNSUPPORTED = 1;
+  RUNTIME_ERROR_CODE_RUNALARM_FAILED = 2;
+  RUNTIME_ERROR_CODE_INTERNAL = 3;
+}
+
+message RuntimeError {
+  RuntimeErrorCode code = 1;
+  string message = 2;
+}
+
+message Alarm {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string how_to_fix = 4;
+  repeated string path = 5;
+  string cron = 6;
+  string interval = 7;
+  AlarmNotifications notifications = 8;
+}
+
+message AlarmNotifications {
+  repeated SlackWebhookNotification slack_webhooks = 1;
+  repeated EmailNotification emails = 2;
+  bool notify_missing_signals = 3;
+}
+
+message SlackWebhookNotification {
+  string url = 1;
+}
+
+message EmailNotification {
+  repeated string to = 1;
+}
+
+message RunAlarmDetail {
+  string title = 1;
+  oneof value {
+    string text = 2;
+    google.protobuf.Struct object = 3;
+    TableDetail table = 4;
+    ListDetail list = 5;
+  }
+}
+
+message TableDetail {
+  repeated string columns = 1;
+  repeated TableRow rows = 2;
+}
+
+message TableRow {
+  repeated string cells = 1;
+}
+
+message ListDetail {
+  repeated string items = 1;
+}
+

@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-
-	"gopkg.in/yaml.v3"
 )
 
 type OAuthConfig struct {
@@ -18,62 +16,23 @@ type OAuthConfig struct {
 }
 
 type AuthConfig struct {
-	OAuth  OAuthConfig `yaml:"oauth"`
-	APIKey string      `yaml:"api_key,omitempty"`
-}
-
-func GetAuthConfigPath() string {
-	return "config/auth.yaml"
+	OAuth  OAuthConfig     `yaml:"oauth"`
+	APIKey string          `yaml:"api_key,omitempty"`
+	Basic  BasicAuthConfig `yaml:"basic,omitempty"`
 }
 
 func LoadAuthConfig() (*AuthConfig, error) {
-	configPath := GetAuthConfigPath()
-
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		return &AuthConfig{
-			OAuth: OAuthConfig{
-				Enabled:        false,
-				Provider:       "google",
-				SessionTimeout: "24h",
-			},
-			APIKey: Env().APIKey,
-		}, nil
-	}
-
-	data, err := os.ReadFile(configPath)
+	miranteConfig, err := LoadMiranteConfig()
 	if err != nil {
-		return nil, fmt.Errorf("failed to read auth config file: %w", err)
+		return nil, err
 	}
-
-	var config AuthConfig
-	if err := yaml.Unmarshal(data, &config); err != nil {
-		return nil, fmt.Errorf("failed to parse auth config file: %w", err)
-	}
-    config.APIKey = Env().APIKey
+	config := miranteConfig.Auth
 
 	if err := validateAuthConfig(&config); err != nil {
 		return nil, fmt.Errorf("invalid auth config: %w", err)
 	}
 
 	return &config, nil
-}
-
-func SaveAuthConfig(config *AuthConfig) error {
-	if err := os.MkdirAll("config", 0755); err != nil {
-		return fmt.Errorf("failed to create config directory: %w", err)
-	}
-
-	configPath := "config/auth.yaml"
-	data, err := yaml.Marshal(config)
-	if err != nil {
-		return fmt.Errorf("failed to marshal auth config: %w", err)
-	}
-
-	if err := os.WriteFile(configPath, data, 0644); err != nil {
-		return fmt.Errorf("failed to write auth config file: %w", err)
-	}
-
-	return nil
 }
 
 func validateAuthConfig(config *AuthConfig) error {
@@ -131,16 +90,5 @@ func (c *OAuthConfig) IsEmailAllowed(email string) bool {
 }
 
 func CreateSampleAuthConfig() error {
-	sampleConfig := &AuthConfig{
-		OAuth: OAuthConfig{
-			Enabled:        true,
-			Provider:       "google",
-			RedirectURL:    "http://localhost:40169/auth/callback",
-			AllowedDomains: []string{"@yourcompany.com"},
-			AllowedEmails:  []string{"admin@yourcompany.com", "developer@yourcompany.com"},
-			SessionTimeout: "24h",
-		},
-	}
-
-	return SaveAuthConfig(sampleConfig)
+	return fmt.Errorf("auth.yaml is no longer supported; configure auth in %s", GetMiranteConfigPath())
 }

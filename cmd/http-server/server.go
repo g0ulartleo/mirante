@@ -1,12 +1,15 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"time"
 
 	"github.com/g0ulartleo/mirante/internal/alarm"
 	alarmrepo "github.com/g0ulartleo/mirante/internal/alarm/repo"
+	runtimeclient "github.com/g0ulartleo/mirante/internal/alarm/runtime/client"
+	runtimesync "github.com/g0ulartleo/mirante/internal/alarm/runtime/sync"
 	"github.com/g0ulartleo/mirante/internal/config"
 	"github.com/g0ulartleo/mirante/internal/signal"
 	signalrepo "github.com/g0ulartleo/mirante/internal/signal/repo"
@@ -17,6 +20,21 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
+func periodicHealthCheck(ctx context.Context, router *runtimeclient.Router) {
+	ticker := time.NewTicker(30 * time.Second)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ticker.C:
+			for name, err := range router.Health(ctx) {
+				log.Printf("Warning: runtime %q health check failed: %v", name, err)
+			}
+		case <-ctx.Done():
+			return
+		}
+	}
+}
+
 func main() {
 	alarmRepo, err := alarmrepo.New()
 	if err != nil {
@@ -24,10 +42,28 @@ func main() {
 	}
 	defer alarmRepo.Close()
 	alarmService := alarm.NewAlarmService(alarmRepo)
-	err = alarm.InitAlarms(alarmRepo)
+
+	miranteConfig, err := config.LoadMiranteConfig()
 	if err != nil {
-		log.Fatalf("Error initializing alarm configs: %v", err)
+		log.Fatalf("Error loading mirante config: %v", err)
 	}
+
+	router, err := runtimeclient.NewRouter(miranteConfig.AlarmRuntime)
+	if err != nil {
+		log.Fatalf("Error initializing alarm runtime router: %v", err)
+	}
+	defer router.Close()
+
+	go periodicHealthCheck(context.Background(), router)
+
+	syncer := runtimesync.New(router, alarmRepo)
+	if err := syncer.Sync(context.Background()); err != nil {
+		if runtimesync.IsValidationError(err) {
+			log.Fatalf("Runtime sync failed: %v", err)
+		}
+		log.Printf("Warning: runtime sync failed: %v", err)
+	}
+
 	signalRepo, err := signalrepo.New(config.LoadAppConfigFromEnv())
 	if err != nil {
 		log.Fatalf("Error initializing signal store: %v", err)
@@ -67,7 +103,7 @@ func main() {
 		return c.String(http.StatusOK, "pong")
 	})
 
-	api.RegisterRoutes(e, signalService, alarmService, asyncClient)
+	api.RegisterRoutes(e, signalService, alarmService, asyncClient, syncer)
 
 	dashboardGroup := e.Group("")
 	dashboardGroup.Use(middleware.BasicAuth(func(username, password string, c echo.Context) (bool, error) {

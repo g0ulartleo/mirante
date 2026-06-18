@@ -5,7 +5,7 @@ providing notifications per alarm, a simple web dashboard for real-time monitori
 
 ## current status
 
-this project was created initally for my own usage (and for studying golang) and it is still under development,
+this project was created initially for my own usage (and for studying golang) and it is still under development,
 so production usage is not yet recommended.
 
 ## architecture
@@ -44,40 +44,41 @@ so production usage is not yet recommended.
 
 ## setting up new alarms
 
-   alarms are configured via YAML files in the `config/alarms` directory.
-   the directory structure reflects the URL path for an alarm's dashboard (if no `path` is defined for the alarm).
+   alarms are defined with code, not YAML. create an alarm runtime repo with the CLI:
 
-   example:
-   ```yaml
-   id: my-alarm
-   name: My Custom Alarm
-   description: "Expects a 200 status code from some API"
-   type: endpoint-checker
-   interval: "30s"        # or specify a cron expression in the `cron` field
-   path: ['Project', 'APIs']
-   config:
-     url: "https://example.com"
-     expected_status: 200
-   notifications:
-      email:
-         to:
-            - "test@example.com"
-            - "test2@example.com"
-      slack:
-         webhook_url: "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXX"
+   ```bash
+   # scaffold a Node.js runtime repo
+   mirante init repo --runtime nodejs --dir my-alarms
+   cd my-alarms
+
+   # add a new alarm
+   mirante new alarm check-server-events-dlq
+
+   # install dependencies and start
+   npm install
+   npm start
    ```
 
-   you can also manage alarms using the CLI.
+   alarms are loaded from `src/alarms/`. the directory structure determines the path in the dashboard.
+   a file at `src/alarms/Production/DB/my-alarm.ts` gets the path `Production/DB`.
 
-   start with setting up authentication, then using `help` to see the available commands
+   for Go runtimes:
+   ```bash
+   mirante init repo --runtime go --dir my-alarms
+   ```
+
+   configuration lives in `mirante.yaml` in the runtime repo root.
+   start from `examples/config/mirante.yaml` for the core server configuration.
+
+   start with setting up authentication, then using `help` to see the available commands:
    ```bash
    # using OAuth authentication
-   $ mirante auth <your_endpoint>
+   mirante auth <your_endpoint>
 
    # using API key authentication
-   $ mirante auth-key <your_endpoint> <api_key>
+   mirante auth-key <your_endpoint> <api_key>
 
-   $ mirante help
+   mirante help
    ```
 
 

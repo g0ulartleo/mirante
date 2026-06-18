@@ -35,13 +35,18 @@ templ Base(children templ.Component) {
 
 				const greenFavicon = createFavicon('#10b981'); // Tailwind green-500
 				const redFavicon = createFavicon('#ef4444');   // Tailwind red-500
+				const yellowFavicon = createFavicon('#eab308'); // Tailwind yellow-500
 
 				function updateFavicon(container) {
 					const favicon = document.getElementById('favicon');
 					const unhealthyElements = container.querySelectorAll('.bg-red-500, .text-red-500, [data-status="unhealthy"], [data-status="red"]');
+					const warningElements = container.querySelectorAll('.bg-yellow-500, .text-yellow-500, [data-status="warning"], [data-status="yellow"]');
 					if (unhealthyElements.length > 0) {
 						favicon.href = redFavicon;
 						document.title = `(${unhealthyElements.length}) Mirante Alerts`;
+					} else if (warningElements.length > 0) {
+						favicon.href = yellowFavicon;
+						document.title = `(${warningElements.length}) Mirante Warnings`;
 					} else {
 						favicon.href = greenFavicon;
 						document.title = 'Mirante Alerts';

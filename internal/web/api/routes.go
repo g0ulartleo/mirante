@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/g0ulartleo/mirante/internal/alarm"
+	"github.com/g0ulartleo/mirante/internal/alarm/runtime/sync"
 	"github.com/g0ulartleo/mirante/internal/auth"
 	"github.com/g0ulartleo/mirante/internal/config"
 	"github.com/g0ulartleo/mirante/internal/signal"
@@ -26,7 +27,7 @@ func APIKeyAuthMiddleware() echo.MiddlewareFunc {
 	}
 }
 
-func RegisterRoutes(e *echo.Echo, signalService *signal.Service, alarmService *alarm.AlarmService, asyncClient *asynq.Client) {
+func RegisterRoutes(e *echo.Echo, signalService *signal.Service, alarmService *alarm.AlarmService, asyncClient *asynq.Client, syncer *sync.AlarmSyncer) {
 	authConfig, err := config.LoadAuthConfig()
 	if err != nil {
 		log.Printf("Error loading auth config, using environment API key: %v", err)
@@ -85,7 +86,11 @@ func RegisterRoutes(e *echo.Echo, signalService *signal.Service, alarmService *a
 			log.Printf("Error fetching config signals: %v", err)
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
-		return c.JSON(http.StatusOK, alarms)
+		maskedAlarms := make([]*alarm.Alarm, 0, len(alarms))
+		for _, a := range alarms {
+			maskedAlarms = append(maskedAlarms, MaskSensitiveData(a))
+		}
+		return c.JSON(http.StatusOK, maskedAlarms)
 	})
 
 	api.GET("/alarms/:alarm_id", func(c echo.Context) error {
@@ -100,31 +105,19 @@ func RegisterRoutes(e *echo.Echo, signalService *signal.Service, alarmService *a
 		return c.JSON(http.StatusOK, maskedAlarm)
 	})
 
-	api.DELETE("/alarms/:alarm_id", func(c echo.Context) error {
-		alarmID := c.Param("alarm_id")
-		if err := alarmService.DeleteAlarm(alarmID); err != nil {
-			log.Printf("Error deleting alarm: %v", err)
+	api.POST("/alarms/sync", func(c echo.Context) error {
+		log.Printf("Manual alarm sync requested remote_ip=%s", c.RealIP())
+		if err := syncer.Sync(c.Request().Context()); err != nil {
+			log.Printf("Error syncing alarms: %v", err)
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
-		return c.JSON(http.StatusOK, map[string]string{"message": "Alarm deleted"})
-	})
-
-	api.POST("/alarms", func(c echo.Context) error {
-		alarm := new(alarm.Alarm)
-		if err := c.Bind(alarm); err != nil {
-			log.Printf("Error binding alarm: %v", err)
-			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-		}
-		if err := alarmService.SetAlarm(alarm); err != nil {
-			log.Printf("Error setting alarm: %v", err)
-			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-		}
-		return c.JSON(http.StatusOK, alarm)
+		log.Printf("Manual alarm sync completed")
+		return c.JSON(http.StatusOK, map[string]string{"message": "Sync completed"})
 	})
 
 	api.POST("/alarms/:alarm_id/check", func(c echo.Context) error {
 		alarmID := c.Param("alarm_id")
-		log.Printf("Manual sentinel check requested alarm_id=%s remote_ip=%s", alarmID, c.RealIP())
+		log.Printf("Manual alarm check requested alarm_id=%s remote_ip=%s", alarmID, c.RealIP())
 		task, err := tasks.NewAlarmCheckTask(alarmID)
 		if err != nil {
 			log.Printf("Error creating check alarm task: %v", err)
@@ -134,7 +127,7 @@ func RegisterRoutes(e *echo.Echo, signalService *signal.Service, alarmService *a
 			log.Printf("Error enqueueing task: %v", err)
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
-		log.Printf("Manual sentinel check enqueued alarm_id=%s", alarmID)
+		log.Printf("Manual alarm check enqueued alarm_id=%s", alarmID)
 		return c.JSON(http.StatusOK, map[string]string{"message": "Task enqueued"})
 	}, auth.AuthRateLimitMiddleware(10))
 }

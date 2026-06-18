@@ -24,10 +24,9 @@ func (c *HelpCommand) Usage() string {
 
 func (c *HelpCommand) Run(args []string) error {
 	if len(args) > 0 {
-		commandName := args[0]
-		command, err := cli.GetCommand(commandName)
+		command, _, err := cli.ResolveCommand(args)
 		if err != nil {
-			return fmt.Errorf("command '%s' not found", commandName)
+			return fmt.Errorf("command '%s' not found", strings.Join(args, " "))
 		}
 
 		fmt.Printf("Command: %s\n", command.Name())
@@ -44,7 +43,12 @@ func (c *HelpCommand) Run(args []string) error {
 	fmt.Println("Available Commands:")
 
 	commands := make([]cli.Command, 0, len(*cli.Registry))
+	seen := map[string]bool{}
 	for _, command := range *cli.Registry {
+		if seen[command.Name()] {
+			continue
+		}
+		seen[command.Name()] = true
 		commands = append(commands, command)
 	}
 

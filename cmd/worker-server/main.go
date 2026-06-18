@@ -7,14 +7,30 @@ import (
 
 	"github.com/g0ulartleo/mirante/internal/alarm"
 	alarmrepo "github.com/g0ulartleo/mirante/internal/alarm/repo"
+	runtimeclient "github.com/g0ulartleo/mirante/internal/alarm/runtime/client"
+	runtimesync "github.com/g0ulartleo/mirante/internal/alarm/runtime/sync"
 	"github.com/g0ulartleo/mirante/internal/config"
-	runtimeclient "github.com/g0ulartleo/mirante/internal/sentinel/runtime/client"
 	"github.com/g0ulartleo/mirante/internal/signal"
 	signalrepo "github.com/g0ulartleo/mirante/internal/signal/repo"
 	"github.com/g0ulartleo/mirante/internal/worker"
 	"github.com/hibiken/asynq"
 	"github.com/redis/go-redis/v9"
 )
+
+func periodicHealthCheck(ctx context.Context, router *runtimeclient.Router) {
+	ticker := time.NewTicker(30 * time.Second)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ticker.C:
+			for name, err := range router.Health(ctx) {
+				log.Printf("Warning: runtime %q health check failed: %v", name, err)
+			}
+		case <-ctx.Done():
+			return
+		}
+	}
+}
 
 func main() {
 	alarmRepo, err := alarmrepo.New()
@@ -23,10 +39,6 @@ func main() {
 	}
 	defer alarmRepo.Close()
 	alarmService := alarm.NewAlarmService(alarmRepo)
-	err = alarm.InitAlarms(alarmRepo)
-	if err != nil {
-		log.Fatalf("Error initializing alarm configs: %v", err)
-	}
 
 	signalRepo, err := signalrepo.New(config.LoadAppConfigFromEnv())
 	if err != nil {
@@ -35,15 +47,25 @@ func main() {
 	defer signalRepo.Close()
 	signalService := signal.NewService(signalRepo)
 
-	runnerTimeout, err := time.ParseDuration(config.Env().SentinelRunnerTimeout)
+	miranteConfig, err := config.LoadMiranteConfig()
 	if err != nil {
-		log.Fatalf("Invalid SENTINEL_RUNNER_TIMEOUT %q: %v", config.Env().SentinelRunnerTimeout, err)
+		log.Fatalf("Error loading mirante config: %v", err)
 	}
-	runnerClient, err := runtimeclient.New(config.Env().SentinelRunnerAddr, runnerTimeout)
+	runnerClient, err := runtimeclient.NewRouter(miranteConfig.AlarmRuntime)
 	if err != nil {
-		log.Fatalf("Error initializing sentinel runner client: %v", err)
+		log.Fatalf("Error initializing alarm runtime router: %v", err)
 	}
 	defer runnerClient.Close()
+
+	syncer := runtimesync.New(runnerClient, alarmRepo)
+	if err := syncer.Sync(context.Background()); err != nil {
+		if runtimesync.IsValidationError(err) {
+			log.Fatalf("Runtime sync failed: %v", err)
+		}
+		log.Printf("Warning: runtime sync failed: %v", err)
+	}
+
+	go periodicHealthCheck(context.Background(), runnerClient)
 
 	asyncClient := asynq.NewClient(asynq.RedisClientOpt{Addr: config.Env().RedisAddr})
 	defer asyncClient.Close()

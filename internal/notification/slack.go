@@ -16,7 +16,6 @@ type SlackNotification struct {
 }
 
 func (s *SlackNotification) Build(alarmConfig *alarm.Alarm, sig signal.Signal) error {
-	s.WebhookURL = alarmConfig.Notifications.Slack.WebhookURL
 	s.Message = fmt.Sprintf("*Alert:* %s (*%s*)\n*Signal:* %v", alarmConfig.Name, sig.Status, sig)
 	return nil
 }
@@ -51,6 +50,6 @@ func (s *SlackNotification) Send() error {
 	return nil
 }
 
-func NewSlackNotification() *SlackNotification {
-	return &SlackNotification{}
+func NewSlackNotification(webhookURL string) *SlackNotification {
+	return &SlackNotification{WebhookURL: webhookURL}
 }

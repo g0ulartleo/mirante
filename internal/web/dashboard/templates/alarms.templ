@@ -23,6 +23,7 @@ templ Treemap(alarmsWithSignals []alarm.AlarmSignals, level int, baseURL string)
         {{ data := buildTreemapData(alarmsWithSignals, level, baseURL) }}
 
         {{ totalItems := len(data.ThisLevel) + len(data.Groups) }}
+		{{ if totalItems == 0 { return } }}
 		{{ cols := int(math.Sqrt(float64(totalItems))) }}
 		{{ if cols * cols < totalItems { cols += 1 } }}
 		{{ gridTemplateColumns := fmt.Sprintf("grid-cols-[repeat(%d,minmax(0,1fr))]", cols) }}
@@ -82,7 +83,11 @@ templ Treemap(alarmsWithSignals []alarm.AlarmSignals, level int, baseURL string)
                         <div class="kbd-overlay absolute inset-x-0 bottom-0 top-1/2 bg-gradient-to-t from-black/50 to-transparent opacity-0 transition-opacity flex items-end justify-center p-3 pointer-events-none">
                             <div class="flex flex-col gap-2 items-center text-white max-w-[95%] pb-1">
                                 if len(alarmWithSignal.Signals) > 0 {
-                                    <p class="text-sm opacity-95 truncate w-full" title={ alarmWithSignal.Signals[len(alarmWithSignal.Signals)-1].Message }>{ alarmWithSignal.Signals[len(alarmWithSignal.Signals)-1].Message }</p>
+                                    {{ latestSignal := alarmWithSignal.Signals[len(alarmWithSignal.Signals)-1] }}
+                                    <p class="text-sm opacity-95 truncate w-full" title={ latestSignal.Message }>{ latestSignal.Message }</p>
+                                    if formatSignalDetails(latestSignal) != "" {
+                                        <pre class="max-h-20 w-full overflow-hidden whitespace-pre-wrap rounded bg-black/20 p-2 text-left text-xs opacity-95">{ formatSignalDetails(latestSignal) }</pre>
+                                    }
                                 }
                                 <div class="mt-1 flex flex-wrap items-center justify-center gap-2 text-xs opacity-90">
                                     if !alarmWithSignal.LastCheckedAt.IsZero() {
@@ -99,7 +104,11 @@ templ Treemap(alarmsWithSignals []alarm.AlarmSignals, level int, baseURL string)
                                 <span class="text-xl font-semibold leading-tight">{ alarmWithSignal.Alarm.Name }</span>
                             </div>
                             if len(alarmWithSignal.Signals) > 0 {
-                                <p class="text-sm opacity-95 truncate w-full" title={ alarmWithSignal.Signals[len(alarmWithSignal.Signals)-1].Message }>{ alarmWithSignal.Signals[len(alarmWithSignal.Signals)-1].Message }</p>
+                                {{ latestSignal := alarmWithSignal.Signals[len(alarmWithSignal.Signals)-1] }}
+                                <p class="text-sm opacity-95 truncate w-full" title={ latestSignal.Message }>{ latestSignal.Message }</p>
+                                if formatSignalDetails(latestSignal) != "" {
+                                    <pre class="max-h-24 w-full overflow-hidden whitespace-pre-wrap rounded bg-black/20 p-2 text-left text-xs opacity-95">{ formatSignalDetails(latestSignal) }</pre>
+                                }
                             }
                             <div class="mt-1 flex flex-wrap items-center justify-center gap-2 text-xs opacity-90">
                                 if !alarmWithSignal.LastCheckedAt.IsZero() {

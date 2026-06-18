@@ -111,17 +111,6 @@ func (c *Client) GetAlarm(id string) (*alarm.Alarm, error) {
 	return &a, nil
 }
 
-func (c *Client) DeleteAlarm(id string) error {
-	endpoint := path.Join("/api/alarms", id)
-	_, err := c.doRequest(http.MethodDelete, endpoint, nil)
-	return err
-}
-
-func (c *Client) SetAlarm(a *alarm.Alarm) error {
-	_, err := c.doRequest(http.MethodPost, "/api/alarms", a)
-	return err
-}
-
 func (c *Client) GetAlarmSignals(id string) ([]signal.Signal, error) {
 	endpoint := path.Join("/api/alarms", id, "signals")
 	data, err := c.doRequest(http.MethodGet, endpoint, nil)
@@ -137,9 +126,14 @@ func (c *Client) GetAlarmSignals(id string) ([]signal.Signal, error) {
 	return signals, nil
 }
 
-func (c *Client) CheckAlarm(id string) error {
+func (c *Client) RunAlarm(id string) error {
 	endpoint := path.Join("/api/alarms", id, "check")
 	_, err := c.doRequest(http.MethodPost, endpoint, nil)
+	return err
+}
+
+func (c *Client) SyncAlarms() error {
+	_, err := c.doRequest(http.MethodPost, "/api/alarms/sync", nil)
 	return err
 }
 

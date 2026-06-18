@@ -1,0 +1,21 @@
+{
+  "name": "@mirante/alarms-sdk",
+  "version": "0.2.0",
+  "type": "module",
+  "private": false,
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    },
+    "./runtime.proto": "./runtime.proto"
+  },
+  "scripts": {
+    "prepare": "node -e \"var fs=require('fs');var src='../../../proto/alarmruntime/v1/runtime.proto';if(fs.existsSync(src))fs.copyFileSync(src,'runtime.proto')\"",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "^1.13.4",
+    "@grpc/proto-loader": "^0.7.15"
+  }
+}

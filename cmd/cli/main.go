@@ -21,13 +21,13 @@ func main() {
 		}
 		return
 	}
-	command, err := cli.GetCommand(os.Args[1])
+	command, commandArgs, err := cli.ResolveCommand(os.Args[1:])
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	if err := command.Run(os.Args[2:]); err != nil {
+	if err := command.Run(commandArgs); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}

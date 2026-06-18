@@ -13,7 +13,7 @@ import (
 type ListAlarmsCommand struct{}
 
 func (c *ListAlarmsCommand) Name() string {
-	return "list-alarms"
+	return "list alarms"
 }
 
 func (c *ListAlarmsCommand) Description() string {
@@ -21,7 +21,7 @@ func (c *ListAlarmsCommand) Description() string {
 }
 
 func (c *ListAlarmsCommand) Usage() string {
-	return "list-alarms"
+	return "list alarms"
 }
 
 func (c *ListAlarmsCommand) Run(args []string) error {
@@ -106,4 +106,5 @@ func printPathTree(tree map[string]interface{}, level int) {
 func init() {
 	c := &ListAlarmsCommand{}
 	cli.RegisterCommand(c.Name(), c)
+	cli.RegisterAlias("list-alarms", c)
 }

@@ -4,14 +4,17 @@ import (
 	"context"
 
 	"github.com/g0ulartleo/mirante/internal/alarm"
-	runtimeclient "github.com/g0ulartleo/mirante/internal/sentinel/runtime/client"
 	"github.com/g0ulartleo/mirante/internal/signal"
 	"github.com/g0ulartleo/mirante/internal/worker/tasks"
 	"github.com/hibiken/asynq"
 	"github.com/redis/go-redis/v9"
 )
 
-func RegisterTasks(mux *asynq.ServeMux, runnerClient *runtimeclient.Client, signalService *signal.Service, alarmService *alarm.AlarmService, asyncClient *asynq.Client, redisClient *redis.Client) {
+type runAlarmRunner interface {
+	RunAlarm(ctx context.Context, runtimeName string, alarmID string) (signal.Signal, error)
+}
+
+func RegisterTasks(mux *asynq.ServeMux, runnerClient runAlarmRunner, signalService *signal.Service, alarmService *alarm.AlarmService, asyncClient *asynq.Client, redisClient *redis.Client) {
 	mux.HandleFunc(tasks.TypeAlarmCheck, func(ctx context.Context, task *asynq.Task) error {
 		return tasks.HandleAlarmCheckTask(ctx, task, runnerClient, signalService, alarmService, asyncClient)
 	})

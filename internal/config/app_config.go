@@ -3,7 +3,6 @@ package config
 import (
 	"fmt"
 	"log"
-	"strconv"
 )
 
 type AppConfig struct {
@@ -19,9 +18,14 @@ type MySQLConfig struct {
 }
 
 func LoadAppConfigFromEnv() *AppConfig {
-	driver := Env().DBDriver
+	miranteConfig, err := LoadMiranteConfig()
+	if err != nil {
+		log.Fatalf("failed to load mirante config: %v", err)
+	}
+
+	driver := miranteConfig.Storage.Driver
 	if driver == "" {
-		log.Fatalf("DB_DRIVER environment variable is required")
+		log.Fatalf("storage.driver is required")
 	}
 
 	config := &AppConfig{
@@ -30,23 +34,7 @@ func LoadAppConfigFromEnv() *AppConfig {
 
 	switch driver {
 	case "mysql":
-		var port int
-		if portStr := Env().MySQLDBPort; portStr != "" {
-			p, err := strconv.Atoi(portStr)
-			if err != nil {
-				log.Fatalf("invalid MYSQL_DB_PORT: %v", err)
-			}
-			port = p
-		} else {
-			port = 3306
-		}
-
-		config.MySQL = MySQLConfig{
-			Host:     Env().MySQLDBHost,
-			Port:     port,
-			User:     Env().MySQLDBUser,
-			Password: Env().MySQLDBPassword,
-		}
+		config.MySQL = miranteConfig.Storage.MySQL
 	case "sqlite":
 		return config
 	case "redis":
