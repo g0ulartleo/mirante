@@ -17,12 +17,21 @@ func MaskSensitiveData(a *alarm.Alarm) *alarm.Alarm {
 		Notifications: a.Notifications,
 	}
 	copy(maskedAlarm.Path, a.Path)
-	maskedAlarm.Notifications.Emails = append([]alarm.EmailNotificationConfig(nil), a.Notifications.Emails...)
-	maskedAlarm.Notifications.SlackWebhooks = append([]alarm.SlackWebhookNotificationConfig(nil), a.Notifications.SlackWebhooks...)
-	for i := range maskedAlarm.Notifications.SlackWebhooks {
-		if maskedAlarm.Notifications.SlackWebhooks[i].URL != "" {
-			maskedAlarm.Notifications.SlackWebhooks[i].URL = "****"
+
+	channels := make(map[string]alarm.NotificationChannel, len(a.Notifications.Channels))
+	for key, ch := range a.Notifications.Channels {
+		slackWebhooks := append([]alarm.SlackWebhookNotificationConfig(nil), ch.SlackWebhooks...)
+		for i := range slackWebhooks {
+			if slackWebhooks[i].URL != "" {
+				slackWebhooks[i].URL = "****"
+			}
+		}
+		emails := append([]alarm.EmailNotificationConfig(nil), ch.Emails...)
+		channels[key] = alarm.NotificationChannel{
+			SlackWebhooks: slackWebhooks,
+			Emails:        emails,
 		}
 	}
+	maskedAlarm.Notifications.Channels = channels
 	return maskedAlarm
 }

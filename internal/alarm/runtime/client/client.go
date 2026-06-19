@@ -81,13 +81,20 @@ func fromProtoAlarm(pa *runtimev1.Alarm) alarm.Alarm {
 		Cron:        pa.GetCron(),
 		Interval:    pa.GetInterval(),
 	}
-	for _, sn := range pa.GetNotifications().GetSlackWebhooks() {
-		a.Notifications.SlackWebhooks = append(a.Notifications.SlackWebhooks, alarm.SlackWebhookNotificationConfig{URL: sn.GetUrl()})
+	channels := map[string]alarm.NotificationChannel{}
+	for k, ch := range pa.GetNotifications().GetChannels() {
+		nc := alarm.NotificationChannel{
+			NotifyMissingSignals: ch.GetNotifyMissingSignals(),
+		}
+		for _, sn := range ch.GetSlackWebhooks() {
+			nc.SlackWebhooks = append(nc.SlackWebhooks, alarm.SlackWebhookNotificationConfig{URL: sn.GetUrl()})
+		}
+		for _, en := range ch.GetEmails() {
+			nc.Emails = append(nc.Emails, alarm.EmailNotificationConfig{To: en.GetTo()})
+		}
+		channels[k] = nc
 	}
-	for _, en := range pa.GetNotifications().GetEmails() {
-		a.Notifications.Emails = append(a.Notifications.Emails, alarm.EmailNotificationConfig{To: en.GetTo()})
-	}
-	a.Notifications.NotifyMissingSignals = pa.GetNotifications().GetNotifyMissingSignals()
+	a.Notifications.Channels = channels
 	return a
 }
 

@@ -183,11 +183,23 @@ export async function serveRuntime({ alarmsDir, addr = '127.0.0.1:50051', creden
   return server;
 }
 
+const KNOWN_SEVERITIES = new Set(['critical', 'warnings']);
+
 export async function toProtoAlarm(alarm) {
   validateAlarm(alarm);
-  const notificationHooks = alarm.notifications ?? {};
-  const slackUrls = typeof notificationHooks.slackWebhooks === 'function' ? await notificationHooks.slackWebhooks() : [];
-  const emailRecipients = typeof notificationHooks.emails === 'function' ? await notificationHooks.emails() : [];
+  const raw = alarm.notifications ?? {};
+  const channels = {};
+  for (const [severity, ch] of Object.entries(raw)) {
+    if (!KNOWN_SEVERITIES.has(severity)) {
+      console.warn(`unknown notification severity ${JSON.stringify(severity)}, skipping`);
+      continue;
+    }
+    channels[severity] = {
+      slackWebhooks: (ch.slackWebhooks ?? []).filter(Boolean).map((url) => ({ url })),
+      emails: (ch.emails ?? []).map((to) => ({ to: normalizeArray(to).filter(Boolean) })),
+      notifyMissingSignals: Boolean(ch.notifyMissingSignals),
+    };
+  }
   return {
     id: alarm.id,
     name: alarm.name || '',
@@ -196,11 +208,7 @@ export async function toProtoAlarm(alarm) {
     path: alarm.path ?? [],
     cron: alarm.cron || '',
     interval: alarm.interval || '',
-    notifications: {
-      slackWebhooks: normalizeArray(slackUrls).filter(Boolean).map((url) => ({ url })),
-      emails: normalizeArray(emailRecipients).map((to) => ({ to: normalizeArray(to).filter(Boolean) })),
-      notifyMissingSignals: Boolean(alarm.notifyMissingSignals),
-    },
+    notifications: { channels },
   };
 }
 

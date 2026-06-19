@@ -36,10 +36,17 @@ export interface AlarmDefinition {
   howToFix?: string;
   cron?: string;
   interval?: string;
-  notifyMissingSignals?: boolean;
   notifications?: {
-    slackWebhooks?(): string[] | Promise<string[]>;
-    emails?(): string[][] | Promise<string[][]>;
+    critical?: {
+      slackWebhooks?: string[];
+      emails?: string[][];
+      notifyMissingSignals?: boolean;
+    };
+    warnings?: {
+      slackWebhooks?: string[];
+      emails?: string[][];
+      notifyMissingSignals?: boolean;
+    };
   };
   run(): Signal | Promise<Signal>;
 }
@@ -56,6 +63,10 @@ export interface Alarm {
 }
 
 export interface AlarmNotifications {
+  channels: Record<string, NotificationChannels>;
+}
+
+export interface NotificationChannels {
   slackWebhooks?: SlackWebhookNotification[];
   emails?: EmailNotification[];
   notifyMissingSignals?: boolean;

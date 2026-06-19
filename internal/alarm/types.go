@@ -19,13 +19,22 @@ type Alarm struct {
 }
 
 func (a *Alarm) HasNotificationsEnabled() bool {
-	return len(a.Notifications.Emails) > 0 || len(a.Notifications.SlackWebhooks) > 0
+	for _, ch := range a.Notifications.Channels {
+		if len(ch.Emails) > 0 || len(ch.SlackWebhooks) > 0 {
+			return true
+		}
+	}
+	return false
 }
 
 type AlarmNotifications struct {
+	Channels map[string]NotificationChannel `yaml:"channels"`
+}
+
+type NotificationChannel struct {
 	Emails               []EmailNotificationConfig        `yaml:"emails"`
 	SlackWebhooks        []SlackWebhookNotificationConfig `yaml:"slack_webhooks"`
-	NotifyMissingSignals bool                             `yaml:"notify_missing_signals"`
+	NotifyMissingSignals bool                              `yaml:"notify_missing_signals"`
 }
 
 type EmailNotificationConfig struct {

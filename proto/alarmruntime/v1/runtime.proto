@@ -76,6 +76,10 @@ message Alarm {
 }
 
 message AlarmNotifications {
+  map<string, NotificationChannels> channels = 1;
+}
+
+message NotificationChannels {
   repeated SlackWebhookNotification slack_webhooks = 1;
   repeated EmailNotification emails = 2;
   bool notify_missing_signals = 3;

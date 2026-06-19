@@ -39,25 +39,34 @@ func TestFromProtoAlarmKeepsRepeatedNotifications(t *testing.T) {
 		Name:        "Alarm 1",
 		Description: "description",
 		Notifications: &runtimev1.AlarmNotifications{
-			SlackWebhooks: []*runtimev1.SlackWebhookNotification{
-				{Url: "https://hooks.slack.test/1"},
-				{Url: "https://hooks.slack.test/2"},
+			Channels: map[string]*runtimev1.NotificationChannels{
+				"critical": {
+					SlackWebhooks: []*runtimev1.SlackWebhookNotification{
+						{Url: "https://hooks.slack.test/1"},
+					},
+					NotifyMissingSignals: true,
+				},
+				"warnings": {
+					SlackWebhooks: []*runtimev1.SlackWebhookNotification{
+						{Url: "https://hooks.slack.test/2"},
+					},
+					Emails: []*runtimev1.EmailNotification{
+						{To: []string{"b@example.com", "c@example.com"}},
+					},
+				},
 			},
-			Emails: []*runtimev1.EmailNotification{
-				{To: []string{"a@example.com"}},
-				{To: []string{"b@example.com", "c@example.com"}},
-			},
-			NotifyMissingSignals: true,
 		},
 	})
 
-	assert.Len(t, a.Notifications.SlackWebhooks, 2)
-	assert.Equal(t, "https://hooks.slack.test/1", a.Notifications.SlackWebhooks[0].URL)
-	assert.Equal(t, "https://hooks.slack.test/2", a.Notifications.SlackWebhooks[1].URL)
-	assert.Len(t, a.Notifications.Emails, 2)
-	assert.Equal(t, []string{"a@example.com"}, a.Notifications.Emails[0].To)
-	assert.Equal(t, []string{"b@example.com", "c@example.com"}, a.Notifications.Emails[1].To)
-	assert.True(t, a.Notifications.NotifyMissingSignals)
+	assert.Len(t, a.Notifications.Channels, 2)
+	assert.Len(t, a.Notifications.Channels["critical"].SlackWebhooks, 1)
+	assert.Equal(t, "https://hooks.slack.test/1", a.Notifications.Channels["critical"].SlackWebhooks[0].URL)
+	assert.True(t, a.Notifications.Channels["critical"].NotifyMissingSignals)
+	assert.Len(t, a.Notifications.Channels["warnings"].SlackWebhooks, 1)
+	assert.Equal(t, "https://hooks.slack.test/2", a.Notifications.Channels["warnings"].SlackWebhooks[0].URL)
+	assert.Len(t, a.Notifications.Channels["warnings"].Emails, 1)
+	assert.Equal(t, []string{"b@example.com", "c@example.com"}, a.Notifications.Channels["warnings"].Emails[0].To)
+	assert.False(t, a.Notifications.Channels["warnings"].NotifyMissingSignals)
 }
 
 func TestFromResponseConvertsDetails(t *testing.T) {

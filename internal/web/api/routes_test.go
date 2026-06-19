@@ -55,6 +55,7 @@ func TestAlarmMutationEndpointsAreUnavailable(t *testing.T) {
 		signal.NewService(&fakeAPISignalRepo{}),
 		alarm.NewAlarmService(&fakeAPIAlarmRepo{}),
 		nil,
+		nil,
 	)
 
 	deleteReq := httptest.NewRequest(http.MethodDelete, "/api/alarms/alarm-1", nil)
@@ -72,17 +73,21 @@ func TestMaskSensitiveDataMasksAllSlackWebhookURLs(t *testing.T) {
 	a := &alarm.Alarm{
 		ID: "alarm-1",
 		Notifications: alarm.AlarmNotifications{
-			SlackWebhooks: []alarm.SlackWebhookNotificationConfig{
-				{URL: "https://hooks.slack.test/1"},
-				{URL: "https://hooks.slack.test/2"},
+			Channels: map[string]alarm.NotificationChannel{
+				"critical": {
+					SlackWebhooks: []alarm.SlackWebhookNotificationConfig{
+						{URL: "https://hooks.slack.test/1"},
+						{URL: "https://hooks.slack.test/2"},
+					},
+				},
 			},
 		},
 	}
 
 	masked := MaskSensitiveData(a)
 
-	require.Len(t, masked.Notifications.SlackWebhooks, 2)
-	assert.Equal(t, "****", masked.Notifications.SlackWebhooks[0].URL)
-	assert.Equal(t, "****", masked.Notifications.SlackWebhooks[1].URL)
-	assert.Equal(t, "https://hooks.slack.test/1", a.Notifications.SlackWebhooks[0].URL)
+	require.Len(t, masked.Notifications.Channels["critical"].SlackWebhooks, 2)
+	assert.Equal(t, "****", masked.Notifications.Channels["critical"].SlackWebhooks[0].URL)
+	assert.Equal(t, "****", masked.Notifications.Channels["critical"].SlackWebhooks[1].URL)
+	assert.Equal(t, "https://hooks.slack.test/1", a.Notifications.Channels["critical"].SlackWebhooks[0].URL)
 }

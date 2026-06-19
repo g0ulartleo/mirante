@@ -642,12 +642,10 @@ func (x *Alarm) GetNotifications() *AlarmNotifications {
 }
 
 type AlarmNotifications struct {
-	state                protoimpl.MessageState      `protogen:"open.v1"`
-	SlackWebhooks        []*SlackWebhookNotification `protobuf:"bytes,1,rep,name=slack_webhooks,json=slackWebhooks,proto3" json:"slack_webhooks,omitempty"`
-	Emails               []*EmailNotification        `protobuf:"bytes,2,rep,name=emails,proto3" json:"emails,omitempty"`
-	NotifyMissingSignals bool                        `protobuf:"varint,3,opt,name=notify_missing_signals,json=notifyMissingSignals,proto3" json:"notify_missing_signals,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	state         protoimpl.MessageState           `protogen:"open.v1"`
+	Channels      map[string]*NotificationChannels `protobuf:"bytes,1,rep,name=channels,proto3" json:"channels,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *AlarmNotifications) Reset() {
@@ -680,21 +678,67 @@ func (*AlarmNotifications) Descriptor() ([]byte, []int) {
 	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *AlarmNotifications) GetSlackWebhooks() []*SlackWebhookNotification {
+func (x *AlarmNotifications) GetChannels() map[string]*NotificationChannels {
+	if x != nil {
+		return x.Channels
+	}
+	return nil
+}
+
+type NotificationChannels struct {
+	state                protoimpl.MessageState      `protogen:"open.v1"`
+	SlackWebhooks        []*SlackWebhookNotification `protobuf:"bytes,1,rep,name=slack_webhooks,json=slackWebhooks,proto3" json:"slack_webhooks,omitempty"`
+	Emails               []*EmailNotification        `protobuf:"bytes,2,rep,name=emails,proto3" json:"emails,omitempty"`
+	NotifyMissingSignals bool                        `protobuf:"varint,3,opt,name=notify_missing_signals,json=notifyMissingSignals,proto3" json:"notify_missing_signals,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *NotificationChannels) Reset() {
+	*x = NotificationChannels{}
+	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *NotificationChannels) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NotificationChannels) ProtoMessage() {}
+
+func (x *NotificationChannels) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NotificationChannels.ProtoReflect.Descriptor instead.
+func (*NotificationChannels) Descriptor() ([]byte, []int) {
+	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *NotificationChannels) GetSlackWebhooks() []*SlackWebhookNotification {
 	if x != nil {
 		return x.SlackWebhooks
 	}
 	return nil
 }
 
-func (x *AlarmNotifications) GetEmails() []*EmailNotification {
+func (x *NotificationChannels) GetEmails() []*EmailNotification {
 	if x != nil {
 		return x.Emails
 	}
 	return nil
 }
 
-func (x *AlarmNotifications) GetNotifyMissingSignals() bool {
+func (x *NotificationChannels) GetNotifyMissingSignals() bool {
 	if x != nil {
 		return x.NotifyMissingSignals
 	}
@@ -710,7 +754,7 @@ type SlackWebhookNotification struct {
 
 func (x *SlackWebhookNotification) Reset() {
 	*x = SlackWebhookNotification{}
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[11]
+	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -722,7 +766,7 @@ func (x *SlackWebhookNotification) String() string {
 func (*SlackWebhookNotification) ProtoMessage() {}
 
 func (x *SlackWebhookNotification) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[11]
+	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -735,7 +779,7 @@ func (x *SlackWebhookNotification) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SlackWebhookNotification.ProtoReflect.Descriptor instead.
 func (*SlackWebhookNotification) Descriptor() ([]byte, []int) {
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{11}
+	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *SlackWebhookNotification) GetUrl() string {
@@ -754,7 +798,7 @@ type EmailNotification struct {
 
 func (x *EmailNotification) Reset() {
 	*x = EmailNotification{}
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[12]
+	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -766,7 +810,7 @@ func (x *EmailNotification) String() string {
 func (*EmailNotification) ProtoMessage() {}
 
 func (x *EmailNotification) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[12]
+	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -779,7 +823,7 @@ func (x *EmailNotification) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EmailNotification.ProtoReflect.Descriptor instead.
 func (*EmailNotification) Descriptor() ([]byte, []int) {
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{12}
+	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *EmailNotification) GetTo() []string {
@@ -823,8 +867,13 @@ const file_proto_alarmruntime_v1_runtime_proto_rawDesc = "" +
 	"\x04path\x18\x05 \x03(\tR\x04path\x12\x12\n" +
 	"\x04cron\x18\x06 \x01(\tR\x04cron\x12\x1a\n" +
 	"\binterval\x18\a \x01(\tR\binterval\x12I\n" +
-	"\rnotifications\x18\b \x01(\v2#.alarmruntime.v1.AlarmNotificationsR\rnotifications\"\xd8\x01\n" +
-	"\x12AlarmNotifications\x12P\n" +
+	"\rnotifications\x18\b \x01(\v2#.alarmruntime.v1.AlarmNotificationsR\rnotifications\"\xc7\x01\n" +
+	"\x12AlarmNotifications\x12M\n" +
+	"\bchannels\x18\x01 \x03(\v21.alarmruntime.v1.AlarmNotifications.ChannelsEntryR\bchannels\x1ab\n" +
+	"\rChannelsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12;\n" +
+	"\x05value\x18\x02 \x01(\v2%.alarmruntime.v1.NotificationChannelsR\x05value:\x028\x01\"\xda\x01\n" +
+	"\x14NotificationChannels\x12P\n" +
 	"\x0eslack_webhooks\x18\x01 \x03(\v2).alarmruntime.v1.SlackWebhookNotificationR\rslackWebhooks\x12:\n" +
 	"\x06emails\x18\x02 \x03(\v2\".alarmruntime.v1.EmailNotificationR\x06emails\x124\n" +
 	"\x16notify_missing_signals\x18\x03 \x01(\bR\x14notifyMissingSignals\",\n" +
@@ -863,7 +912,7 @@ func file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP() []byte {
 }
 
 var file_proto_alarmruntime_v1_runtime_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_proto_alarmruntime_v1_runtime_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_proto_alarmruntime_v1_runtime_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_proto_alarmruntime_v1_runtime_proto_goTypes = []any{
 	(SignalStatus)(0),                // 0: alarmruntime.v1.SignalStatus
 	(RuntimeErrorCode)(0),            // 1: alarmruntime.v1.RuntimeErrorCode
@@ -878,33 +927,37 @@ var file_proto_alarmruntime_v1_runtime_proto_goTypes = []any{
 	(*RuntimeError)(nil),             // 10: alarmruntime.v1.RuntimeError
 	(*Alarm)(nil),                    // 11: alarmruntime.v1.Alarm
 	(*AlarmNotifications)(nil),       // 12: alarmruntime.v1.AlarmNotifications
-	(*SlackWebhookNotification)(nil), // 13: alarmruntime.v1.SlackWebhookNotification
-	(*EmailNotification)(nil),        // 14: alarmruntime.v1.EmailNotification
-	(*structpb.Struct)(nil),          // 15: google.protobuf.Struct
+	(*NotificationChannels)(nil),     // 13: alarmruntime.v1.NotificationChannels
+	(*SlackWebhookNotification)(nil), // 14: alarmruntime.v1.SlackWebhookNotification
+	(*EmailNotification)(nil),        // 15: alarmruntime.v1.EmailNotification
+	nil,                              // 16: alarmruntime.v1.AlarmNotifications.ChannelsEntry
+	(*structpb.Struct)(nil),          // 17: google.protobuf.Struct
 }
 var file_proto_alarmruntime_v1_runtime_proto_depIdxs = []int32{
 	11, // 0: alarmruntime.v1.ListAlarmsResponse.alarms:type_name -> alarmruntime.v1.Alarm
 	11, // 1: alarmruntime.v1.GetAlarmResponse.alarm:type_name -> alarmruntime.v1.Alarm
 	0,  // 2: alarmruntime.v1.RunAlarmResponse.status:type_name -> alarmruntime.v1.SignalStatus
 	10, // 3: alarmruntime.v1.RunAlarmResponse.error:type_name -> alarmruntime.v1.RuntimeError
-	15, // 4: alarmruntime.v1.RunAlarmResponse.details:type_name -> google.protobuf.Struct
+	17, // 4: alarmruntime.v1.RunAlarmResponse.details:type_name -> google.protobuf.Struct
 	1,  // 5: alarmruntime.v1.RuntimeError.code:type_name -> alarmruntime.v1.RuntimeErrorCode
 	12, // 6: alarmruntime.v1.Alarm.notifications:type_name -> alarmruntime.v1.AlarmNotifications
-	13, // 7: alarmruntime.v1.AlarmNotifications.slack_webhooks:type_name -> alarmruntime.v1.SlackWebhookNotification
-	14, // 8: alarmruntime.v1.AlarmNotifications.emails:type_name -> alarmruntime.v1.EmailNotification
-	4,  // 9: alarmruntime.v1.AlarmRuntime.ListAlarms:input_type -> alarmruntime.v1.ListAlarmsRequest
-	6,  // 10: alarmruntime.v1.AlarmRuntime.GetAlarm:input_type -> alarmruntime.v1.GetAlarmRequest
-	8,  // 11: alarmruntime.v1.AlarmRuntime.RunAlarm:input_type -> alarmruntime.v1.RunAlarmRequest
-	2,  // 12: alarmruntime.v1.AlarmRuntime.Health:input_type -> alarmruntime.v1.HealthRequest
-	5,  // 13: alarmruntime.v1.AlarmRuntime.ListAlarms:output_type -> alarmruntime.v1.ListAlarmsResponse
-	7,  // 14: alarmruntime.v1.AlarmRuntime.GetAlarm:output_type -> alarmruntime.v1.GetAlarmResponse
-	9,  // 15: alarmruntime.v1.AlarmRuntime.RunAlarm:output_type -> alarmruntime.v1.RunAlarmResponse
-	3,  // 16: alarmruntime.v1.AlarmRuntime.Health:output_type -> alarmruntime.v1.HealthResponse
-	13, // [13:17] is the sub-list for method output_type
-	9,  // [9:13] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	16, // 7: alarmruntime.v1.AlarmNotifications.channels:type_name -> alarmruntime.v1.AlarmNotifications.ChannelsEntry
+	14, // 8: alarmruntime.v1.NotificationChannels.slack_webhooks:type_name -> alarmruntime.v1.SlackWebhookNotification
+	15, // 9: alarmruntime.v1.NotificationChannels.emails:type_name -> alarmruntime.v1.EmailNotification
+	13, // 10: alarmruntime.v1.AlarmNotifications.ChannelsEntry.value:type_name -> alarmruntime.v1.NotificationChannels
+	4,  // 11: alarmruntime.v1.AlarmRuntime.ListAlarms:input_type -> alarmruntime.v1.ListAlarmsRequest
+	6,  // 12: alarmruntime.v1.AlarmRuntime.GetAlarm:input_type -> alarmruntime.v1.GetAlarmRequest
+	8,  // 13: alarmruntime.v1.AlarmRuntime.RunAlarm:input_type -> alarmruntime.v1.RunAlarmRequest
+	2,  // 14: alarmruntime.v1.AlarmRuntime.Health:input_type -> alarmruntime.v1.HealthRequest
+	5,  // 15: alarmruntime.v1.AlarmRuntime.ListAlarms:output_type -> alarmruntime.v1.ListAlarmsResponse
+	7,  // 16: alarmruntime.v1.AlarmRuntime.GetAlarm:output_type -> alarmruntime.v1.GetAlarmResponse
+	9,  // 17: alarmruntime.v1.AlarmRuntime.RunAlarm:output_type -> alarmruntime.v1.RunAlarmResponse
+	3,  // 18: alarmruntime.v1.AlarmRuntime.Health:output_type -> alarmruntime.v1.HealthResponse
+	15, // [15:19] is the sub-list for method output_type
+	11, // [11:15] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_proto_alarmruntime_v1_runtime_proto_init() }
@@ -918,7 +971,7 @@ func file_proto_alarmruntime_v1_runtime_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_alarmruntime_v1_runtime_proto_rawDesc), len(file_proto_alarmruntime_v1_runtime_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   13,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

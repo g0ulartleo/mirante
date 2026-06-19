@@ -5,14 +5,37 @@ import (
 	"github.com/g0ulartleo/mirante/internal/signal"
 )
 
-func Dispatch(alarmConfig *alarm.Alarm, sig signal.Signal) []error {
+func Dispatch(alarmConfig *alarm.Alarm, sig signal.Signal, prevStatus signal.Status) []error {
+	var errors []error
+
+	if sig.Status == signal.StatusUnknown {
+		for _, ch := range alarmConfig.Notifications.Channels {
+			if ch.NotifyMissingSignals {
+				errors = append(errors, dispatchCh(ch, alarmConfig, sig)...)
+			}
+		}
+		return errors
+	}
+
+	key := channelKey(sig.Status, prevStatus)
+	if key == "" {
+		return nil
+	}
+	ch, ok := alarmConfig.Notifications.Channels[key]
+	if !ok {
+		return nil
+	}
+	return dispatchCh(ch, alarmConfig, sig)
+}
+
+func dispatchCh(ch alarm.NotificationChannel, alarmConfig *alarm.Alarm, sig signal.Signal) []error {
 	notifications := []Notification{}
-	for _, email := range alarmConfig.Notifications.Emails {
+	for _, email := range ch.Emails {
 		if len(email.To) > 0 {
 			notifications = append(notifications, NewEmailNotification(email.To))
 		}
 	}
-	for _, webhook := range alarmConfig.Notifications.SlackWebhooks {
+	for _, webhook := range ch.SlackWebhooks {
 		if webhook.URL != "" {
 			notifications = append(notifications, NewSlackNotification(webhook.URL))
 		}
@@ -29,4 +52,21 @@ func Dispatch(alarmConfig *alarm.Alarm, sig signal.Signal) []error {
 		}
 	}
 	return errors
+}
+
+func channelKey(status, prevStatus signal.Status) string {
+	switch status {
+	case signal.StatusUnhealthy:
+		return "critical"
+	case signal.StatusWarning:
+		return "warnings"
+	case signal.StatusHealthy:
+		switch prevStatus {
+		case signal.StatusUnhealthy:
+			return "critical"
+		case signal.StatusWarning:
+			return "warnings"
+		}
+	}
+	return ""
 }

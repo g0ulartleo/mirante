@@ -108,19 +108,22 @@ func checkAlarm(
 		return fmt.Errorf("failed to enqueue dashboard notify task: %w", err)
 	}
 
-	changed, err := signalService.AlarmHasChangedStatus(payload.AlarmID)
+	signals, err := signalService.GetAlarmLatestSignals(payload.AlarmID, 2)
 	if err != nil {
 		return fmt.Errorf("failed to get alarm latest signals: %w", err)
 	}
+	changed := len(signals) <= 1 || signals[0].Status != signals[1].Status
 	if !changed {
 		return nil
 	}
 
+	prevStatus := signal.StatusUnknown
+	if len(signals) >= 2 {
+		prevStatus = signals[1].Status
+	}
+
 	if alarmConfig.HasNotificationsEnabled() {
-		if sig.Status == signal.StatusUnknown && !alarmConfig.Notifications.NotifyMissingSignals {
-			return nil
-		}
-		task, err := NewAlarmNotifyTask(payload.AlarmID, sig)
+		task, err := NewAlarmNotifyTask(payload.AlarmID, sig, prevStatus)
 		if err != nil {
 			return fmt.Errorf("failed to create notify task: %w", err)
 		}

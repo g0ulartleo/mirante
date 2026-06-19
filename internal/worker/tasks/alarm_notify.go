@@ -16,12 +16,13 @@ const (
 )
 
 type AlarmNotifyPayload struct {
-	AlarmID string
-	Signal  signal.Signal
+	AlarmID    string
+	Signal     signal.Signal
+	PrevStatus signal.Status
 }
 
-func NewAlarmNotifyTask(alarmID string, sig signal.Signal) (*asynq.Task, error) {
-	payload, err := json.Marshal(AlarmNotifyPayload{AlarmID: alarmID, Signal: sig})
+func NewAlarmNotifyTask(alarmID string, sig signal.Signal, prevStatus signal.Status) (*asynq.Task, error) {
+	payload, err := json.Marshal(AlarmNotifyPayload{AlarmID: alarmID, Signal: sig, PrevStatus: prevStatus})
 	if err != nil {
 		return nil, fmt.Errorf("json.Marshal failed: %w", err)
 	}
@@ -42,7 +43,7 @@ func HandleAlarmNotifyTask(ctx context.Context, t *asynq.Task, alarmService *ala
 	if err != nil {
 		return fmt.Errorf("failed to get alarm config: %w", err)
 	}
-	errors := notification.Dispatch(alarmConfig, payload.Signal)
+	errors := notification.Dispatch(alarmConfig, payload.Signal, payload.PrevStatus)
 	if len(errors) > 0 {
 		for _, err := range errors {
 			fmt.Println("error dispatching alarm notification: %w", err)
