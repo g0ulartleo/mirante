@@ -27,6 +27,11 @@ build:
 	go build -o ./bin/worker ./cmd/worker-server/main.go
 	go build -o ./bin/scheduler ./cmd/scheduler/main.go
 	go build -ldflags="-s -w" -o ./bin/mirante ./cmd/cli/main.go
+	go build -o ./bin/mirante-tui ./cmd/tui/main.go
+
+.PHONY: build-tui
+build-tui:
+	go build -o ./bin/mirante-tui ./cmd/tui/main.go
 
 .PHONY: proto-generate
 proto-generate:

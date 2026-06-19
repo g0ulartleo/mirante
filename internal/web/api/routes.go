@@ -3,6 +3,8 @@ package api
 import (
 	"log"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/g0ulartleo/mirante/internal/alarm"
 	"github.com/g0ulartleo/mirante/internal/alarm/runtime/sync"
@@ -70,9 +72,34 @@ func RegisterRoutes(e *echo.Echo, signalService *signal.Service, alarmService *a
 		return c.JSON(http.StatusOK, alarmSignals)
 	})
 
+	jsonWSBroker := NewJSONWebSocketBroker(config.Env().RedisAddr)
+	api.GET("/alarms/ws", HandleJSONWebSocket(jsonWSBroker, signalService, alarmService))
+
 	api.GET("/alarms/:alarm_id/signals", func(c echo.Context) error {
 		alarmID := c.Param("alarm_id")
-		alarmSignals, err := signalService.GetAlarmLatestSignals(alarmID, 10)
+		if v := c.QueryParam("since"); v != "" {
+			since, err := time.Parse(time.RFC3339, v)
+			if err != nil {
+				return echo.NewHTTPError(http.StatusBadRequest, "invalid since timestamp")
+			}
+			alarmSignals, err := signalService.GetAlarmSignalsSince(alarmID, since)
+			if err != nil {
+				log.Printf("Error fetching config signals: %v", err)
+				return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+			}
+			return c.JSON(http.StatusOK, alarmSignals)
+		}
+
+		limit := 10
+		if v := c.QueryParam("limit"); v != "" {
+			if n, err := strconv.Atoi(v); err == nil && n > 0 {
+				if n > 100 {
+					n = 100
+				}
+				limit = n
+			}
+		}
+		alarmSignals, err := signalService.GetAlarmLatestSignals(alarmID, limit)
 		if err != nil {
 			log.Printf("Error fetching config signals: %v", err)
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())

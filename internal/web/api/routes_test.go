@@ -35,6 +35,9 @@ func (r *fakeAPISignalRepo) Save(signal.Signal) error { return nil }
 func (r *fakeAPISignalRepo) GetAlarmLatestSignals(alarmID string, limit int) ([]signal.Signal, error) {
 	return nil, nil
 }
+func (r *fakeAPISignalRepo) GetAlarmSignalsSince(alarmID string, since time.Time) ([]signal.Signal, error) {
+	return nil, nil
+}
 func (r *fakeAPISignalRepo) GetAlarmHealth(alarmID string) (signal.Status, error) {
 	return signal.StatusUnknown, nil
 }

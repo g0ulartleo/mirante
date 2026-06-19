@@ -77,6 +77,30 @@ func (r *RedisStore) GetAlarmLatestSignals(alarmID string, limit int) ([]signal.
 	return signals, nil
 }
 
+func (r *RedisStore) GetAlarmSignalsSince(alarmID string, since time.Time) ([]signal.Signal, error) {
+	ctx := context.Background()
+	key := "signals:" + alarmID
+	results, err := r.redis.ZRevRangeByScore(ctx, key, &redis.ZRangeBy{
+		Max: "+inf",
+		Min: fmt.Sprintf("%d", since.Unix()),
+	}).Result()
+	if err != nil {
+		return nil, err
+	}
+
+	signals := make([]signal.Signal, 0, len(results))
+	for _, result := range results {
+		var sig signal.Signal
+		if err := json.Unmarshal([]byte(result), &sig); err != nil {
+			fmt.Printf("error unmarshalling signal: %v", err)
+			continue
+		}
+		signals = append(signals, sig)
+	}
+
+	return signals, nil
+}
+
 func (r *RedisStore) GetAlarmHealth(alarmID string) (signal.Status, error) {
 	ctx := context.Background()
 	lastSignalKey := "last_signal:" + alarmID

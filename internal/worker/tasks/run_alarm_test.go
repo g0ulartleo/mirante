@@ -86,6 +86,16 @@ func (f *fakeSignalRepo) GetAlarmLatestSignals(alarmID string, limit int) ([]sig
 	return append([]signal.Signal(nil), f.saved[len(f.saved)-limit:]...), nil
 }
 
+func (f *fakeSignalRepo) GetAlarmSignalsSince(alarmID string, since time.Time) ([]signal.Signal, error) {
+	matched := make([]signal.Signal, 0, len(f.saved))
+	for _, s := range f.saved {
+		if s.Timestamp.After(since) || s.Timestamp.Equal(since) {
+			matched = append(matched, s)
+		}
+	}
+	return matched, nil
+}
+
 func (f *fakeSignalRepo) GetAlarmHealth(alarmID string) (signal.Status, error) {
 	if len(f.saved) == 0 {
 		return signal.StatusUnknown, nil

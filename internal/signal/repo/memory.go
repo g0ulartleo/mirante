@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"sort"
 	"time"
 
 	"github.com/g0ulartleo/mirante/internal/signal"
@@ -29,7 +30,24 @@ func (r *MemorySignalRepository) GetAlarmLatestSignals(alarmID string, limit int
 	if len(signals) == 0 {
 		return nil, nil
 	}
+	if limit > len(signals) {
+		limit = len(signals)
+	}
 	return signals[len(signals)-limit:], nil
+}
+
+func (r *MemorySignalRepository) GetAlarmSignalsSince(alarmID string, since time.Time) ([]signal.Signal, error) {
+	signals := r.signals[alarmID]
+	matched := make([]signal.Signal, 0, len(signals))
+	for _, s := range signals {
+		if s.Timestamp.After(since) || s.Timestamp.Equal(since) {
+			matched = append(matched, s)
+		}
+	}
+	sort.Slice(matched, func(i, j int) bool {
+		return matched[i].Timestamp.After(matched[j].Timestamp)
+	})
+	return matched, nil
 }
 
 func (r *MemorySignalRepository) GetAlarmHealth(alarmID string) (signal.Status, error) {

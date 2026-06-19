@@ -19,6 +19,7 @@ func TestGroupedReadCheckCommandsAreRegistered(t *testing.T) {
 		{args: []string{"run", "alarm", "alarm-1"}, name: "run alarm"},
 		{args: []string{"init", "repo", "--runtime", "nodejs", "--dir", "runtime"}, name: "init repo"},
 		{args: []string{"new", "alarm", "alarm-1"}, name: "new alarm"},
+		{args: []string{"tui"}, name: "tui"},
 	}
 
 	for _, tt := range tests {

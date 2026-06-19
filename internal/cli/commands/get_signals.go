@@ -35,7 +35,7 @@ func (c *GetSignalsCommand) Run(args []string) error {
 	}
 	apiClient := NewAPIClient(cliConfig)
 
-	signals, err := apiClient.GetAlarmSignals(alarmID)
+	signals, err := apiClient.GetAlarmSignals(alarmID, 0)
 	if err != nil {
 		return fmt.Errorf("failed to get alarm signals: %w", err)
 

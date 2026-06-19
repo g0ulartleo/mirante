@@ -65,6 +65,31 @@ func (r *SQLiteSignalRepository) GetAlarmLatestSignals(alarmID string, limit int
 	return signals, nil
 }
 
+func (r *SQLiteSignalRepository) GetAlarmSignalsSince(alarmID string, since time.Time) ([]signal.Signal, error) {
+	query := `
+		SELECT alarm_id, status, message, details_json, created_at
+		FROM signals WHERE alarm_id = ? AND created_at >= ? ORDER BY created_at DESC`
+	rows, err := r.db.Query(query, alarmID, since)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	signals := make([]signal.Signal, 0)
+	for rows.Next() {
+		var s signal.Signal
+		var detailsJSON sql.NullString
+		err := rows.Scan(&s.AlarmID, &s.Status, &s.Message, &detailsJSON, &s.Timestamp)
+		if err != nil {
+			return nil, err
+		}
+		if err := scanDetails(detailsJSON, &s); err != nil {
+			return nil, err
+		}
+		signals = append(signals, s)
+	}
+	return signals, nil
+}
+
 func (r *SQLiteSignalRepository) GetAlarmHealth(alarmID string) (signal.Status, error) {
 	query := `
 		SELECT status
