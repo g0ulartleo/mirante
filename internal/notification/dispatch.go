@@ -1,11 +1,16 @@
 package notification
 
 import (
+	"os"
+
 	"github.com/g0ulartleo/mirante/internal/alarm"
 	"github.com/g0ulartleo/mirante/internal/signal"
 )
 
 func Dispatch(alarmConfig *alarm.Alarm, sig signal.Signal, prevStatus signal.Status) []error {
+	if os.Getenv("IGNORE_NOTIFICATIONS") != "" {
+		return nil
+	}
 	var errors []error
 
 	if sig.Status == signal.StatusUnknown {

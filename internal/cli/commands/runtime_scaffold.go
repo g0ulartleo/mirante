@@ -1,5 +1,4 @@
 package commands
-
 import (
 	"fmt"
 	"os"
@@ -325,7 +324,7 @@ func nodeDockerCompose() string {
     volumes:
       - redis-data:/data
 
-  mirante:
+  core:
     image: g0ulartleo/mirante:latest
     ports:
       - 40169:40169
