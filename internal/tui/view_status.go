@@ -8,8 +8,7 @@ import (
 )
 
 func (m *Model) statusBar() string {
-	mode := "NORMAL"
-	modeColor := colorAccent
+	mode, modeColor := m.statusBadgeMode()
 	if m.filter != "" {
 		mode = "FILTER"
 		modeColor = colorWarning
@@ -57,4 +56,19 @@ func (m *Model) statusBar() string {
 		gap = 1
 	}
 	return left + strings.Repeat(" ", gap) + right
+}
+
+func (m *Model) statusBadgeMode() (string, lipgloss.Color) {
+	if m.listMode == allList {
+		return "ALL", colorAccent
+	}
+	hc := m.overallHealth()
+	switch {
+	case hc.unhealthy > 0:
+		return "TRIAGE", colorUnhealthy
+	case hc.unknown > 0:
+		return "TRIAGE", colorUnknown
+	default:
+		return "TRIAGE", colorHealthy
+	}
 }

@@ -19,21 +19,9 @@ func (m *Model) runCommand(cmd string) (tea.Model, tea.Cmd) {
 		m.statusMsg = "syncing…"
 		return m, syncAlarmsCmd(m.client)
 	case "run":
-		id := m.selectedID
-		if id == "" {
-			if as, ok := m.selectedRowAlarm(); ok {
-				id = as.Alarm.ID
-			}
-		}
-		if id == "" {
-			m.statusMsg = "no alarm selected"
-			return m, nil
-		}
-		m.statusMsg = "running…"
-		return m, runAlarmCmd(m.client, id)
+		return m.runSelectedAlarm()
 	case "refresh", "r":
-		m.statusMsg = "refreshing…"
-		return m, fetchCmd(m.client)
+		return m.refreshCurrentView()
 	case "sort":
 		if len(fields) > 1 {
 			switch fields[1] {

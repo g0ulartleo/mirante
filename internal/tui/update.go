@@ -47,8 +47,8 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case detailSignalsMsg:
 		if msg.id == m.selectedID {
-			m.detailSignals = msg.signals
-			m.detailHistoryAt = newestSignalTime(msg.signals)
+			m.detailSignals = normalizeDetailSignals(msg.signals, detailSignalsFetchLimit)
+			m.detailHistoryAt = newestSignalTime(m.detailSignals)
 			if m.detailHistoryAt.IsZero() {
 				m.detailHistoryAt = time.Now()
 			}

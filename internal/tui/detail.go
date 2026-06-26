@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"sort"
 	"time"
 
 	"github.com/charmbracelet/bubbles/viewport"
@@ -70,4 +71,39 @@ func newestSignalTime(signals []signal.Signal) time.Time {
 		}
 	}
 	return newest
+}
+
+func normalizeDetailSignals(signals []signal.Signal, limit int) []signal.Signal {
+	return mergeDetailSignals(nil, signals, limit)
+}
+
+func mergeDetailSignals(existing, incoming []signal.Signal, limit int) []signal.Signal {
+	if len(existing) == 0 && len(incoming) == 0 {
+		return nil
+	}
+	seen := make(map[string]struct{}, len(existing)+len(incoming))
+	merged := make([]signal.Signal, 0, len(existing)+len(incoming))
+	add := func(signals []signal.Signal) {
+		for _, s := range signals {
+			key := detailSignalKey(s)
+			if _, ok := seen[key]; ok {
+				continue
+			}
+			seen[key] = struct{}{}
+			merged = append(merged, s)
+		}
+	}
+	add(existing)
+	add(incoming)
+	sort.SliceStable(merged, func(i, j int) bool {
+		return merged[i].Timestamp.After(merged[j].Timestamp)
+	})
+	if limit > 0 && len(merged) > limit {
+		merged = merged[:limit]
+	}
+	return merged
+}
+
+func detailSignalKey(s signal.Signal) string {
+	return s.AlarmID + "\x00" + s.Timestamp.UTC().Format(time.RFC3339Nano) + "\x00" + string(s.Status) + "\x00" + s.Message
 }

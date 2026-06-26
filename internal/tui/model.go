@@ -81,6 +81,10 @@ type Model struct {
 	err        error
 	statusMsg  string
 	showHelp   bool
+	leaderMode bool
+
+	commandPaletteOpen   bool
+	commandPaletteCursor int
 
 	marqueeOffset int
 

@@ -29,6 +29,8 @@ func (m *Model) listScreen() string {
 	switch {
 	case m.err != nil && len(m.all) == 0:
 		body = errorStyle.Render("Error: " + m.err.Error())
+	case m.listMode == triageList && m.filter == "" && len(m.all) > 0 && len(m.rows) == 0:
+		body = m.peacefulTriage(bodyHeight)
 	case len(m.rows) == 0:
 		body = lipgloss.NewStyle().Padding(1, 2).Foreground(colorMuted).Render("No alarms match.")
 	default:
@@ -36,6 +38,18 @@ func (m *Model) listScreen() string {
 	}
 	body = lipgloss.NewStyle().Height(bodyHeight).Render(body)
 	return lipgloss.JoinVertical(lipgloss.Left, header, colHeader, body, status)
+}
+
+func (m *Model) peacefulTriage(height int) string {
+	frames := []string{"☁", "☁☁", "☁ ☁", " ☁☁"}
+	frame := frames[m.marqueeOffset%len(frames)]
+	art := strings.Join([]string{
+		lipgloss.NewStyle().Foreground(colorHealthy).Bold(true).Render("All peaceful for now"),
+		lipgloss.NewStyle().Foreground(colorMuted).Render("No alarms need triage."),
+		lipgloss.NewStyle().Foreground(colorAccent).Render("      " + frame),
+		lipgloss.NewStyle().Foreground(colorFaint).Render("   .-^-._.-^-._.-^-."),
+	}, "\n")
+	return lipgloss.Place(m.width, height, lipgloss.Center, lipgloss.Center, art)
 }
 
 func (m *Model) listBodyHeight() int {

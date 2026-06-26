@@ -13,5 +13,8 @@ func (m *Model) View() string {
 	if m.showHelp {
 		s = m.overlayHelp()
 	}
+	if m.commandPaletteOpen {
+		s = m.overlayCommandPalette()
+	}
 	return s
 }

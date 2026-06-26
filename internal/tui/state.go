@@ -62,6 +62,11 @@ func (m *Model) applyData(data []alarm.AlarmSignals) {
 	m.ensureVisible()
 	if m.mode == detailView {
 		if as, ok := m.selectedAlarm(); ok {
+			m.detailSignals = mergeDetailSignals(m.detailSignals, as.Signals, detailSignalsFetchLimit)
+			m.detailHistoryAt = newestSignalTime(m.detailSignals)
+			if m.detailHistoryAt.IsZero() {
+				m.detailHistoryAt = time.Now()
+			}
 			m.detail.SetContent(m.renderDetail(as))
 		} else {
 			m.mode = listView

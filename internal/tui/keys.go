@@ -12,8 +12,31 @@ func (m *Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, tea.Quit
 	}
 
+	if msg.String() == "ctrl+p" {
+		if m.commandPaletteOpen {
+			m.commandPaletteOpen = false
+			return m, nil
+		}
+		m.openCommandPalette()
+		return m, nil
+	}
+
+	if m.commandPaletteOpen {
+		return m.handleCommandPaletteKey(msg)
+	}
+
+	if m.leaderMode {
+		return m.handleLeaderKey(msg)
+	}
+
 	if m.input != inputNone {
 		return m.handleInputKey(msg)
+	}
+
+	if msg.String() == "ctrl+x" {
+		m.leaderMode = true
+		m.statusMsg = "leader: r run · s sync"
+		return m, nil
 	}
 
 	if msg.String() == "q" {
@@ -124,6 +147,11 @@ func (m *Model) handleListKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.input = inputCommand
 		m.inputBuf = ""
 		return m, nil
+	case "y":
+		if as, ok := m.selectedRowAlarm(); ok && as.Alarm.ID != "" {
+			return m, copyAlarmIDCmd(as.Alarm.ID)
+		}
+		return m, nil
 	case "s", "S":
 		m.toggleSort()
 		m.rebuildRows()
@@ -131,8 +159,7 @@ func (m *Model) handleListKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "?":
 		m.showHelp = true
 	case "r":
-		m.statusMsg = "refreshing…"
-		return m, fetchCmd(m.client)
+		return m.refreshCurrentView()
 	case "tab":
 		switch m.listMode {
 		case triageList:
@@ -162,8 +189,7 @@ func (m *Model) handleDetailKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		}
 		return m, nil
 	case "r":
-		m.statusMsg = "refreshing…"
-		return m, tea.Batch(fetchCmd(m.client), fetchDetailCmd(m.client, m.selectedID))
+		return m.refreshCurrentView()
 	case "j", "down":
 		n := len(m.detailSignals)
 		if n > 0 && m.detailSignalCursor < n-1 {
@@ -209,6 +235,23 @@ func (m *Model) handleDetailKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	m.detail, cmd = m.detail.Update(msg)
 	return m, cmd
+}
+
+func (m *Model) handleLeaderKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	m.leaderMode = false
+	switch msg.String() {
+	case "r":
+		return m.runSelectedAlarm()
+	case "s":
+		m.statusMsg = "syncing…"
+		return m, syncAlarmsCmd(m.client)
+	case "ctrl+x", "esc":
+		m.statusMsg = ""
+		return m, nil
+	default:
+		m.statusMsg = "unknown leader: " + msg.String()
+		return m, nil
+	}
 }
 
 func deleteLastInputWord(s string) string {

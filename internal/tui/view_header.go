@@ -119,6 +119,7 @@ func (m *Model) keysPanel(w int) string {
 		keyRow("l / → / ↵", "open alarm", inner),
 		keyRow("h / ← / esc", "back · clear", inner),
 		keyRow("/ · :", "filter · command", inner),
+		keyRow("ctrl+p", "commands", inner),
 		keyRow("tab", "toggle view", inner),
 		keyRow("?", "help", inner),
 	}

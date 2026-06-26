@@ -16,6 +16,8 @@ func (m *Model) overlayHelp() string {
 		keyRow("h / ← / esc", "back · clear filter", 30),
 		keyRow("/", "filter", 30),
 		keyRow(":", "command", 30),
+		keyRow("ctrl+p", "command box", 30),
+		keyRow("ctrl+x", "leader", 30),
 		keyRow("s", "toggle sort", 30),
 		keyRow("tab", "toggle triage/all view", 30),
 		keyRow("r", "refresh", 30),
