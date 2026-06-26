@@ -12,35 +12,23 @@ so production usage is not yet recommended.
 
 ### components
 
-- **HTTP Server:** Serves the web UI that displays alarm status and history, and an admin API for CLI usage. Located in `cmd/http-server/`.
-- **Worker Server:** Processes background tasks such as writing signals and requesting sentinel checks over gRPC. See `cmd/worker-server/`.
-- **Sentinel Runner:** Executes sentinels and returns check results via gRPC, isolating sentinel dependencies from Mirante core. Located in `cmd/sentinel-runner/`.
-- **Scheduler:** Registers and executes periodic sentinel checks as well as cleanup tasks. Located in `cmd/scheduler/`.
-- **CLI:** A command-line interface for managing alarms and signals. See `cmd/cli/`.
-
-### builtin-sentinels
-
-- **EndpointChecker**: Performs HTTP operations on URLs and validates responses based on configuration
-- **MySQLCountChecker**: Executes SQL queries that return counts and validates them against expected values
-- **SQSCountChecker**: Monitors the number of messages in an SQS queue and alerts if it exceeds a threshold
-- see all built-in sentinels with configuration examples [here](docs/builtin-sentinels.md)
-- sentinel runtime contract and external runner guide [here](docs/sentinel-runtime.md)
-
+- **Core API:** Serves mirante core API and a simple web interface that displays alarm signals and history.
+- **Worker:** Processes background tasks such as writing signals and requesting sentinel checks over gRPC.
+- **Scheduler:** Registers and executes periodic alarm checks as well as cleanup tasks.
+- **Alarm Runtime:** A client managed server that lists and executes alarms via gRPC, isolating alarm dependencies and secrets.
+- **CLI:** A command-line interface for managing alarms. Type `mirante help` to get started.
+- **TUI:** A terminal based dashboard for managing alarms. Accessible via `mirante tui`
 
 ## what is working right now
 
-- alarms management using the CLI (set-alarm, get-alarm, delete-alarm)
+- alarms management using the your our repo
+- any gRPC supported language can serve the alarm runtime, but only nodejs has the cli initialization and sdk.
 - notifications through email or slack
-- built-in sentinels
-
+- cli and TUI for alarm management
 
 ## what is in the roadmap
 
-- allow env variables on alarm configs
-- alarm initialization/integration with github repo
-- external/private sentinel runners in any language using the runtime contract
-- add warning state for alarms
-
+-
 
 ## setting up new alarms
 
