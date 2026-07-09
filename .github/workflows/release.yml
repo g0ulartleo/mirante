@@ -14,7 +14,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: '1.23'
+        go-version: '1.24.2'
 
     - name: Build CLI
       run: |
@@ -25,6 +25,20 @@ jobs:
         CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o mirante-windows-amd64.exe ./cmd/cli/main.go
 
         chmod +x mirante-*
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USER }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build & push Docker image
+      run: |
+        IMAGE=g0ulartleo/mirante
+        TAG=${GITHUB_REF_NAME#v}
+        docker build -t $IMAGE:$TAG -t $IMAGE:latest .
+        docker push $IMAGE:$TAG
+        docker push $IMAGE:latest
 
     - name: Create Release
       uses: softprops/action-gh-release@v1
