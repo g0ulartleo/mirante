@@ -41,7 +41,6 @@ RUN apk add --no-cache ca-certificates tzdata sqlite-libs && update-ca-certifica
 
 COPY --from=builder /app/bin/ /app/bin/
 COPY --from=builder /app/static /app/static
-COPY --from=builder /app/config /app/config
 
 ENV HTTP_ADDR=0.0.0.0
 
