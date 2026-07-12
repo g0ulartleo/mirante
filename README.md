@@ -22,7 +22,7 @@ so production usage is not yet recommended.
 ## what is working right now
 
 - alarms management using the your our repo
-- any gRPC supported language can serve the alarm runtime, but only nodejs has the cli initialization and sdk.
+- any gRPC supported language can serve the alarm runtime, with Node.js and Go having CLI scaffold and SDK support.
 - notifications through email or slack
 - cli and TUI for alarm management
 
