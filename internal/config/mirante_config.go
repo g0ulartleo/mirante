@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 )
@@ -135,6 +136,24 @@ func applyEnvOverrides(config *MiranteConfig) {
 	}
 	if value := os.Getenv("DASHBOARD_BASIC_AUTH_PASSWORD"); value != "" {
 		config.Auth.Basic.Password = value
+	}
+	if value := os.Getenv("OAUTH_ENABLED"); value != "" {
+		config.Auth.OAuth.Enabled = value == "true" || value == "1"
+	}
+	if value := os.Getenv("OAUTH_PROVIDER"); value != "" {
+		config.Auth.OAuth.Provider = value
+	}
+	if value := os.Getenv("OAUTH_REDIRECT_URL"); value != "" {
+		config.Auth.OAuth.RedirectURL = value
+	}
+	if value := os.Getenv("OAUTH_ALLOWED_DOMAINS"); value != "" {
+		config.Auth.OAuth.AllowedDomains = strings.Split(value, ",")
+	}
+	if value := os.Getenv("OAUTH_ALLOWED_EMAILS"); value != "" {
+		config.Auth.OAuth.AllowedEmails = strings.Split(value, ",")
+	}
+	if value := os.Getenv("OAUTH_SESSION_TIMEOUT"); value != "" {
+		config.Auth.OAuth.SessionTimeout = value
 	}
 	if value := os.Getenv("SMTP_HOST"); value != "" {
 		config.SMTP.Host = value
