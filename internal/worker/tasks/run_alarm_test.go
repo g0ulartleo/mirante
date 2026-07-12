@@ -9,7 +9,7 @@ import (
 	"github.com/g0ulartleo/mirante/internal/alarm"
 	runtimeclient "github.com/g0ulartleo/mirante/internal/alarm/runtime/client"
 	"github.com/g0ulartleo/mirante/internal/signal"
-	runtimev1 "github.com/g0ulartleo/mirante/proto/alarmruntime/v1"
+	alarmsv1 "github.com/g0ulartleo/mirante/proto/alarms/v1"
 	"github.com/hibiken/asynq"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -117,7 +117,7 @@ func TestCheckAlarm_UnsupportedReturnsSkipRetry(t *testing.T) {
 	signalService := signal.NewService(signalRepo)
 
 	runtimeErr := &runtimeclient.RuntimeError{
-		Code: runtimev1.RuntimeErrorCode_RUNTIME_ERROR_CODE_UNSUPPORTED,
+		Code: alarmsv1.RuntimeErrorCode_RUNTIME_ERROR_CODE_UNSUPPORTED,
 		Signal: signal.Signal{
 			AlarmID:   "alarm-1",
 			Status:    signal.StatusUnknown,
@@ -150,7 +150,7 @@ func TestCheckAlarm_CheckFailedWritesUnknownAndReturnsNil(t *testing.T) {
 	signalService := signal.NewService(signalRepo)
 
 	runtimeErr := &runtimeclient.RuntimeError{
-		Code: runtimev1.RuntimeErrorCode_RUNTIME_ERROR_CODE_RUNALARM_FAILED,
+		Code: alarmsv1.RuntimeErrorCode_RUNTIME_ERROR_CODE_RUNALARM_FAILED,
 		Signal: signal.Signal{
 			AlarmID:   "alarm-1",
 			Status:    signal.StatusUnknown,

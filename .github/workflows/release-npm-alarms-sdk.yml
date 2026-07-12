@@ -1,0 +1,38 @@
+name: Release NPM Alarms SDK
+
+on:
+  push:
+    tags:
+      - 'packages/npm/alarms-sdk/v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/npm/alarms-sdk
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        registry-url: 'https://registry.npmjs.org'
+
+    - run: npm ci
+
+    - name: Verify proto copy
+      run: |
+        node -e "
+          var fs=require('fs');
+          var src='../../../proto/alarms/v1/alarms.proto';
+          if(!fs.existsSync(src)) throw new Error('root proto not found at ' + src);
+          fs.copyFileSync(src, 'runtime.proto');
+          if(!fs.existsSync('runtime.proto')) throw new Error('runtime.proto not copied');
+        "
+
+    - run: npm test
+
+    - run: npm publish --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

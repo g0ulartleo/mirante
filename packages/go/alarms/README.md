@@ -9,14 +9,14 @@ This package is a nested Go module and has independent versions from the root Mi
 Release tags must include the module path prefix:
 
 ```sh
-git tag packages/go/alarms-sdk/v0.1.0
-git push origin packages/go/alarms-sdk/v0.1.0
+git tag packages/go/alarms/v0.1.0
+git push origin packages/go/alarms/v0.1.0
 ```
 
 Generated runtime repositories should require the latest published SDK version:
 
 ```go
-require github.com/g0ulartleo/mirante/packages/go/alarms-sdk v0.1.0
+require github.com/g0ulartleo/mirante/packages/go/alarms v0.1.0
 ```
 
 ## Local Development
@@ -24,7 +24,7 @@ require github.com/g0ulartleo/mirante/packages/go/alarms-sdk v0.1.0
 Before the SDK version is tagged, test generated runtimes with a local replace:
 
 ```sh
-go mod edit -replace github.com/g0ulartleo/mirante/packages/go/alarms-sdk=../mirante/packages/go/alarms-sdk
+go mod edit -replace github.com/g0ulartleo/mirante/packages/go/alarms=../mirante/packages/go/alarms
 go mod tidy
 ```
 
@@ -32,7 +32,7 @@ Do not commit local replaces in generated runtime repositories unless that repos
 
 ## Proto Generation
 
-`proto/alarmruntime/v1/runtime.proto` in the root repository is the schema source of truth.
+`proto/alarms/v1/alarms.proto` in the root repository is the schema source of truth.
 
 Regenerate SDK stubs from the root repository:
 

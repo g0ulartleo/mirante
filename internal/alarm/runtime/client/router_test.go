@@ -9,33 +9,33 @@ import (
 
 	"github.com/g0ulartleo/mirante/internal/config"
 	"github.com/g0ulartleo/mirante/internal/signal"
-	runtimev1 "github.com/g0ulartleo/mirante/proto/alarmruntime/v1"
+	alarmsv1 "github.com/g0ulartleo/mirante/proto/alarms/v1"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 )
 
 type testRuntimeServer struct {
-	runtimev1.UnimplementedAlarmRuntimeServer
-	status runtimev1.SignalStatus
+	alarmsv1.UnimplementedAlarmRuntimeServer
+	status alarmsv1.SignalStatus
 	calls  atomic.Int32
 }
 
-func (s *testRuntimeServer) RunAlarm(ctx context.Context, req *runtimev1.RunAlarmRequest) (*runtimev1.RunAlarmResponse, error) {
+func (s *testRuntimeServer) RunAlarm(ctx context.Context, req *alarmsv1.RunAlarmRequest) (*alarmsv1.RunAlarmResponse, error) {
 	s.calls.Add(1)
-	return &runtimev1.RunAlarmResponse{
+	return &alarmsv1.RunAlarmResponse{
 		Status:  s.status,
 		Message: s.status.String(),
 	}, nil
 }
 
-func (s *testRuntimeServer) ListAlarms(ctx context.Context, req *runtimev1.ListAlarmsRequest) (*runtimev1.ListAlarmsResponse, error) {
-	return &runtimev1.ListAlarmsResponse{}, nil
+func (s *testRuntimeServer) ListAlarms(ctx context.Context, req *alarmsv1.ListAlarmsRequest) (*alarmsv1.ListAlarmsResponse, error) {
+	return &alarmsv1.ListAlarmsResponse{}, nil
 }
 
 func TestRouterCheckSelectsExactRuntime(t *testing.T) {
-	runtimeA := &testRuntimeServer{status: runtimev1.SignalStatus_SIGNAL_STATUS_HEALTHY}
-	runtimeB := &testRuntimeServer{status: runtimev1.SignalStatus_SIGNAL_STATUS_WARNING}
+	runtimeA := &testRuntimeServer{status: alarmsv1.SignalStatus_SIGNAL_STATUS_HEALTHY}
+	runtimeB := &testRuntimeServer{status: alarmsv1.SignalStatus_SIGNAL_STATUS_WARNING}
 	addrA := startRuntimeServer(t, runtimeA)
 	addrB := startRuntimeServer(t, runtimeB)
 
@@ -57,10 +57,10 @@ func TestRouterCheckSelectsExactRuntime(t *testing.T) {
 	assert.Equal(t, int32(1), runtimeB.calls.Load())
 }
 
-func startRuntimeServer(t *testing.T, srv runtimev1.AlarmRuntimeServer) string {
+func startRuntimeServer(t *testing.T, srv alarmsv1.AlarmRuntimeServer) string {
 	t.Helper()
 	grpcServer := grpc.NewServer()
-	runtimev1.RegisterAlarmRuntimeServer(grpcServer, srv)
+	alarmsv1.RegisterAlarmRuntimeServer(grpcServer, srv)
 	lis, err := net.Listen("tcp", "127.0.0.1:0")
 	require.NoError(t, err)
 	t.Cleanup(func() {

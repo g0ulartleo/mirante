@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.29.3
-// source: proto/alarmruntime/v1/runtime.proto
+// source: proto/alarms/v1/alarms.proto
 
-package alarmruntimev1
+package alarmsv1
 
 import (
 	context "context"
@@ -19,10 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AlarmRuntime_ListAlarms_FullMethodName = "/alarmruntime.v1.AlarmRuntime/ListAlarms"
-	AlarmRuntime_GetAlarm_FullMethodName   = "/alarmruntime.v1.AlarmRuntime/GetAlarm"
-	AlarmRuntime_RunAlarm_FullMethodName   = "/alarmruntime.v1.AlarmRuntime/RunAlarm"
-	AlarmRuntime_Health_FullMethodName     = "/alarmruntime.v1.AlarmRuntime/Health"
+	AlarmRuntime_ListAlarms_FullMethodName = "/alarms.v1.AlarmRuntime/ListAlarms"
+	AlarmRuntime_GetAlarm_FullMethodName   = "/alarms.v1.AlarmRuntime/GetAlarm"
+	AlarmRuntime_RunAlarm_FullMethodName   = "/alarms.v1.AlarmRuntime/RunAlarm"
+	AlarmRuntime_Health_FullMethodName     = "/alarms.v1.AlarmRuntime/Health"
 )
 
 // AlarmRuntimeClient is the client API for AlarmRuntime service.
@@ -210,7 +210,7 @@ func _AlarmRuntime_Health_Handler(srv interface{}, ctx context.Context, dec func
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var AlarmRuntime_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "alarmruntime.v1.AlarmRuntime",
+	ServiceName: "alarms.v1.AlarmRuntime",
 	HandlerType: (*AlarmRuntimeServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -231,5 +231,5 @@ var AlarmRuntime_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/alarmruntime/v1/runtime.proto",
+	Metadata: "proto/alarms/v1/alarms.proto",
 }

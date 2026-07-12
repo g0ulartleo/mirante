@@ -8,7 +8,7 @@ import (
 
 	runtimeexample "github.com/g0ulartleo/mirante/internal/alarm/runtime/example"
 	runtimeclient "github.com/g0ulartleo/mirante/internal/alarm/runtime/client"
-	runtimev1 "github.com/g0ulartleo/mirante/proto/alarmruntime/v1"
+	alarmsv1 "github.com/g0ulartleo/mirante/proto/alarms/v1"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
@@ -16,7 +16,7 @@ import (
 
 func TestRuntimeClientCheckReturnsUnsupportedForUnknownAlarm(t *testing.T) {
 	grpcServer := grpc.NewServer()
-	runtimev1.RegisterAlarmRuntimeServer(grpcServer, runtimeexample.New())
+	alarmsv1.RegisterAlarmRuntimeServer(grpcServer, runtimeexample.New())
 
 	lis, err := net.Listen("tcp", "127.0.0.1:0")
 	require.NoError(t, err)
@@ -40,5 +40,5 @@ func TestRuntimeClientCheckReturnsUnsupportedForUnknownAlarm(t *testing.T) {
 
 	runtimeErr, ok := err.(*runtimeclient.RuntimeError)
 	require.True(t, ok)
-	assert.Equal(t, runtimev1.RuntimeErrorCode_RUNTIME_ERROR_CODE_UNSUPPORTED, runtimeErr.Code)
+	assert.Equal(t, alarmsv1.RuntimeErrorCode_RUNTIME_ERROR_CODE_UNSUPPORTED, runtimeErr.Code)
 }

@@ -11,7 +11,7 @@
     "./runtime.proto": "./runtime.proto"
   },
   "scripts": {
-    "prepare": "node -e \"var fs=require('fs');var src='../../../proto/alarmruntime/v1/runtime.proto';if(fs.existsSync(src))fs.copyFileSync(src,'runtime.proto')\"",
+    "prepare": "node -e \"var fs=require('fs');var src='../../../proto/alarms/v1/alarms.proto';if(fs.existsSync(src))fs.copyFileSync(src,'runtime.proto')\"",
     "test": "node --test"
   },
   "dependencies": {

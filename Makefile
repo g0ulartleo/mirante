@@ -36,18 +36,18 @@ build-tui:
 
 .PHONY: proto-generate
 proto-generate:
-	protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative proto/alarmruntime/v1/runtime.proto
+	protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative proto/alarms/v1/alarms.proto
 
 .PHONY: proto-generate-go-sdk
 proto-generate-go-sdk:
 	protoc --proto_path=. \
-		--go_out=packages/go/alarms-sdk \
-		--go_opt=module=github.com/g0ulartleo/mirante/packages/go/alarms-sdk \
-		--go_opt=Mproto/alarmruntime/v1/runtime.proto=github.com/g0ulartleo/mirante/packages/go/alarms-sdk/alarmruntime/v1 \
-		--go-grpc_out=packages/go/alarms-sdk \
-		--go-grpc_opt=module=github.com/g0ulartleo/mirante/packages/go/alarms-sdk \
-		--go-grpc_opt=Mproto/alarmruntime/v1/runtime.proto=github.com/g0ulartleo/mirante/packages/go/alarms-sdk/alarmruntime/v1 \
-		proto/alarmruntime/v1/runtime.proto
+		--go_out=packages/go/alarms \
+		--go_opt=module=github.com/g0ulartleo/mirante/packages/go/alarms \
+		--go_opt=Mproto/alarms/v1/alarms.proto=github.com/g0ulartleo/mirante/packages/go/alarms/v1 \
+		--go-grpc_out=packages/go/alarms \
+		--go-grpc_opt=module=github.com/g0ulartleo/mirante/packages/go/alarms \
+		--go-grpc_opt=Mproto/alarms/v1/alarms.proto=github.com/g0ulartleo/mirante/packages/go/alarms/v1 \
+		proto/alarms/v1/alarms.proto
 
 .PHONY: init-oauth
 init-oauth:

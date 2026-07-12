@@ -1,10 +1,10 @@
-package alarmsdk
+package alarms
 
 import (
 	"context"
 	"testing"
 
-	runtimev1 "github.com/g0ulartleo/mirante/packages/go/alarms-sdk/alarmruntime/v1"
+	alarmsv1 "github.com/g0ulartleo/mirante/packages/go/alarms/v1"
 )
 
 func TestRuntimeServerListsAndRunsAlarms(t *testing.T) {
@@ -21,7 +21,7 @@ func TestRuntimeServerListsAndRunsAlarms(t *testing.T) {
 		t.Fatalf("NewRuntimeServer() error = %v", err)
 	}
 
-	listed, err := server.ListAlarms(context.Background(), &runtimev1.ListAlarmsRequest{})
+	listed, err := server.ListAlarms(context.Background(), &alarmsv1.ListAlarmsRequest{})
 	if err != nil {
 		t.Fatalf("ListAlarms() error = %v", err)
 	}
@@ -32,11 +32,11 @@ func TestRuntimeServerListsAndRunsAlarms(t *testing.T) {
 		t.Fatalf("alarm id = %q, want ping-api", got)
 	}
 
-	run, err := server.RunAlarm(context.Background(), &runtimev1.RunAlarmRequest{AlarmId: "ping-api"})
+	run, err := server.RunAlarm(context.Background(), &alarmsv1.RunAlarmRequest{AlarmId: "ping-api"})
 	if err != nil {
 		t.Fatalf("RunAlarm() error = %v", err)
 	}
-	if got := run.GetStatus(); got != runtimev1.SignalStatus_SIGNAL_STATUS_HEALTHY {
+	if got := run.GetStatus(); got != alarmsv1.SignalStatus_SIGNAL_STATUS_HEALTHY {
 		t.Fatalf("status = %s, want healthy", got)
 	}
 }

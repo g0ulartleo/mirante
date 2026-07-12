@@ -1,8 +1,8 @@
-package alarmsdk
+package alarms
 
 import (
 	"fmt"
-	runtimev1 "github.com/g0ulartleo/mirante/packages/go/alarms-sdk/alarmruntime/v1"
+	alarmsv1 "github.com/g0ulartleo/mirante/packages/go/alarms/v1"
 	"google.golang.org/grpc"
 	"net"
 )
@@ -14,7 +14,7 @@ type RuntimeOptions struct {
 }
 
 type RuntimeServer struct {
-	runtimev1.UnimplementedAlarmRuntimeServer
+	alarmsv1.UnimplementedAlarmRuntimeServer
 	alarms map[string]Alarm
 }
 
@@ -35,7 +35,7 @@ func ServeRuntime(opts RuntimeOptions) error {
 	}
 
 	grpcServer := grpc.NewServer(opts.Options...)
-	runtimev1.RegisterAlarmRuntimeServer(grpcServer, runtimeServer)
+	alarmsv1.RegisterAlarmRuntimeServer(grpcServer, runtimeServer)
 	return grpcServer.Serve(listener)
 }
 

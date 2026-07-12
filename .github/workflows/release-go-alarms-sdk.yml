@@ -3,14 +3,14 @@ name: Release Go Alarms SDK
 on:
   push:
     tags:
-      - 'packages/go/alarms-sdk/v*'
+      - 'packages/go/alarms/v*'
 
 jobs:
   validate:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: packages/go/alarms-sdk
+        working-directory: packages/go/alarms
     steps:
     - uses: actions/checkout@v4
 
@@ -23,7 +23,7 @@ jobs:
 
     - name: Check generated stubs match committed
       run: |
-        if [ -n "$(git status --porcelain packages/go/alarms-sdk/alarmruntime)" ]; then
+        if [ -n "$(git status --porcelain packages/go/alarms/alarmruntime)" ]; then
           echo "Proto stubs are stale. Run 'make proto-generate-go-sdk' and commit."
           exit 1
         fi

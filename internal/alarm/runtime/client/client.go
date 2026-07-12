@@ -7,7 +7,7 @@ import (
 
 	"github.com/g0ulartleo/mirante/internal/alarm"
 	"github.com/g0ulartleo/mirante/internal/signal"
-	runtimev1 "github.com/g0ulartleo/mirante/proto/alarmruntime/v1"
+	alarmsv1 "github.com/g0ulartleo/mirante/proto/alarms/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
@@ -17,12 +17,12 @@ import (
 
 type Client struct {
 	conn    *grpc.ClientConn
-	service runtimev1.AlarmRuntimeClient
+	service alarmsv1.AlarmRuntimeClient
 	timeout time.Duration
 }
 
 type RuntimeError struct {
-	Code   runtimev1.RuntimeErrorCode
+	Code   alarmsv1.RuntimeErrorCode
 	Signal signal.Signal
 }
 
@@ -37,7 +37,7 @@ func New(addr string, timeout time.Duration) (*Client, error) {
 	}
 	return &Client{
 		conn:    conn,
-		service: runtimev1.NewAlarmRuntimeClient(conn),
+		service: alarmsv1.NewAlarmRuntimeClient(conn),
 		timeout: timeout,
 	}, nil
 }
@@ -50,7 +50,7 @@ func (c *Client) ListAlarms(ctx context.Context) ([]*alarm.Alarm, error) {
 	rpcCtx, cancel := context.WithTimeout(ctx, c.timeout)
 	defer cancel()
 
-	resp, err := c.service.ListAlarms(rpcCtx, &runtimev1.ListAlarmsRequest{})
+	resp, err := c.service.ListAlarms(rpcCtx, &alarmsv1.ListAlarmsRequest{})
 	if err != nil {
 		return nil, err
 	}
@@ -67,11 +67,11 @@ func (c *Client) Health(ctx context.Context) error {
 	rpcCtx, cancel := context.WithTimeout(ctx, c.timeout)
 	defer cancel()
 
-	_, err := c.service.Health(rpcCtx, &runtimev1.HealthRequest{})
+	_, err := c.service.Health(rpcCtx, &alarmsv1.HealthRequest{})
 	return err
 }
 
-func fromProtoAlarm(pa *runtimev1.Alarm) alarm.Alarm {
+func fromProtoAlarm(pa *alarmsv1.Alarm) alarm.Alarm {
 	a := alarm.Alarm{
 		ID:          pa.GetId(),
 		Name:        pa.GetName(),
@@ -99,7 +99,7 @@ func fromProtoAlarm(pa *runtimev1.Alarm) alarm.Alarm {
 }
 
 func (c *Client) RunAlarm(ctx context.Context, alarmID string) (signal.Signal, error) {
-	request := &runtimev1.RunAlarmRequest{
+	request := &alarmsv1.RunAlarmRequest{
 		AlarmId: alarmID,
 	}
 
@@ -113,7 +113,7 @@ func (c *Client) RunAlarm(ctx context.Context, alarmID string) (signal.Signal, e
 				Message:   "runtime unreachable: " + err.Error(),
 			}
 			return sig, &RuntimeError{
-				Code:   runtimev1.RuntimeErrorCode_RUNTIME_ERROR_CODE_INTERNAL,
+				Code:   alarmsv1.RuntimeErrorCode_RUNTIME_ERROR_CODE_INTERNAL,
 				Signal: sig,
 			}
 		}
@@ -131,7 +131,7 @@ func (c *Client) RunAlarm(ctx context.Context, alarmID string) (signal.Signal, e
 	return sig, nil
 }
 
-func (c *Client) runAlarmWithRetry(ctx context.Context, request *runtimev1.RunAlarmRequest) (*runtimev1.RunAlarmResponse, error) {
+func (c *Client) runAlarmWithRetry(ctx context.Context, request *alarmsv1.RunAlarmRequest) (*alarmsv1.RunAlarmResponse, error) {
 	const maxAttempts = 3
 	var lastErr error
 
@@ -172,7 +172,7 @@ func isRetryableRPCError(err error) bool {
 	}
 }
 
-func fromRunAlarmResponse(alarmID string, response *runtimev1.RunAlarmResponse) signal.Signal {
+func fromRunAlarmResponse(alarmID string, response *alarmsv1.RunAlarmResponse) signal.Signal {
 	return signal.Signal{
 		AlarmID:   alarmID,
 		Status:    fromProtoStatus(response.GetStatus()),
@@ -193,13 +193,13 @@ func fromProtoDetails(details []*structpb.Struct) []map[string]any {
 	return converted
 }
 
-func fromProtoStatus(status runtimev1.SignalStatus) signal.Status {
+func fromProtoStatus(status alarmsv1.SignalStatus) signal.Status {
 	switch status {
-	case runtimev1.SignalStatus_SIGNAL_STATUS_HEALTHY:
+	case alarmsv1.SignalStatus_SIGNAL_STATUS_HEALTHY:
 		return signal.StatusHealthy
-	case runtimev1.SignalStatus_SIGNAL_STATUS_UNHEALTHY:
+	case alarmsv1.SignalStatus_SIGNAL_STATUS_UNHEALTHY:
 		return signal.StatusUnhealthy
-	case runtimev1.SignalStatus_SIGNAL_STATUS_WARNING:
+	case alarmsv1.SignalStatus_SIGNAL_STATUS_WARNING:
 		return signal.StatusWarning
 	default:
 		return signal.StatusUnknown

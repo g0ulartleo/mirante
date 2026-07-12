@@ -10,7 +10,7 @@ import (
 	"github.com/g0ulartleo/mirante/internal/alarm"
 	runtimeclient "github.com/g0ulartleo/mirante/internal/alarm/runtime/client"
 	"github.com/g0ulartleo/mirante/internal/signal"
-	runtimev1 "github.com/g0ulartleo/mirante/proto/alarmruntime/v1"
+	alarmsv1 "github.com/g0ulartleo/mirante/proto/alarms/v1"
 	"github.com/hibiken/asynq"
 )
 
@@ -89,7 +89,7 @@ func checkAlarm(
 		}
 
 		switch runtimeErr.Code {
-		case runtimev1.RuntimeErrorCode_RUNTIME_ERROR_CODE_UNSUPPORTED:
+		case alarmsv1.RuntimeErrorCode_RUNTIME_ERROR_CODE_UNSUPPORTED:
 			return fmt.Errorf("alarm %q not supported by runtime %q: %v: %w", payload.AlarmID, alarmConfig.Runtime, runtimeErr, asynq.SkipRetry)
 		default:
 			return nil

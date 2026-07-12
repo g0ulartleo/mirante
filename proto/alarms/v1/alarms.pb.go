@@ -2,9 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v5.29.3
-// source: proto/alarmruntime/v1/runtime.proto
+// source: proto/alarms/v1/alarms.proto
 
-package alarmruntimev1
+package alarmsv1
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -61,11 +61,11 @@ func (x SignalStatus) String() string {
 }
 
 func (SignalStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_alarmruntime_v1_runtime_proto_enumTypes[0].Descriptor()
+	return file_proto_alarms_v1_alarms_proto_enumTypes[0].Descriptor()
 }
 
 func (SignalStatus) Type() protoreflect.EnumType {
-	return &file_proto_alarmruntime_v1_runtime_proto_enumTypes[0]
+	return &file_proto_alarms_v1_alarms_proto_enumTypes[0]
 }
 
 func (x SignalStatus) Number() protoreflect.EnumNumber {
@@ -74,7 +74,7 @@ func (x SignalStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SignalStatus.Descriptor instead.
 func (SignalStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{0}
+	return file_proto_alarms_v1_alarms_proto_rawDescGZIP(), []int{0}
 }
 
 type RuntimeErrorCode int32
@@ -113,11 +113,11 @@ func (x RuntimeErrorCode) String() string {
 }
 
 func (RuntimeErrorCode) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_alarmruntime_v1_runtime_proto_enumTypes[1].Descriptor()
+	return file_proto_alarms_v1_alarms_proto_enumTypes[1].Descriptor()
 }
 
 func (RuntimeErrorCode) Type() protoreflect.EnumType {
-	return &file_proto_alarmruntime_v1_runtime_proto_enumTypes[1]
+	return &file_proto_alarms_v1_alarms_proto_enumTypes[1]
 }
 
 func (x RuntimeErrorCode) Number() protoreflect.EnumNumber {
@@ -126,7 +126,7 @@ func (x RuntimeErrorCode) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use RuntimeErrorCode.Descriptor instead.
 func (RuntimeErrorCode) EnumDescriptor() ([]byte, []int) {
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{1}
+	return file_proto_alarms_v1_alarms_proto_rawDescGZIP(), []int{1}
 }
 
 type HealthRequest struct {
@@ -137,7 +137,7 @@ type HealthRequest struct {
 
 func (x *HealthRequest) Reset() {
 	*x = HealthRequest{}
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[0]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -149,7 +149,7 @@ func (x *HealthRequest) String() string {
 func (*HealthRequest) ProtoMessage() {}
 
 func (x *HealthRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[0]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -162,7 +162,7 @@ func (x *HealthRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HealthRequest.ProtoReflect.Descriptor instead.
 func (*HealthRequest) Descriptor() ([]byte, []int) {
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{0}
+	return file_proto_alarms_v1_alarms_proto_rawDescGZIP(), []int{0}
 }
 
 type HealthResponse struct {
@@ -174,7 +174,7 @@ type HealthResponse struct {
 
 func (x *HealthResponse) Reset() {
 	*x = HealthResponse{}
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[1]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -186,7 +186,7 @@ func (x *HealthResponse) String() string {
 func (*HealthResponse) ProtoMessage() {}
 
 func (x *HealthResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[1]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -199,7 +199,7 @@ func (x *HealthResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HealthResponse.ProtoReflect.Descriptor instead.
 func (*HealthResponse) Descriptor() ([]byte, []int) {
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{1}
+	return file_proto_alarms_v1_alarms_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *HealthResponse) GetStatus() string {
@@ -217,7 +217,7 @@ type ListAlarmsRequest struct {
 
 func (x *ListAlarmsRequest) Reset() {
 	*x = ListAlarmsRequest{}
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[2]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -229,7 +229,7 @@ func (x *ListAlarmsRequest) String() string {
 func (*ListAlarmsRequest) ProtoMessage() {}
 
 func (x *ListAlarmsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[2]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -242,7 +242,7 @@ func (x *ListAlarmsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAlarmsRequest.ProtoReflect.Descriptor instead.
 func (*ListAlarmsRequest) Descriptor() ([]byte, []int) {
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{2}
+	return file_proto_alarms_v1_alarms_proto_rawDescGZIP(), []int{2}
 }
 
 type ListAlarmsResponse struct {
@@ -254,7 +254,7 @@ type ListAlarmsResponse struct {
 
 func (x *ListAlarmsResponse) Reset() {
 	*x = ListAlarmsResponse{}
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[3]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -266,7 +266,7 @@ func (x *ListAlarmsResponse) String() string {
 func (*ListAlarmsResponse) ProtoMessage() {}
 
 func (x *ListAlarmsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[3]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -279,7 +279,7 @@ func (x *ListAlarmsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAlarmsResponse.ProtoReflect.Descriptor instead.
 func (*ListAlarmsResponse) Descriptor() ([]byte, []int) {
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{3}
+	return file_proto_alarms_v1_alarms_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *ListAlarmsResponse) GetAlarms() []*Alarm {
@@ -298,7 +298,7 @@ type GetAlarmRequest struct {
 
 func (x *GetAlarmRequest) Reset() {
 	*x = GetAlarmRequest{}
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[4]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -310,7 +310,7 @@ func (x *GetAlarmRequest) String() string {
 func (*GetAlarmRequest) ProtoMessage() {}
 
 func (x *GetAlarmRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[4]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -323,7 +323,7 @@ func (x *GetAlarmRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAlarmRequest.ProtoReflect.Descriptor instead.
 func (*GetAlarmRequest) Descriptor() ([]byte, []int) {
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{4}
+	return file_proto_alarms_v1_alarms_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *GetAlarmRequest) GetAlarmId() string {
@@ -342,7 +342,7 @@ type GetAlarmResponse struct {
 
 func (x *GetAlarmResponse) Reset() {
 	*x = GetAlarmResponse{}
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[5]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -354,7 +354,7 @@ func (x *GetAlarmResponse) String() string {
 func (*GetAlarmResponse) ProtoMessage() {}
 
 func (x *GetAlarmResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[5]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -367,7 +367,7 @@ func (x *GetAlarmResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAlarmResponse.ProtoReflect.Descriptor instead.
 func (*GetAlarmResponse) Descriptor() ([]byte, []int) {
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{5}
+	return file_proto_alarms_v1_alarms_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetAlarmResponse) GetAlarm() *Alarm {
@@ -386,7 +386,7 @@ type RunAlarmRequest struct {
 
 func (x *RunAlarmRequest) Reset() {
 	*x = RunAlarmRequest{}
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[6]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -398,7 +398,7 @@ func (x *RunAlarmRequest) String() string {
 func (*RunAlarmRequest) ProtoMessage() {}
 
 func (x *RunAlarmRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[6]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -411,7 +411,7 @@ func (x *RunAlarmRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RunAlarmRequest.ProtoReflect.Descriptor instead.
 func (*RunAlarmRequest) Descriptor() ([]byte, []int) {
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{6}
+	return file_proto_alarms_v1_alarms_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *RunAlarmRequest) GetAlarmId() string {
@@ -423,7 +423,7 @@ func (x *RunAlarmRequest) GetAlarmId() string {
 
 type RunAlarmResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Status        SignalStatus           `protobuf:"varint,1,opt,name=status,proto3,enum=alarmruntime.v1.SignalStatus" json:"status,omitempty"`
+	Status        SignalStatus           `protobuf:"varint,1,opt,name=status,proto3,enum=alarms.v1.SignalStatus" json:"status,omitempty"`
 	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 	Error         *RuntimeError          `protobuf:"bytes,3,opt,name=error,proto3" json:"error,omitempty"`
 	Details       []*structpb.Struct     `protobuf:"bytes,4,rep,name=details,proto3" json:"details,omitempty"`
@@ -433,7 +433,7 @@ type RunAlarmResponse struct {
 
 func (x *RunAlarmResponse) Reset() {
 	*x = RunAlarmResponse{}
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[7]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -445,7 +445,7 @@ func (x *RunAlarmResponse) String() string {
 func (*RunAlarmResponse) ProtoMessage() {}
 
 func (x *RunAlarmResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[7]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -458,7 +458,7 @@ func (x *RunAlarmResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RunAlarmResponse.ProtoReflect.Descriptor instead.
 func (*RunAlarmResponse) Descriptor() ([]byte, []int) {
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{7}
+	return file_proto_alarms_v1_alarms_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *RunAlarmResponse) GetStatus() SignalStatus {
@@ -491,7 +491,7 @@ func (x *RunAlarmResponse) GetDetails() []*structpb.Struct {
 
 type RuntimeError struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          RuntimeErrorCode       `protobuf:"varint,1,opt,name=code,proto3,enum=alarmruntime.v1.RuntimeErrorCode" json:"code,omitempty"`
+	Code          RuntimeErrorCode       `protobuf:"varint,1,opt,name=code,proto3,enum=alarms.v1.RuntimeErrorCode" json:"code,omitempty"`
 	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -499,7 +499,7 @@ type RuntimeError struct {
 
 func (x *RuntimeError) Reset() {
 	*x = RuntimeError{}
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[8]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -511,7 +511,7 @@ func (x *RuntimeError) String() string {
 func (*RuntimeError) ProtoMessage() {}
 
 func (x *RuntimeError) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[8]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -524,7 +524,7 @@ func (x *RuntimeError) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RuntimeError.ProtoReflect.Descriptor instead.
 func (*RuntimeError) Descriptor() ([]byte, []int) {
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{8}
+	return file_proto_alarms_v1_alarms_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *RuntimeError) GetCode() RuntimeErrorCode {
@@ -557,7 +557,7 @@ type Alarm struct {
 
 func (x *Alarm) Reset() {
 	*x = Alarm{}
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[9]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -569,7 +569,7 @@ func (x *Alarm) String() string {
 func (*Alarm) ProtoMessage() {}
 
 func (x *Alarm) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[9]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -582,7 +582,7 @@ func (x *Alarm) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Alarm.ProtoReflect.Descriptor instead.
 func (*Alarm) Descriptor() ([]byte, []int) {
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{9}
+	return file_proto_alarms_v1_alarms_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *Alarm) GetId() string {
@@ -650,7 +650,7 @@ type AlarmNotifications struct {
 
 func (x *AlarmNotifications) Reset() {
 	*x = AlarmNotifications{}
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[10]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -662,7 +662,7 @@ func (x *AlarmNotifications) String() string {
 func (*AlarmNotifications) ProtoMessage() {}
 
 func (x *AlarmNotifications) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[10]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -675,7 +675,7 @@ func (x *AlarmNotifications) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AlarmNotifications.ProtoReflect.Descriptor instead.
 func (*AlarmNotifications) Descriptor() ([]byte, []int) {
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{10}
+	return file_proto_alarms_v1_alarms_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *AlarmNotifications) GetChannels() map[string]*NotificationChannels {
@@ -696,7 +696,7 @@ type NotificationChannels struct {
 
 func (x *NotificationChannels) Reset() {
 	*x = NotificationChannels{}
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[11]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -708,7 +708,7 @@ func (x *NotificationChannels) String() string {
 func (*NotificationChannels) ProtoMessage() {}
 
 func (x *NotificationChannels) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[11]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -721,7 +721,7 @@ func (x *NotificationChannels) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use NotificationChannels.ProtoReflect.Descriptor instead.
 func (*NotificationChannels) Descriptor() ([]byte, []int) {
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{11}
+	return file_proto_alarms_v1_alarms_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *NotificationChannels) GetSlackWebhooks() []*SlackWebhookNotification {
@@ -754,7 +754,7 @@ type SlackWebhookNotification struct {
 
 func (x *SlackWebhookNotification) Reset() {
 	*x = SlackWebhookNotification{}
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[12]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -766,7 +766,7 @@ func (x *SlackWebhookNotification) String() string {
 func (*SlackWebhookNotification) ProtoMessage() {}
 
 func (x *SlackWebhookNotification) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[12]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -779,7 +779,7 @@ func (x *SlackWebhookNotification) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SlackWebhookNotification.ProtoReflect.Descriptor instead.
 func (*SlackWebhookNotification) Descriptor() ([]byte, []int) {
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{12}
+	return file_proto_alarms_v1_alarms_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *SlackWebhookNotification) GetUrl() string {
@@ -798,7 +798,7 @@ type EmailNotification struct {
 
 func (x *EmailNotification) Reset() {
 	*x = EmailNotification{}
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[13]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -810,7 +810,7 @@ func (x *EmailNotification) String() string {
 func (*EmailNotification) ProtoMessage() {}
 
 func (x *EmailNotification) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_alarmruntime_v1_runtime_proto_msgTypes[13]
+	mi := &file_proto_alarms_v1_alarms_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -823,7 +823,7 @@ func (x *EmailNotification) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EmailNotification.ProtoReflect.Descriptor instead.
 func (*EmailNotification) Descriptor() ([]byte, []int) {
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP(), []int{13}
+	return file_proto_alarms_v1_alarms_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *EmailNotification) GetTo() []string {
@@ -833,31 +833,31 @@ func (x *EmailNotification) GetTo() []string {
 	return nil
 }
 
-var File_proto_alarmruntime_v1_runtime_proto protoreflect.FileDescriptor
+var File_proto_alarms_v1_alarms_proto protoreflect.FileDescriptor
 
-const file_proto_alarmruntime_v1_runtime_proto_rawDesc = "" +
+const file_proto_alarms_v1_alarms_proto_rawDesc = "" +
 	"\n" +
-	"#proto/alarmruntime/v1/runtime.proto\x12\x0falarmruntime.v1\x1a\x1cgoogle/protobuf/struct.proto\"\x0f\n" +
+	"\x1cproto/alarms/v1/alarms.proto\x12\talarms.v1\x1a\x1cgoogle/protobuf/struct.proto\"\x0f\n" +
 	"\rHealthRequest\"(\n" +
 	"\x0eHealthResponse\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\tR\x06status\"\x13\n" +
-	"\x11ListAlarmsRequest\"D\n" +
-	"\x12ListAlarmsResponse\x12.\n" +
-	"\x06alarms\x18\x01 \x03(\v2\x16.alarmruntime.v1.AlarmR\x06alarms\",\n" +
+	"\x11ListAlarmsRequest\">\n" +
+	"\x12ListAlarmsResponse\x12(\n" +
+	"\x06alarms\x18\x01 \x03(\v2\x10.alarms.v1.AlarmR\x06alarms\",\n" +
 	"\x0fGetAlarmRequest\x12\x19\n" +
-	"\balarm_id\x18\x01 \x01(\tR\aalarmId\"@\n" +
-	"\x10GetAlarmResponse\x12,\n" +
-	"\x05alarm\x18\x01 \x01(\v2\x16.alarmruntime.v1.AlarmR\x05alarm\",\n" +
+	"\balarm_id\x18\x01 \x01(\tR\aalarmId\":\n" +
+	"\x10GetAlarmResponse\x12&\n" +
+	"\x05alarm\x18\x01 \x01(\v2\x10.alarms.v1.AlarmR\x05alarm\",\n" +
 	"\x0fRunAlarmRequest\x12\x19\n" +
-	"\balarm_id\x18\x01 \x01(\tR\aalarmId\"\xcb\x01\n" +
-	"\x10RunAlarmResponse\x125\n" +
-	"\x06status\x18\x01 \x01(\x0e2\x1d.alarmruntime.v1.SignalStatusR\x06status\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\x123\n" +
-	"\x05error\x18\x03 \x01(\v2\x1d.alarmruntime.v1.RuntimeErrorR\x05error\x121\n" +
-	"\adetails\x18\x04 \x03(\v2\x17.google.protobuf.StructR\adetails\"_\n" +
-	"\fRuntimeError\x125\n" +
-	"\x04code\x18\x01 \x01(\x0e2!.alarmruntime.v1.RuntimeErrorCodeR\x04code\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\xfa\x01\n" +
+	"\balarm_id\x18\x01 \x01(\tR\aalarmId\"\xbf\x01\n" +
+	"\x10RunAlarmResponse\x12/\n" +
+	"\x06status\x18\x01 \x01(\x0e2\x17.alarms.v1.SignalStatusR\x06status\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\x12-\n" +
+	"\x05error\x18\x03 \x01(\v2\x17.alarms.v1.RuntimeErrorR\x05error\x121\n" +
+	"\adetails\x18\x04 \x03(\v2\x17.google.protobuf.StructR\adetails\"Y\n" +
+	"\fRuntimeError\x12/\n" +
+	"\x04code\x18\x01 \x01(\x0e2\x1b.alarms.v1.RuntimeErrorCodeR\x04code\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\xf4\x01\n" +
 	"\x05Alarm\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
@@ -866,16 +866,16 @@ const file_proto_alarmruntime_v1_runtime_proto_rawDesc = "" +
 	"how_to_fix\x18\x04 \x01(\tR\bhowToFix\x12\x12\n" +
 	"\x04path\x18\x05 \x03(\tR\x04path\x12\x12\n" +
 	"\x04cron\x18\x06 \x01(\tR\x04cron\x12\x1a\n" +
-	"\binterval\x18\a \x01(\tR\binterval\x12I\n" +
-	"\rnotifications\x18\b \x01(\v2#.alarmruntime.v1.AlarmNotificationsR\rnotifications\"\xc7\x01\n" +
-	"\x12AlarmNotifications\x12M\n" +
-	"\bchannels\x18\x01 \x03(\v21.alarmruntime.v1.AlarmNotifications.ChannelsEntryR\bchannels\x1ab\n" +
+	"\binterval\x18\a \x01(\tR\binterval\x12C\n" +
+	"\rnotifications\x18\b \x01(\v2\x1d.alarms.v1.AlarmNotificationsR\rnotifications\"\xbb\x01\n" +
+	"\x12AlarmNotifications\x12G\n" +
+	"\bchannels\x18\x01 \x03(\v2+.alarms.v1.AlarmNotifications.ChannelsEntryR\bchannels\x1a\\\n" +
 	"\rChannelsEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12;\n" +
-	"\x05value\x18\x02 \x01(\v2%.alarmruntime.v1.NotificationChannelsR\x05value:\x028\x01\"\xda\x01\n" +
-	"\x14NotificationChannels\x12P\n" +
-	"\x0eslack_webhooks\x18\x01 \x03(\v2).alarmruntime.v1.SlackWebhookNotificationR\rslackWebhooks\x12:\n" +
-	"\x06emails\x18\x02 \x03(\v2\".alarmruntime.v1.EmailNotificationR\x06emails\x124\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x125\n" +
+	"\x05value\x18\x02 \x01(\v2\x1f.alarms.v1.NotificationChannelsR\x05value:\x028\x01\"\xce\x01\n" +
+	"\x14NotificationChannels\x12J\n" +
+	"\x0eslack_webhooks\x18\x01 \x03(\v2#.alarms.v1.SlackWebhookNotificationR\rslackWebhooks\x124\n" +
+	"\x06emails\x18\x02 \x03(\v2\x1c.alarms.v1.EmailNotificationR\x06emails\x124\n" +
 	"\x16notify_missing_signals\x18\x03 \x01(\bR\x14notifyMissingSignals\",\n" +
 	"\x18SlackWebhookNotification\x12\x10\n" +
 	"\x03url\x18\x01 \x01(\tR\x03url\"#\n" +
@@ -891,68 +891,68 @@ const file_proto_alarmruntime_v1_runtime_proto_rawDesc = "" +
 	"\x1eRUNTIME_ERROR_CODE_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eRUNTIME_ERROR_CODE_UNSUPPORTED\x10\x01\x12&\n" +
 	"\"RUNTIME_ERROR_CODE_RUNALARM_FAILED\x10\x02\x12\x1f\n" +
-	"\x1bRUNTIME_ERROR_CODE_INTERNAL\x10\x032\xd2\x02\n" +
-	"\fAlarmRuntime\x12U\n" +
+	"\x1bRUNTIME_ERROR_CODE_INTERNAL\x10\x032\xa2\x02\n" +
+	"\fAlarmRuntime\x12I\n" +
 	"\n" +
-	"ListAlarms\x12\".alarmruntime.v1.ListAlarmsRequest\x1a#.alarmruntime.v1.ListAlarmsResponse\x12O\n" +
-	"\bGetAlarm\x12 .alarmruntime.v1.GetAlarmRequest\x1a!.alarmruntime.v1.GetAlarmResponse\x12O\n" +
-	"\bRunAlarm\x12 .alarmruntime.v1.RunAlarmRequest\x1a!.alarmruntime.v1.RunAlarmResponse\x12I\n" +
-	"\x06Health\x12\x1e.alarmruntime.v1.HealthRequest\x1a\x1f.alarmruntime.v1.HealthResponseBDZBgithub.com/g0ulartleo/mirante/proto/alarmruntime/v1;alarmruntimev1b\x06proto3"
+	"ListAlarms\x12\x1c.alarms.v1.ListAlarmsRequest\x1a\x1d.alarms.v1.ListAlarmsResponse\x12C\n" +
+	"\bGetAlarm\x12\x1a.alarms.v1.GetAlarmRequest\x1a\x1b.alarms.v1.GetAlarmResponse\x12C\n" +
+	"\bRunAlarm\x12\x1a.alarms.v1.RunAlarmRequest\x1a\x1b.alarms.v1.RunAlarmResponse\x12=\n" +
+	"\x06Health\x12\x18.alarms.v1.HealthRequest\x1a\x19.alarms.v1.HealthResponseB8Z6github.com/g0ulartleo/mirante/proto/alarms/v1;alarmsv1b\x06proto3"
 
 var (
-	file_proto_alarmruntime_v1_runtime_proto_rawDescOnce sync.Once
-	file_proto_alarmruntime_v1_runtime_proto_rawDescData []byte
+	file_proto_alarms_v1_alarms_proto_rawDescOnce sync.Once
+	file_proto_alarms_v1_alarms_proto_rawDescData []byte
 )
 
-func file_proto_alarmruntime_v1_runtime_proto_rawDescGZIP() []byte {
-	file_proto_alarmruntime_v1_runtime_proto_rawDescOnce.Do(func() {
-		file_proto_alarmruntime_v1_runtime_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_alarmruntime_v1_runtime_proto_rawDesc), len(file_proto_alarmruntime_v1_runtime_proto_rawDesc)))
+func file_proto_alarms_v1_alarms_proto_rawDescGZIP() []byte {
+	file_proto_alarms_v1_alarms_proto_rawDescOnce.Do(func() {
+		file_proto_alarms_v1_alarms_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_alarms_v1_alarms_proto_rawDesc), len(file_proto_alarms_v1_alarms_proto_rawDesc)))
 	})
-	return file_proto_alarmruntime_v1_runtime_proto_rawDescData
+	return file_proto_alarms_v1_alarms_proto_rawDescData
 }
 
-var file_proto_alarmruntime_v1_runtime_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_proto_alarmruntime_v1_runtime_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
-var file_proto_alarmruntime_v1_runtime_proto_goTypes = []any{
-	(SignalStatus)(0),                // 0: alarmruntime.v1.SignalStatus
-	(RuntimeErrorCode)(0),            // 1: alarmruntime.v1.RuntimeErrorCode
-	(*HealthRequest)(nil),            // 2: alarmruntime.v1.HealthRequest
-	(*HealthResponse)(nil),           // 3: alarmruntime.v1.HealthResponse
-	(*ListAlarmsRequest)(nil),        // 4: alarmruntime.v1.ListAlarmsRequest
-	(*ListAlarmsResponse)(nil),       // 5: alarmruntime.v1.ListAlarmsResponse
-	(*GetAlarmRequest)(nil),          // 6: alarmruntime.v1.GetAlarmRequest
-	(*GetAlarmResponse)(nil),         // 7: alarmruntime.v1.GetAlarmResponse
-	(*RunAlarmRequest)(nil),          // 8: alarmruntime.v1.RunAlarmRequest
-	(*RunAlarmResponse)(nil),         // 9: alarmruntime.v1.RunAlarmResponse
-	(*RuntimeError)(nil),             // 10: alarmruntime.v1.RuntimeError
-	(*Alarm)(nil),                    // 11: alarmruntime.v1.Alarm
-	(*AlarmNotifications)(nil),       // 12: alarmruntime.v1.AlarmNotifications
-	(*NotificationChannels)(nil),     // 13: alarmruntime.v1.NotificationChannels
-	(*SlackWebhookNotification)(nil), // 14: alarmruntime.v1.SlackWebhookNotification
-	(*EmailNotification)(nil),        // 15: alarmruntime.v1.EmailNotification
-	nil,                              // 16: alarmruntime.v1.AlarmNotifications.ChannelsEntry
+var file_proto_alarms_v1_alarms_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_proto_alarms_v1_alarms_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_proto_alarms_v1_alarms_proto_goTypes = []any{
+	(SignalStatus)(0),                // 0: alarms.v1.SignalStatus
+	(RuntimeErrorCode)(0),            // 1: alarms.v1.RuntimeErrorCode
+	(*HealthRequest)(nil),            // 2: alarms.v1.HealthRequest
+	(*HealthResponse)(nil),           // 3: alarms.v1.HealthResponse
+	(*ListAlarmsRequest)(nil),        // 4: alarms.v1.ListAlarmsRequest
+	(*ListAlarmsResponse)(nil),       // 5: alarms.v1.ListAlarmsResponse
+	(*GetAlarmRequest)(nil),          // 6: alarms.v1.GetAlarmRequest
+	(*GetAlarmResponse)(nil),         // 7: alarms.v1.GetAlarmResponse
+	(*RunAlarmRequest)(nil),          // 8: alarms.v1.RunAlarmRequest
+	(*RunAlarmResponse)(nil),         // 9: alarms.v1.RunAlarmResponse
+	(*RuntimeError)(nil),             // 10: alarms.v1.RuntimeError
+	(*Alarm)(nil),                    // 11: alarms.v1.Alarm
+	(*AlarmNotifications)(nil),       // 12: alarms.v1.AlarmNotifications
+	(*NotificationChannels)(nil),     // 13: alarms.v1.NotificationChannels
+	(*SlackWebhookNotification)(nil), // 14: alarms.v1.SlackWebhookNotification
+	(*EmailNotification)(nil),        // 15: alarms.v1.EmailNotification
+	nil,                              // 16: alarms.v1.AlarmNotifications.ChannelsEntry
 	(*structpb.Struct)(nil),          // 17: google.protobuf.Struct
 }
-var file_proto_alarmruntime_v1_runtime_proto_depIdxs = []int32{
-	11, // 0: alarmruntime.v1.ListAlarmsResponse.alarms:type_name -> alarmruntime.v1.Alarm
-	11, // 1: alarmruntime.v1.GetAlarmResponse.alarm:type_name -> alarmruntime.v1.Alarm
-	0,  // 2: alarmruntime.v1.RunAlarmResponse.status:type_name -> alarmruntime.v1.SignalStatus
-	10, // 3: alarmruntime.v1.RunAlarmResponse.error:type_name -> alarmruntime.v1.RuntimeError
-	17, // 4: alarmruntime.v1.RunAlarmResponse.details:type_name -> google.protobuf.Struct
-	1,  // 5: alarmruntime.v1.RuntimeError.code:type_name -> alarmruntime.v1.RuntimeErrorCode
-	12, // 6: alarmruntime.v1.Alarm.notifications:type_name -> alarmruntime.v1.AlarmNotifications
-	16, // 7: alarmruntime.v1.AlarmNotifications.channels:type_name -> alarmruntime.v1.AlarmNotifications.ChannelsEntry
-	14, // 8: alarmruntime.v1.NotificationChannels.slack_webhooks:type_name -> alarmruntime.v1.SlackWebhookNotification
-	15, // 9: alarmruntime.v1.NotificationChannels.emails:type_name -> alarmruntime.v1.EmailNotification
-	13, // 10: alarmruntime.v1.AlarmNotifications.ChannelsEntry.value:type_name -> alarmruntime.v1.NotificationChannels
-	4,  // 11: alarmruntime.v1.AlarmRuntime.ListAlarms:input_type -> alarmruntime.v1.ListAlarmsRequest
-	6,  // 12: alarmruntime.v1.AlarmRuntime.GetAlarm:input_type -> alarmruntime.v1.GetAlarmRequest
-	8,  // 13: alarmruntime.v1.AlarmRuntime.RunAlarm:input_type -> alarmruntime.v1.RunAlarmRequest
-	2,  // 14: alarmruntime.v1.AlarmRuntime.Health:input_type -> alarmruntime.v1.HealthRequest
-	5,  // 15: alarmruntime.v1.AlarmRuntime.ListAlarms:output_type -> alarmruntime.v1.ListAlarmsResponse
-	7,  // 16: alarmruntime.v1.AlarmRuntime.GetAlarm:output_type -> alarmruntime.v1.GetAlarmResponse
-	9,  // 17: alarmruntime.v1.AlarmRuntime.RunAlarm:output_type -> alarmruntime.v1.RunAlarmResponse
-	3,  // 18: alarmruntime.v1.AlarmRuntime.Health:output_type -> alarmruntime.v1.HealthResponse
+var file_proto_alarms_v1_alarms_proto_depIdxs = []int32{
+	11, // 0: alarms.v1.ListAlarmsResponse.alarms:type_name -> alarms.v1.Alarm
+	11, // 1: alarms.v1.GetAlarmResponse.alarm:type_name -> alarms.v1.Alarm
+	0,  // 2: alarms.v1.RunAlarmResponse.status:type_name -> alarms.v1.SignalStatus
+	10, // 3: alarms.v1.RunAlarmResponse.error:type_name -> alarms.v1.RuntimeError
+	17, // 4: alarms.v1.RunAlarmResponse.details:type_name -> google.protobuf.Struct
+	1,  // 5: alarms.v1.RuntimeError.code:type_name -> alarms.v1.RuntimeErrorCode
+	12, // 6: alarms.v1.Alarm.notifications:type_name -> alarms.v1.AlarmNotifications
+	16, // 7: alarms.v1.AlarmNotifications.channels:type_name -> alarms.v1.AlarmNotifications.ChannelsEntry
+	14, // 8: alarms.v1.NotificationChannels.slack_webhooks:type_name -> alarms.v1.SlackWebhookNotification
+	15, // 9: alarms.v1.NotificationChannels.emails:type_name -> alarms.v1.EmailNotification
+	13, // 10: alarms.v1.AlarmNotifications.ChannelsEntry.value:type_name -> alarms.v1.NotificationChannels
+	4,  // 11: alarms.v1.AlarmRuntime.ListAlarms:input_type -> alarms.v1.ListAlarmsRequest
+	6,  // 12: alarms.v1.AlarmRuntime.GetAlarm:input_type -> alarms.v1.GetAlarmRequest
+	8,  // 13: alarms.v1.AlarmRuntime.RunAlarm:input_type -> alarms.v1.RunAlarmRequest
+	2,  // 14: alarms.v1.AlarmRuntime.Health:input_type -> alarms.v1.HealthRequest
+	5,  // 15: alarms.v1.AlarmRuntime.ListAlarms:output_type -> alarms.v1.ListAlarmsResponse
+	7,  // 16: alarms.v1.AlarmRuntime.GetAlarm:output_type -> alarms.v1.GetAlarmResponse
+	9,  // 17: alarms.v1.AlarmRuntime.RunAlarm:output_type -> alarms.v1.RunAlarmResponse
+	3,  // 18: alarms.v1.AlarmRuntime.Health:output_type -> alarms.v1.HealthResponse
 	15, // [15:19] is the sub-list for method output_type
 	11, // [11:15] is the sub-list for method input_type
 	11, // [11:11] is the sub-list for extension type_name
@@ -960,27 +960,27 @@ var file_proto_alarmruntime_v1_runtime_proto_depIdxs = []int32{
 	0,  // [0:11] is the sub-list for field type_name
 }
 
-func init() { file_proto_alarmruntime_v1_runtime_proto_init() }
-func file_proto_alarmruntime_v1_runtime_proto_init() {
-	if File_proto_alarmruntime_v1_runtime_proto != nil {
+func init() { file_proto_alarms_v1_alarms_proto_init() }
+func file_proto_alarms_v1_alarms_proto_init() {
+	if File_proto_alarms_v1_alarms_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_alarmruntime_v1_runtime_proto_rawDesc), len(file_proto_alarmruntime_v1_runtime_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_alarms_v1_alarms_proto_rawDesc), len(file_proto_alarms_v1_alarms_proto_rawDesc)),
 			NumEnums:      2,
 			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_proto_alarmruntime_v1_runtime_proto_goTypes,
-		DependencyIndexes: file_proto_alarmruntime_v1_runtime_proto_depIdxs,
-		EnumInfos:         file_proto_alarmruntime_v1_runtime_proto_enumTypes,
-		MessageInfos:      file_proto_alarmruntime_v1_runtime_proto_msgTypes,
+		GoTypes:           file_proto_alarms_v1_alarms_proto_goTypes,
+		DependencyIndexes: file_proto_alarms_v1_alarms_proto_depIdxs,
+		EnumInfos:         file_proto_alarms_v1_alarms_proto_enumTypes,
+		MessageInfos:      file_proto_alarms_v1_alarms_proto_msgTypes,
 	}.Build()
-	File_proto_alarmruntime_v1_runtime_proto = out.File
-	file_proto_alarmruntime_v1_runtime_proto_goTypes = nil
-	file_proto_alarmruntime_v1_runtime_proto_depIdxs = nil
+	File_proto_alarms_v1_alarms_proto = out.File
+	file_proto_alarms_v1_alarms_proto_goTypes = nil
+	file_proto_alarms_v1_alarms_proto_depIdxs = nil
 }

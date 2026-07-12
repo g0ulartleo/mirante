@@ -1,4 +1,4 @@
-module github.com/g0ulartleo/mirante/packages/go/alarms-sdk
+module github.com/g0ulartleo/mirante/packages/go/alarms
 
 go 1.24.2
 
