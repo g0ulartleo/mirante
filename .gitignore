@@ -13,4 +13,4 @@ sqlite.db
 dist/
 .DS_Store
 **/node_modules/
-packages/npm/alarms-sdk/runtime.proto
+packages/npm/alarms/runtime.proto

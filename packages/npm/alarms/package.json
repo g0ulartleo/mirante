@@ -1,5 +1,5 @@
 {
-  "name": "@mirante/alarms-sdk",
+  "name": "@mirante/alarms",
   "version": "0.3.0",
   "type": "module",
   "private": false,

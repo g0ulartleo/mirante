@@ -1,4 +1,4 @@
-import { healthy } from "@mirante/alarms-sdk";
+import { healthy } from "@mirante/alarms";
 
 export const checkServerCount = {
   id: "check-server-count",

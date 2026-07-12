@@ -3,7 +3,7 @@ name: Release NPM Alarms SDK
 on:
   push:
     tags:
-      - 'packages/npm/alarms-sdk/v*'
+      - 'packages/npm/alarms/v*'
 
 permissions:
   contents: read
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: packages/npm/alarms-sdk
+        working-directory: packages/npm/alarms
     steps:
     - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 

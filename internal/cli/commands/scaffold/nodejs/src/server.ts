@@ -1,4 +1,4 @@
-import { serveRuntime } from "@mirante/alarms-sdk";
+import { serveRuntime } from "@mirante/alarms";
 
 await serveRuntime({
   alarmsDir: new URL("./alarms", import.meta.url).pathname,
