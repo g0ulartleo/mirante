@@ -21,6 +21,15 @@ jobs:
       with:
         go-version: '1.24.2'
 
+    - name: Install protoc
+      run: |
+        PB_REL="https://github.com/protocolbuffers/protobuf/releases"
+        curl -LO $PB_REL/download/v35.1/protoc-35.1-linux-x86_64.zip
+        unzip protoc-35.1-linux-x86_64.zip -d $HOME/.local
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+        go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+        go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+
     - name: Generate proto stubs
       run: make -C "${{ github.workspace }}" proto-generate-go-sdk
 
