@@ -9,6 +9,11 @@ import (
 )
 
 func main() {
+	if len(os.Args) == 2 && (os.Args[1] == "-v" || os.Args[1] == "--version") {
+		fmt.Println(cli.Version)
+		return
+	}
+
 	if len(os.Args) < 2 {
 		helpCommand, err := cli.GetCommand("help")
 		if err != nil {

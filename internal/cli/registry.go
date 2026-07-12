@@ -5,6 +5,8 @@ import (
 	"strings"
 )
 
+var Version = "dev"
+
 type Command interface {
 	Name() string
 	Description() string

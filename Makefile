@@ -22,12 +22,15 @@ go-install-templ:
 	go install github.com/a-h/templ/cmd/templ@latest
 
 .PHONY: build
+VERSION ?= $(shell git describe --tags --dirty --always 2>/dev/null || echo "dev")
+LDFLAGS = -ldflags="-X github.com/g0ulartleo/mirante/internal/cli.Version=$(VERSION) -s -w"
+
 build:
 	templ generate
 	go build -o ./bin/http-server ./cmd/http-server/server.go
 	go build -o ./bin/worker ./cmd/worker-server/main.go
 	go build -o ./bin/scheduler ./cmd/scheduler/main.go
-	go build -ldflags="-s -w" -o ./bin/mirante ./cmd/cli/main.go
+	go build $(LDFLAGS) -o ./bin/mirante ./cmd/cli/main.go
 	go build -o ./bin/mirante-tui ./cmd/tui/main.go
 
 .PHONY: build-tui
@@ -130,11 +133,11 @@ build-cli-all-platforms:
 	@echo "Building CLI for all platforms..."
 	@mkdir -p ./dist
 
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o ./dist/mirante-linux-amd64 ./cmd/cli/main.go
-	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -o ./dist/mirante-linux-arm64 ./cmd/cli/main.go
-	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o ./dist/mirante-darwin-amd64 ./cmd/cli/main.go
-	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w" -o ./dist/mirante-darwin-arm64 ./cmd/cli/main.go
-	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o ./dist/mirante-windows-amd64.exe ./cmd/cli/main.go
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -o ./dist/mirante-linux-amd64 ./cmd/cli/main.go
+	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build $(LDFLAGS) -o ./dist/mirante-linux-arm64 ./cmd/cli/main.go
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build $(LDFLAGS) -o ./dist/mirante-darwin-amd64 ./cmd/cli/main.go
+	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build $(LDFLAGS) -o ./dist/mirante-darwin-arm64 ./cmd/cli/main.go
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build $(LDFLAGS) -o ./dist/mirante-windows-amd64.exe ./cmd/cli/main.go
 
 	@echo "✅ All platform binaries built in ./dist/"
 
@@ -142,7 +145,7 @@ build-cli-all-platforms:
 build-cli:
 	@echo "Building CLI..."
 	@mkdir -p ./bin
-	go build -ldflags="-s -w" -o ./bin/mirante ./cmd/cli/main.go
+	go build $(LDFLAGS) -o ./bin/mirante ./cmd/cli/main.go
 
 .PHONY: package-cli
 package-cli: build-cli-all-platforms
