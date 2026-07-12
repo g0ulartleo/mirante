@@ -166,7 +166,7 @@ export async function serveRuntime({ alarmsDir, addr = '127.0.0.1:50051', creden
     defaults: true,
     oneofs: true,
   });
-  const proto = grpc.loadPackageDefinition(packageDefinition).alarmruntime.v1;
+  const proto = grpc.loadPackageDefinition(packageDefinition).alarms.v1;
   const alarms = await loadAlarms({ alarmsDir });
   const server = new grpc.Server(grpcOptions);
   server.addService(proto.AlarmRuntime.service, createRuntimeService(alarms));
