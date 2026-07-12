@@ -1,0 +1,20 @@
+package alarms
+
+import (
+	"context"
+
+	alarmsdk "github.com/g0ulartleo/mirante/packages/go/alarms"
+)
+
+var {{ .GoName }} = alarmsdk.Alarm{
+	ID:          {{ printf "%q" .AlarmID }},
+	Name:        {{ printf "%q" .HumanName }},
+	Description: "Describe what this alarm checks.",
+	HowToFix:    "Describe how to fix failures.",
+	Interval:    "1m",
+	Run:         run{{ .GoName }},
+}
+
+func run{{ .GoName }}(ctx context.Context) (*alarmsdk.Signal, error) {
+	return alarmsdk.Healthy("OK"), nil
+}

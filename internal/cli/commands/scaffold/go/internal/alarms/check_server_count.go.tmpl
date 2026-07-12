@@ -1,0 +1,45 @@
+package alarms
+
+import (
+	"context"
+	"fmt"
+	"net/http"
+	"os"
+	"time"
+
+	alarmsdk "github.com/g0ulartleo/mirante/packages/go/alarms"
+)
+
+var CheckServerCount = alarmsdk.Alarm{
+	ID:          "check-server-count",
+	Name:        "Check Server Count",
+	Description: "Pings an HTTP endpoint and verifies it responds successfully.",
+	HowToFix:    "Check the target service, network path, and PING_URL configuration.",
+	Interval:    "1m",
+	Run:         runCheckServerCount,
+}
+
+func runCheckServerCount(ctx context.Context) (*alarmsdk.Signal, error) {
+	url := os.Getenv("PING_URL")
+	if url == "" {
+		url = "https://example.com"
+	}
+
+	client := &http.Client{Timeout: 5 * time.Second}
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return alarmsdk.Unhealthy(fmt.Sprintf("invalid PING_URL %q: %v", url, err)), nil
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return alarmsdk.Unhealthy(fmt.Sprintf("ping %s failed: %v", url, err)), nil
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 400 {
+		return alarmsdk.Healthy(fmt.Sprintf("ping %s returned %s", url, resp.Status)), nil
+	}
+
+	return alarmsdk.Unhealthy(fmt.Sprintf("ping %s returned %s", url, resp.Status)), nil
+}

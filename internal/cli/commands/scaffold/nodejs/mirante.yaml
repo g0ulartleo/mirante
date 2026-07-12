@@ -1,0 +1,21 @@
+storage:
+  driver: redis
+
+redis:
+  addr: redis:6379
+
+http:
+  addr: 0.0.0.0
+  port: "40169"
+
+alarm_runtime:
+  timeout: 30s
+  runtimes:
+    runtime:
+      addr: runtime:50051
+
+auth:
+  api_key: ${API_KEY}
+  basic:
+    username: ${DASHBOARD_BASIC_AUTH_USERNAME}
+    password: ${DASHBOARD_BASIC_AUTH_PASSWORD}

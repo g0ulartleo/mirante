@@ -1,0 +1,2 @@
+runtime: nodejs
+alarms_dir: src/alarms

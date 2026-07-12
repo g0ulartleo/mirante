@@ -1,0 +1,27 @@
+package main
+
+import (
+	"log"
+	"os"
+
+	"mirante-alarm-runtime/internal/alarms"
+
+	alarmsdk "github.com/g0ulartleo/mirante/packages/go/alarms"
+)
+
+func main() {
+	addr := os.Getenv("ALARM_RUNTIME_ADDR")
+	if addr == "" {
+		addr = "127.0.0.1:50051"
+	}
+
+	log.Printf("mirante alarm runtime listening on %s", addr)
+	if err := alarmsdk.ServeRuntime(alarmsdk.RuntimeOptions{
+		Addr: addr,
+		Alarms: []alarmsdk.Alarm{
+			alarms.CheckServerCount,
+		},
+	}); err != nil {
+		log.Fatalf("serve runtime: %v", err)
+	}
+}

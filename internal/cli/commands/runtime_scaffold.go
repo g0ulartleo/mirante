@@ -1,14 +1,22 @@
 package commands
+
 import (
+	"bytes"
+	"embed"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+	"text/template"
 
 	"github.com/g0ulartleo/mirante/internal/cli"
 	"gopkg.in/yaml.v3"
 )
+
+//go:embed all:scaffold
+var scaffoldFS embed.FS
 
 type RuntimeMarker struct {
 	Runtime   string `yaml:"runtime"`
@@ -37,9 +45,9 @@ func (c *InitRepoCommand) Run(args []string) error {
 
 	switch runtime {
 	case "nodejs":
-		return scaffoldNodeRepo(dir)
+		return scaffoldRepo(dir, "scaffold/nodejs")
 	case "go":
-		return scaffoldGoRepo(dir)
+		return scaffoldRepo(dir, "scaffold/go")
 	default:
 		return fmt.Errorf("unsupported runtime %q; expected nodejs or go", runtime)
 	}
@@ -77,10 +85,18 @@ func (c *NewAlarmCommand) Run(args []string) error {
 	switch marker.Runtime {
 	case "nodejs":
 		path := filepath.Join(marker.AlarmsDir, alarmID+".ts")
-		return writeFileExclusive(path, nodeAlarmTemplate(alarmID))
+		content, err := renderAlarmTemplate("scaffold/templates/node_alarm.ts.tmpl", nodeAlarmData(alarmID))
+		if err != nil {
+			return err
+		}
+		return writeFileExclusive(path, content)
 	case "go":
 		path := filepath.Join(marker.AlarmsDir, strings.ReplaceAll(alarmID, "-", "_")+".go")
-		return writeFileExclusive(path, goAlarmTemplate(alarmID))
+		content, err := renderAlarmTemplate("scaffold/templates/go_alarm.go.tmpl", goAlarmData(alarmID))
+		if err != nil {
+			return err
+		}
+		return writeFileExclusive(path, content)
 	default:
 		return fmt.Errorf("unsupported runtime %q in mirante.runtime.yaml", marker.Runtime)
 	}
@@ -113,48 +129,26 @@ func parseInitRepoArgs(args []string) (string, string, error) {
 	return runtime, dir, nil
 }
 
-func scaffoldNodeRepo(dir string) error {
-	marker := RuntimeMarker{Runtime: "nodejs", AlarmsDir: "src/alarms"}
-	files := map[string]string{
-		"package.json":                     nodePackageJSON(),
-		"tsconfig.json":                    nodeTSConfig(),
-		"src/server.ts":                    nodeServerTemplate(),
-		"src/alarms/check-server-count.ts": nodeAlarmTemplate("check-server-count"),
-		".env.example":                     nodeEnvExample(),
-		"mirante.runtime.yaml":             markerYAML(marker),
-		"README.md":                        runtimeReadme(),
-		".gitignore":                       nodeGitIgnore(),
-		"docker-compose.yml":               nodeDockerCompose(),
-		"Dockerfile":                       nodeDockerfile(),
-		"mirante.yaml":                     miranteConfig(),
-	}
-	return writeScaffoldFiles(dir, files)
-}
-
-func scaffoldGoRepo(dir string) error {
-	marker := RuntimeMarker{Runtime: "go", AlarmsDir: "internal/alarms"}
-	files := map[string]string{
-		"go.mod":                                goRuntimeMod(),
-		"cmd/runtime/main.go":                   goRuntimeMain(),
-		"internal/alarms/check_server_count.go": goAlarmTemplate("check-server-count"),
-		".env.example":                          goEnvExample(),
-		"mirante.runtime.yaml":                  markerYAML(marker),
-		"README.md":                             runtimeReadme(),
-		".gitignore":                            goGitIgnore(),
-	}
-	return writeScaffoldFiles(dir, files)
-}
-
-func writeScaffoldFiles(dir string, files map[string]string) error {
+func scaffoldRepo(dir string, root string) error {
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return fmt.Errorf("failed to create runtime directory: %w", err)
 	}
-	for path, content := range files {
-		if err := writeFileExclusive(filepath.Join(dir, path), content); err != nil {
+
+	return fs.WalkDir(scaffoldFS, root, func(path string, entry fs.DirEntry, err error) error {
+		if err != nil {
 			return err
 		}
-	}
-	return nil
+		if entry.IsDir() {
+			return nil
+		}
+
+		rel := strings.TrimSuffix(strings.TrimPrefix(path, root+"/"), ".tmpl")
+		content, err := scaffoldFS.ReadFile(path)
+		if err != nil {
+			return fmt.Errorf("failed to read scaffold file %s: %w", path, err)
+		}
+		return writeFileExclusive(filepath.Join(dir, filepath.FromSlash(rel)), string(content))
+	})
 }
 
 func writeFileExclusive(path string, content string) error {
@@ -193,10 +187,6 @@ func loadRuntimeMarker(path string) (*RuntimeMarker, error) {
 	return &marker, nil
 }
 
-func markerYAML(marker RuntimeMarker) string {
-	return fmt.Sprintf("runtime: %s\nalarms_dir: %s\n", marker.Runtime, marker.AlarmsDir)
-}
-
 func validateAlarmID(id string) error {
 	if id == "" {
 		return fmt.Errorf("alarm id is required")
@@ -211,256 +201,45 @@ func validateAlarmID(id string) error {
 	return nil
 }
 
-func nodePackageJSON() string {
-	return `{
-  "name": "mirante-alarm-runtime",
-  "version": "0.1.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "start": "tsx src/server.ts"
-  },
-  "dependencies": {
-    "@mirante/alarms-sdk": "0.1.0"
-  },
-  "devDependencies": {
-    "tsx": "^4.19.0",
-    "typescript": "^5.6.0"
-  }
-}
-`
+type alarmTemplateData struct {
+	AlarmID    string
+	ExportName string
+	GoName     string
+	HumanName  string
 }
 
-func nodeTSConfig() string {
-	return `{
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "strict": true,
-    "skipLibCheck": true
-  },
-  "include": ["src/**/*.ts"]
-}
-`
-}
-
-func nodeServerTemplate() string {
-	return `import { serveRuntime } from "@mirante/alarms-sdk";
-
-await serveRuntime({
-  alarmsDir: new URL("./alarms", import.meta.url).pathname,
-  addr: process.env.ALARM_RUNTIME_ADDR ?? "127.0.0.1:50051",
-});
-`
-}
-
-func nodeAlarmTemplate(alarmID string) string {
+func nodeAlarmData(alarmID string) alarmTemplateData {
 	className := toPascalCase(alarmID)
-	exportName := strings.ToLower(className[:1]) + className[1:]
-	return fmt.Sprintf(`import { healthy } from "@mirante/alarms-sdk";
-
-export const %s = {
-  id: %q,
-  name: %q,
-  description: "Describe what this alarm checks.",
-  howToFix: "Describe how to fix failures.",
-  interval: "1m",
-  notifications: {
-    slackWebhooks: async () => [],
-    emails: async () => [],
-  },
-  async run() {
-    return healthy("OK");
-  },
-};
-`, exportName, alarmID, humanizeAlarmID(alarmID))
+	return alarmTemplateData{
+		AlarmID:    alarmID,
+		ExportName: strings.ToLower(className[:1]) + className[1:],
+		HumanName:  humanizeAlarmID(alarmID),
+	}
 }
 
-func nodeEnvExample() string {
-	return `ALARM_RUNTIME_ADDR=0.0.0.0:50051
-
-# Mirante Core
-API_KEY=
-DASHBOARD_BASIC_AUTH_USERNAME=admin
-DASHBOARD_BASIC_AUTH_PASSWORD=
-`
+func goAlarmData(alarmID string) alarmTemplateData {
+	return alarmTemplateData{
+		AlarmID:   alarmID,
+		GoName:    toPascalCase(alarmID),
+		HumanName: humanizeAlarmID(alarmID),
+	}
 }
 
-func goRuntimeMod() string {
-	return `module mirante-alarm-runtime
+func renderAlarmTemplate(path string, data alarmTemplateData) (string, error) {
+	content, err := scaffoldFS.ReadFile(path)
+	if err != nil {
+		return "", fmt.Errorf("failed to read alarm template %s: %w", path, err)
+	}
+	tmpl, err := template.New(filepath.Base(path)).Parse(string(content))
+	if err != nil {
+		return "", fmt.Errorf("failed to parse alarm template %s: %w", path, err)
+	}
 
-go 1.23.6
-`
-}
-
-func goRuntimeMain() string {
-	return `package main
-
-func main() {
-    // TODO: wire generated alarm runtime server.
-}
-`
-}
-
-func goAlarmTemplate(alarmID string) string {
-	return fmt.Sprintf(`package alarms
-
-// AlarmID identifies this runtime-owned alarm.
-const AlarmID = %q
-`, alarmID)
-}
-
-func goEnvExample() string {
-	return "ALARM_RUNTIME_ADDR=127.0.0.1:50051\n"
-}
-
-func nodeDockerCompose() string {
-	return `services:
-  redis:
-    image: redis:7.2-alpine
-    ports:
-      - 6379:6379
-    volumes:
-      - redis-data:/data
-
-  core:
-    image: g0ulartleo/mirante:latest
-    ports:
-      - 40169:40169
-    env_file: .env
-    environment:
-      REDIS_ADDR: redis:6379
-      HTTP_ADDR: 0.0.0.0
-      MIRANTE_CONFIG: /etc/mirante/mirante.yaml
-    volumes:
-      - ./mirante.yaml:/etc/mirante/mirante.yaml
-    depends_on:
-      redis:
-        condition: service_started
-      runtime:
-        condition: service_healthy
-    extra_hosts:
-      - host.docker.internal:host-gateway
-
-  worker:
-    image: g0ulartleo/mirante:latest
-    command: ["./bin/worker"]
-    env_file: .env
-    environment:
-      REDIS_ADDR: redis:6379
-      MIRANTE_CONFIG: /etc/mirante/mirante.yaml
-    volumes:
-      - ./mirante.yaml:/etc/mirante/mirante.yaml
-      - ~/.aws:/home/node/.aws:ro
-    depends_on:
-      redis:
-        condition: service_started
-      runtime:
-        condition: service_healthy
-    extra_hosts:
-      - host.docker.internal:host-gateway
-
-  scheduler:
-    image: g0ulartleo/mirante:latest
-    command: ["./bin/scheduler"]
-    env_file: .env
-    environment:
-      REDIS_ADDR: redis:6379
-      MIRANTE_CONFIG: /etc/mirante/mirante.yaml
-    volumes:
-      - ./mirante.yaml:/etc/mirante/mirante.yaml
-    depends_on:
-      redis:
-        condition: service_started
-      runtime:
-        condition: service_healthy
-
-  runtime:
-    build: .
-    ports:
-      - 50051:50051
-    env_file: .env
-    environment:
-      ALARM_RUNTIME_ADDR: 0.0.0.0:50051
-      AWS_SHARED_CREDENTIALS_FILE: /home/node/.aws/credentials
-      AWS_CONFIG_FILE: /home/node/.aws/config
-    volumes:
-      - ./src:/app/src
-      - ~/.aws:/home/node/.aws:ro
-    healthcheck:
-      test: ["CMD", "node", "-e", "require('net').createConnection(50051).on('connect',()=>process.exit(0)).on('error',()=>process.exit(1))"]
-      interval: 2s
-      timeout: 3s
-      retries: 10
-      start_period: 10s
-    depends_on:
-      - mirante
-
-volumes:
-  redis-data:
-`
-}
-
-func nodeDockerfile() string {
-	return `FROM node:22-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-EXPOSE 50051
-CMD ["npm", "start"]
-`
-}
-
-func miranteConfig() string {
-	return `storage:
-  driver: redis
-
-redis:
-  addr: redis:6379
-
-http:
-  addr: 0.0.0.0
-  port: "40169"
-
-alarm_runtime:
-  timeout: 30s
-  runtimes:
-    runtime:
-      addr: runtime:50051
-
-auth:
-  api_key: ${API_KEY}
-  basic:
-    username: ${DASHBOARD_BASIC_AUTH_USERNAME}
-    password: ${DASHBOARD_BASIC_AUTH_PASSWORD}
-`
-}
-
-func nodeGitIgnore() string {
-	return `node_modules/
-.env
-.DS_Store
-`
-}
-
-func goGitIgnore() string {
-	return `.env
-.DS_Store
-tmp/
-dist/
-`
-}
-
-func runtimeReadme() string {
-	return fmt.Sprintf(`# Mirante Alarms Runtime
-
-Generated by `+"`"+`mirante init repo`+"`"+`.
-
-This repository owns alarm definitions and implementations.
-Mirante core syncs alarm metadata from this server application and use it to execute alarms.
-`)
+	var buf bytes.Buffer
+	if err := tmpl.Execute(&buf, data); err != nil {
+		return "", fmt.Errorf("failed to render alarm template %s: %w", path, err)
+	}
+	return buf.String(), nil
 }
 
 func toPascalCase(id string) string {

@@ -1,0 +1,76 @@
+services:
+  redis:
+    image: redis:7.2-alpine
+    ports:
+      - 6379:6379
+    volumes:
+      - redis-data:/data
+
+  core:
+    image: g0ulartleo/mirante:latest
+    ports:
+      - 40169:40169
+    env_file: .env
+    environment:
+      REDIS_ADDR: redis:6379
+      HTTP_ADDR: 0.0.0.0
+      MIRANTE_CONFIG: /etc/mirante/mirante.yaml
+    volumes:
+      - ./mirante.yaml:/etc/mirante/mirante.yaml
+    depends_on:
+      redis:
+        condition: service_started
+      runtime:
+        condition: service_healthy
+
+  worker:
+    image: g0ulartleo/mirante:latest
+    command: ["./bin/worker"]
+    env_file: .env
+    environment:
+      REDIS_ADDR: redis:6379
+      MIRANTE_CONFIG: /etc/mirante/mirante.yaml
+    volumes:
+      - ./mirante.yaml:/etc/mirante/mirante.yaml
+    depends_on:
+      redis:
+        condition: service_started
+      runtime:
+        condition: service_healthy
+
+  scheduler:
+    image: g0ulartleo/mirante:latest
+    command: ["./bin/scheduler"]
+    env_file: .env
+    environment:
+      REDIS_ADDR: redis:6379
+      MIRANTE_CONFIG: /etc/mirante/mirante.yaml
+    volumes:
+      - ./mirante.yaml:/etc/mirante/mirante.yaml
+    depends_on:
+      redis:
+        condition: service_started
+      runtime:
+        condition: service_healthy
+
+  runtime:
+    build:
+      context: .
+      target: dev
+    ports:
+      - 50051:50051
+    env_file: .env
+    environment:
+      ALARM_RUNTIME_ADDR: 0.0.0.0:50051
+    volumes:
+      - ./cmd:/app/cmd
+      - ./internal:/app/internal
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z 127.0.0.1 50051"]
+      interval: 2s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  redis-data:

@@ -23,6 +23,7 @@ func TestInitRepoCommandScaffoldsNodeRuntime(t *testing.T) {
 	assertFileExists(t, filepath.Join(dir, ".env.example"))
 	assertFileExists(t, filepath.Join(dir, "README.md"))
 	assertFileExists(t, filepath.Join(dir, ".gitignore"))
+	assertFileExists(t, filepath.Join(dir, ".dockerignore"))
 	assertFileExists(t, filepath.Join(dir, "docker-compose.yml"))
 	assertFileExists(t, filepath.Join(dir, "Dockerfile"))
 	assertFileExists(t, filepath.Join(dir, "mirante.yaml"))
@@ -31,6 +32,16 @@ func TestInitRepoCommandScaffoldsNodeRuntime(t *testing.T) {
 	assert.Contains(t, marker, "alarms_dir: src/alarms")
 	miranteCfg := readFile(t, filepath.Join(dir, "mirante.yaml"))
 	assert.Contains(t, miranteCfg, "runtime:50051")
+	dockerfile := readFile(t, filepath.Join(dir, "Dockerfile"))
+	assert.Contains(t, dockerfile, "FROM node:22-alpine AS deps")
+	assert.Contains(t, dockerfile, "FROM node:22-alpine AS prod")
+	assert.Contains(t, dockerfile, "npm ci --omit=dev")
+	assert.Contains(t, dockerfile, `CMD ["node", "dist/server.js"]`)
+	dockerIgnore := readFile(t, filepath.Join(dir, ".dockerignore"))
+	assert.Contains(t, dockerIgnore, ".env.*")
+	assert.Contains(t, dockerIgnore, "terraform/")
+	compose := readFile(t, filepath.Join(dir, "docker-compose.yml"))
+	assert.Contains(t, compose, "target: dev")
 }
 
 func TestInitRepoCommandScaffoldsGoRuntime(t *testing.T) {
@@ -46,9 +57,20 @@ func TestInitRepoCommandScaffoldsGoRuntime(t *testing.T) {
 	assertFileExists(t, filepath.Join(dir, ".env.example"))
 	assertFileExists(t, filepath.Join(dir, "README.md"))
 	assertFileExists(t, filepath.Join(dir, ".gitignore"))
+	assertFileExists(t, filepath.Join(dir, ".dockerignore"))
+	assertFileExists(t, filepath.Join(dir, "docker-compose.yml"))
+	assertFileExists(t, filepath.Join(dir, "Dockerfile"))
+	assertFileExists(t, filepath.Join(dir, "mirante.yaml"))
 	marker := readFile(t, filepath.Join(dir, "mirante.runtime.yaml"))
 	assert.Contains(t, marker, "runtime: go")
 	assert.Contains(t, marker, "alarms_dir: internal/alarms")
+	main := readFile(t, filepath.Join(dir, "cmd/runtime/main.go"))
+	assert.Contains(t, main, "alarmsdk.ServeRuntime")
+	alarm := readFile(t, filepath.Join(dir, "internal/alarms/check_server_count.go"))
+	assert.Contains(t, alarm, "PING_URL")
+	assert.Contains(t, alarm, "alarmsdk.Healthy")
+	miranteCfg := readFile(t, filepath.Join(dir, "mirante.yaml"))
+	assert.Contains(t, miranteCfg, "runtime:50051")
 }
 
 func TestNewAlarmCommandCreatesNodeAlarmFromMarker(t *testing.T) {
@@ -75,7 +97,8 @@ func TestNewAlarmCommandCreatesGoAlarmFromMarker(t *testing.T) {
 	require.NoError(t, err)
 
 	content := readFile(t, filepath.Join(dir, "internal/alarms/server_events_dlq.go"))
-	assert.Contains(t, content, `const AlarmID = "server-events-dlq"`)
+	assert.Contains(t, content, `ID:          "server-events-dlq"`)
+	assert.Contains(t, content, "func runServerEventsDlq")
 }
 
 func TestNewAlarmCommandFailsOutsideRuntimeRepo(t *testing.T) {

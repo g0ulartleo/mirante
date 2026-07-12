@@ -1,0 +1,2 @@
+runtime: go
+alarms_dir: internal/alarms
