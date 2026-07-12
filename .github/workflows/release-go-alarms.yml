@@ -35,7 +35,7 @@ jobs:
 
     - name: Check generated stubs match committed
       run: |
-        if [ -n "$(git status --porcelain packages/go/alarms/alarmruntime)" ]; then
+        if [ -n "$(git -C "${{ github.workspace }}" status --porcelain packages/go/alarms/alarmruntime)" ]; then
           echo "Proto stubs are stale. Run 'make proto-generate-go-sdk' and commit."
           exit 1
         fi
