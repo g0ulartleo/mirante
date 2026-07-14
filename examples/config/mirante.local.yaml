@@ -20,9 +20,12 @@ auth:
     username: ${DASHBOARD_BASIC_AUTH_USERNAME}
     password: ${DASHBOARD_BASIC_AUTH_PASSWORD}
   oauth:
+    # enable OAuth authentication
     enabled: false
     provider: google
     redirect_url: http://localhost:40169/auth/callback
+    # allowed_domains and allowed_emails are used to restrict access
+    # at least one must be set when enabled=true
     allowed_domains: []
     allowed_emails: []
     session_timeout: 24h

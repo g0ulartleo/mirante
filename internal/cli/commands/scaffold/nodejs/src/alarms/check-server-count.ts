@@ -1,14 +1,14 @@
-import { healthy } from "@mirante/alarms";
+import { healthy, type AlarmDefinition } from "@mirante/alarms";
 
-export const checkServerCount = {
+export const checkServerCount: AlarmDefinition = {
   id: "check-server-count",
   name: "Check Server Count",
   description: "Describe what this alarm checks.",
   howToFix: "Describe how to fix failures.",
   interval: "1m",
   notifications: {
-    slackWebhooks: async () => [],
-    emails: async () => [],
+    critical: {},
+    warnings: {},
   },
   async run() {
     return healthy("OK");
