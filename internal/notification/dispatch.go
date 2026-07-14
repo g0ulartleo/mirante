@@ -1,6 +1,7 @@
 package notification
 
 import (
+	"log"
 	"os"
 
 	"github.com/g0ulartleo/mirante/internal/alarm"
@@ -9,14 +10,16 @@ import (
 
 func Dispatch(alarmConfig *alarm.Alarm, sig signal.Signal, prevStatus signal.Status) []error {
 	if os.Getenv("IGNORE_NOTIFICATIONS") != "" {
+		log.Printf("notification skipped alarm_id=%s status=%s reason=ignore_notifications", alarmConfig.ID, sig.Status)
 		return nil
 	}
 	var errors []error
 
 	if sig.Status == signal.StatusUnknown {
-		for _, ch := range alarmConfig.Notifications.Channels {
+		for key, ch := range alarmConfig.Notifications.Channels {
 			if ch.NotifyMissingSignals {
-				errors = append(errors, dispatchCh(ch, alarmConfig, sig)...)
+				log.Printf("notification channel selected alarm_id=%s status=%s prev_status=%s channel=%s", alarmConfig.ID, sig.Status, prevStatus, key)
+				errors = append(errors, dispatchCh(key, ch, alarmConfig, sig)...)
 			}
 		}
 		return errors
@@ -24,16 +27,19 @@ func Dispatch(alarmConfig *alarm.Alarm, sig signal.Signal, prevStatus signal.Sta
 
 	key := channelKey(sig.Status, prevStatus)
 	if key == "" {
+		log.Printf("notification skipped alarm_id=%s status=%s prev_status=%s reason=no_channel_key", alarmConfig.ID, sig.Status, prevStatus)
 		return nil
 	}
 	ch, ok := alarmConfig.Notifications.Channels[key]
 	if !ok {
+		log.Printf("notification skipped alarm_id=%s status=%s prev_status=%s channel=%s reason=channel_missing", alarmConfig.ID, sig.Status, prevStatus, key)
 		return nil
 	}
-	return dispatchCh(ch, alarmConfig, sig)
+	log.Printf("notification channel selected alarm_id=%s status=%s prev_status=%s channel=%s", alarmConfig.ID, sig.Status, prevStatus, key)
+	return dispatchCh(key, ch, alarmConfig, sig)
 }
 
-func dispatchCh(ch alarm.NotificationChannel, alarmConfig *alarm.Alarm, sig signal.Signal) []error {
+func dispatchCh(key string, ch alarm.NotificationChannel, alarmConfig *alarm.Alarm, sig signal.Signal) []error {
 	notifications := []Notification{}
 	for _, email := range ch.Emails {
 		if len(email.To) > 0 {
@@ -47,6 +53,7 @@ func dispatchCh(ch alarm.NotificationChannel, alarmConfig *alarm.Alarm, sig sign
 	}
 
 	errors := []error{}
+	log.Printf("notification targets alarm_id=%s channel=%s slack_webhooks=%d emails=%d", alarmConfig.ID, key, len(ch.SlackWebhooks), len(ch.Emails))
 	for _, n := range notifications {
 		if err := n.Build(alarmConfig, sig); err != nil {
 			errors = append(errors, err)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 
 	"github.com/g0ulartleo/mirante/internal/alarm"
 	"github.com/g0ulartleo/mirante/internal/notification"
@@ -43,12 +44,14 @@ func HandleAlarmNotifyTask(ctx context.Context, t *asynq.Task, alarmService *ala
 	if err != nil {
 		return fmt.Errorf("failed to get alarm config: %w", err)
 	}
+	log.Printf("alarm notify processing alarm_id=%s status=%s prev_status=%s", payload.AlarmID, payload.Signal.Status, payload.PrevStatus)
 	errors := notification.Dispatch(alarmConfig, payload.Signal, payload.PrevStatus)
 	if len(errors) > 0 {
 		for _, err := range errors {
-			fmt.Println("error dispatching alarm notification: %w", err)
+			log.Printf("alarm notify failed alarm_id=%s error=%v", payload.AlarmID, err)
 		}
 		return fmt.Errorf("failed to dispatch alarm notifications: %v", errors)
 	}
+	log.Printf("alarm notify sent alarm_id=%s status=%s prev_status=%s", payload.AlarmID, payload.Signal.Status, payload.PrevStatus)
 	return nil
 }

@@ -104,9 +104,11 @@ func checkAlarm(
 	if err != nil {
 		return fmt.Errorf("failed to create dashboard notify task: %w", err)
 	}
+	log.Printf("dashboard notify enqueue alarm_id=%s status=%s", payload.AlarmID, sig.Status)
 	if _, err := asyncClient.Enqueue(dashboardTask); err != nil {
 		return fmt.Errorf("failed to enqueue dashboard notify task: %w", err)
 	}
+	log.Printf("dashboard notify enqueued alarm_id=%s status=%s", payload.AlarmID, sig.Status)
 
 	signals, err := signalService.GetAlarmLatestSignals(payload.AlarmID, 2)
 	if err != nil {
@@ -114,6 +116,7 @@ func checkAlarm(
 	}
 	changed := len(signals) <= 1 || signals[0].Status != signals[1].Status
 	if !changed {
+		log.Printf("alarm notify skipped alarm_id=%s status=%s reason=status_unchanged", payload.AlarmID, sig.Status)
 		return nil
 	}
 
@@ -123,6 +126,7 @@ func checkAlarm(
 	}
 
 	if alarmConfig.HasNotificationsEnabled() {
+		log.Printf("alarm notify enqueue alarm_id=%s status=%s prev_status=%s", payload.AlarmID, sig.Status, prevStatus)
 		task, err := NewAlarmNotifyTask(payload.AlarmID, sig, prevStatus)
 		if err != nil {
 			return fmt.Errorf("failed to create notify task: %w", err)
@@ -130,6 +134,9 @@ func checkAlarm(
 		if _, err := asyncClient.Enqueue(task); err != nil {
 			return fmt.Errorf("failed to enqueue task: %w", err)
 		}
+		log.Printf("alarm notify enqueued alarm_id=%s status=%s prev_status=%s", payload.AlarmID, sig.Status, prevStatus)
+	} else {
+		log.Printf("alarm notify skipped alarm_id=%s status=%s reason=notifications_disabled", payload.AlarmID, sig.Status)
 	}
 	return nil
 }
